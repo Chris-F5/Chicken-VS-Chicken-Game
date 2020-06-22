@@ -10,17 +10,26 @@ namespace GameServer.GameObjects
     {
         public Vector2 velocity;
         public float gravityScale { get; private set; }
-        public DynamicPhysicsObject(byte _typeId, Rect _rect, float _gravityScale = 1) : base(_typeId, _rect)
+        public float drag { get; private set; }
+        public float xFriction { get; private set; }
+        public float yFriction { get; private set; }
+        public DynamicPhysicsObject(byte _typeId, Rect _rect, float _gravityScale = 1, float _drag = 1, float _xFriction = 1, float _yFriction = 1) : base(_typeId, _rect)
         {
             gravityScale = _gravityScale;
+            drag = _drag;
+            xFriction = _xFriction;
+            yFriction = _yFriction;
             velocity = new Vector2(0,0);
         }
-        public DynamicPhysicsObject(byte _typeId, Rect _rect, Vector2 _velocity, float _gravityScale = 1) : base(_typeId, _rect)
+        public DynamicPhysicsObject(byte _typeId, Rect _rect, Vector2 _velocity, float _gravityScale = 1, float _drag = 1, float _xFriction = 1, float _yFriction = 1) : base(_typeId, _rect)
         {
             if (_velocity == null)
             {
                 throw new System.ArgumentException("Velocity cannot be set to null");
             }
+            drag = _drag;
+            xFriction = _xFriction;
+            yFriction = _yFriction;
             velocity = _velocity;
             gravityScale = _gravityScale;
         }
@@ -36,13 +45,32 @@ namespace GameServer.GameObjects
             if (_collisionAxis == Axis.x)
             {
                 velocity.x = 0;
+                Friction(Axis.x);
             }
             else if(_collisionAxis == Axis.y)
             {
                 velocity.y = 0;
+                Friction(Axis.y);
             }
 
+            Drag();
+
             base.Update(_packet);
+        }
+        private void Drag()
+        {
+            velocity *= 1 - Constants.SECONDS_PER_TICK * drag;
+        }
+        private void Friction(Axis _axis)
+        {
+            if (_axis == Axis.y)
+            {
+                velocity.x *= 1 - Constants.SECONDS_PER_TICK * xFriction;
+            }
+            else if(_axis == Axis.x)
+            {
+                velocity.y *= 1 - Constants.SECONDS_PER_TICK * yFriction;
+            }
         }
     }
 }

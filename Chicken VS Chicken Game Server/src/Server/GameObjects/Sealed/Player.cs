@@ -26,7 +26,7 @@ namespace GameServer.GameObjects
         public bool leftKey;
         public bool rightKey;
 
-        public Player(Vector2 _position) : base((byte)ObjectTypes.player,new Rect(_position, new Vector2(0,0)))
+        public Player(Vector2 _position) : base((byte)ObjectTypes.player,new Rect(_position, new Vector2(0,0)),1,1,1,0)
         {
         }
 

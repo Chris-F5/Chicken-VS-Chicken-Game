@@ -57,10 +57,8 @@ namespace GameServer
 
         private static void UDPRecieveCallback(IAsyncResult _result)
         {
-            Console.WriteLine("-");
             try
             {
-                Console.WriteLine("Handeling Data");
                 IPEndPoint _clientEndPoint = new IPEndPoint(IPAddress.Any, 0);
                 byte[] _data = udpListener.EndReceive(_result, ref _clientEndPoint);
                 udpListener.BeginReceive(UDPRecieveCallback, null);
@@ -68,7 +66,7 @@ namespace GameServer
                 if (_data.Length < 4)
                 {
                     // Something went wrong while transporting the packet. For now, it will be ignored.
-                    Console.WriteLine("Something went wrong while transporting the packet. For now, it will be ignored.");
+                    Console.WriteLine("Something went wrong while transporting a UDP packet. For now, it will be ignored.");
                     return;
                 }
                 else
@@ -80,7 +78,7 @@ namespace GameServer
                         if (_claimedClientId <= 0 || _claimedClientId > maxPlayers)
                         {
                             // The clients claimed id does not exist. Either they are using a broken client or something went very wrong.
-                            Console.WriteLine($"The clients claimed id {_claimedClientId} does not exist. Either they are using a broken client or something went very wrong.");
+                            Console.WriteLine($"A clients claimed id {_claimedClientId} does not exist. Either they are using a broken client or something went very wrong.");
                         }
                         else if (!clients[_claimedClientId].IsUDPConnected())
                         {
@@ -89,7 +87,6 @@ namespace GameServer
                         }
                         else if (clients[_claimedClientId].VerifEndPoint(_clientEndPoint))
                         {
-                            Console.WriteLine($"Client {_claimedClientId} accepting UDP data.");
                             clients[_claimedClientId].udp.HandleData(_packet);
                         }
                     }
@@ -99,7 +96,6 @@ namespace GameServer
             {
                 Console.WriteLine($"Error reciving UDP data: {_ex}");
             }
-            Console.WriteLine("-");
         }
 
         public static void SendUDPData(IPEndPoint _clientEndPoint, Packet _packet)
