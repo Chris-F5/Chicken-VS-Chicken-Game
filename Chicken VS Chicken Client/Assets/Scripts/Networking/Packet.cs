@@ -85,11 +85,6 @@ public class Packet : IDisposable
     public byte[] ToArray()
     {
         readableBuffer = buffer.ToArray();
-        UnityEngine.Debug.Log("-");
-        for (int i = 0; i < readableBuffer.Length; i++) {
-            UnityEngine.Debug.Log(readableBuffer[i]);
-        }
-        UnityEngine.Debug.Log("-");
         return readableBuffer;
     }
 

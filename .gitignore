@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Unity files
+/Chicken VS Chicken Client/Temp/
+
 # User-specific files
 *.rsuser
 *.suo

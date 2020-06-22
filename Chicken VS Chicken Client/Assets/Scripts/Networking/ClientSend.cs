@@ -35,7 +35,6 @@ public class ClientSend : MonoBehaviour
 
     public static void ButtonUp(KeyButton _btn)
     {
-        Debug.Log("Right Dectedted 2");
         using (Packet _packet = new Packet((int)ClientPackets.buttonUp))
         {
             _packet.WriteByte((byte)_btn);
