@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum KeyButton
 {
-    up,
+    up = 1,
     down,
     left,
     right
@@ -24,6 +24,14 @@ public class InputManager : MonoBehaviour
         if (Input.GetKeyDown(left))
         {
             ClientSend.ButtonDown(KeyButton.left);
+        }
+        if (Input.GetKeyUp(right))
+        {
+            ClientSend.ButtonUp(KeyButton.right);
+        }
+        if (Input.GetKeyUp(left))
+        {
+            ClientSend.ButtonUp(KeyButton.left);
         }
     }
 }

@@ -27,12 +27,12 @@ namespace GameServer
         public static void ButtonDown(int _fromClient, Packet _packet)
         {
             byte _key = _packet.ReadByte();
-            Console.WriteLine(_key);
+            Console.WriteLine("Pressed Key : " + _key);
             if (_key == (byte)KeyButton.right)
             {
                 ServerManager.clients[_fromClient].playerObject.rightKey = true;
             }
-            else if (_key == (byte)KeyButton.right)
+            else if (_key == (byte)KeyButton.left)
             {
                 ServerManager.clients[_fromClient].playerObject.leftKey = true;
             }
@@ -40,13 +40,13 @@ namespace GameServer
         }
         public static void ButtonUp(int _fromClient, Packet _packet)
         {
-            Console.WriteLine("UP");
+            Console.WriteLine("Key Up");
             byte _key = _packet.ReadByte();
             if (_key == (byte)KeyButton.right)
             {
                 ServerManager.clients[_fromClient].playerObject.rightKey = false;
             }
-            else if (_key == (byte)KeyButton.right)
+            else if (_key == (byte)KeyButton.left)
             {
                 ServerManager.clients[_fromClient].playerObject.leftKey = false;
             }

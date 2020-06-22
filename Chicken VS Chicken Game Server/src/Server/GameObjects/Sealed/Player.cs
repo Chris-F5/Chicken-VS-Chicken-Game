@@ -8,7 +8,7 @@ namespace GameServer
 {
     enum KeyButton
     {
-        up,
+        up = 1,
         down,
         left,
         right
@@ -38,7 +38,7 @@ namespace GameServer.GameObjects
             }
             if (leftKey)
             {
-                velocity += new Vector2(acceleration * Constants.SECONDS_PER_TICK, 0);
+                velocity -= new Vector2(acceleration * Constants.SECONDS_PER_TICK, 0);
             }
 
             base.Update(_packet);
