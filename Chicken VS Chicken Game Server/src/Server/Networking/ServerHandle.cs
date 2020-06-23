@@ -36,6 +36,10 @@ namespace GameServer
             {
                 ServerManager.clients[_fromClient].playerObject.leftKey = true;
             }
+            else if (_key == (byte)KeyButton.up)
+            {
+                ServerManager.clients[_fromClient].playerObject.upKey = true;
+            }
             // TODO: Send key confirmation message
         }
         public static void ButtonUp(int _fromClient, Packet _packet)
@@ -49,6 +53,10 @@ namespace GameServer
             else if (_key == (byte)KeyButton.left)
             {
                 ServerManager.clients[_fromClient].playerObject.leftKey = false;
+            }
+            else if (_key == (byte)KeyButton.up)
+            {
+                ServerManager.clients[_fromClient].playerObject.upKey = false;
             }
             // TODO: Send key confirmation message
         }

@@ -13,6 +13,7 @@ namespace GameServer.GameObjects
         public float drag { get; private set; }
         public float xFriction { get; private set; }
         public float yFriction { get; private set; }
+        public bool grounded { get; private set; }
         public DynamicPhysicsObject(byte _typeId, Rect _rect, float _gravityScale = 1, float _drag = 1, float _xFriction = 1, float _yFriction = 1) : base(_typeId, _rect)
         {
             gravityScale = _gravityScale;
@@ -46,11 +47,17 @@ namespace GameServer.GameObjects
             {
                 velocity.x = 0;
                 Friction(Axis.x);
+                grounded = false;
             }
             else if(_collisionAxis == Axis.y)
             {
                 velocity.y = 0;
                 Friction(Axis.y);
+                grounded = true;
+            }
+            else
+            {
+                grounded = false;
             }
 
             Drag();

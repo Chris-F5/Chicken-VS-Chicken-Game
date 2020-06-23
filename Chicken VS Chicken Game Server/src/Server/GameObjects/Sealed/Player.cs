@@ -20,6 +20,7 @@ namespace GameServer.GameObjects
     sealed class Player : DynamicPhysicsObject
     {
         private float acceleration = 1;
+        private float jumpForce = 5;
 
         public bool upKey;
         public bool downKey;
@@ -39,6 +40,10 @@ namespace GameServer.GameObjects
             if (leftKey)
             {
                 velocity -= new Vector2(acceleration * Constants.SECONDS_PER_TICK, 0);
+            }
+            if (upKey && grounded)
+            {
+                velocity += new Vector2(0, jumpForce);
             }
 
             base.Update(_packet);

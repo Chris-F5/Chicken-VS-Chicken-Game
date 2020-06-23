@@ -25,6 +25,10 @@ public class InputManager : MonoBehaviour
         {
             ClientSend.ButtonDown(KeyButton.left);
         }
+        if (Input.GetKeyDown(up))
+        {
+            ClientSend.ButtonDown(KeyButton.up);
+        }
         if (Input.GetKeyUp(right))
         {
             ClientSend.ButtonUp(KeyButton.right);
@@ -32,6 +36,10 @@ public class InputManager : MonoBehaviour
         if (Input.GetKeyUp(left))
         {
             ClientSend.ButtonUp(KeyButton.left);
+        }
+        if (Input.GetKeyUp(up))
+        {
+            ClientSend.ButtonUp(KeyButton.up);
         }
     }
 }
