@@ -14,32 +14,30 @@ public class InputManager : MonoBehaviour
 {
     [SerializeField]
     KeyCode up, down, left, right;
+    private Dictionary<KeyButton, KeyCode> keys;
+    private void Awake()
+    {
+        keys = new Dictionary<KeyButton, KeyCode>()
+        {
+            { KeyButton.up, up },
+            { KeyButton.down, down },
+            { KeyButton.left, left },
+            { KeyButton.right, right }
+        };
+    }
 
     void Update()
     {
-        if (Input.GetKeyDown(right))
+        foreach (KeyValuePair<KeyButton, KeyCode> key in keys)
         {
-            ClientSend.ButtonDown(KeyButton.right);
-        }
-        if (Input.GetKeyDown(left))
-        {
-            ClientSend.ButtonDown(KeyButton.left);
-        }
-        if (Input.GetKeyDown(up))
-        {
-            ClientSend.ButtonDown(KeyButton.up);
-        }
-        if (Input.GetKeyUp(right))
-        {
-            ClientSend.ButtonUp(KeyButton.right);
-        }
-        if (Input.GetKeyUp(left))
-        {
-            ClientSend.ButtonUp(KeyButton.left);
-        }
-        if (Input.GetKeyUp(up))
-        {
-            ClientSend.ButtonUp(KeyButton.up);
+            if (Input.GetKeyDown(key.Value))
+            {
+                ClientSend.ButtonDown(key.Key);
+            }
+            else if(Input.GetKeyUp(key.Value))
+            {
+                ClientSend.ButtonUp(key.Key);
+            }
         }
     }
 }
