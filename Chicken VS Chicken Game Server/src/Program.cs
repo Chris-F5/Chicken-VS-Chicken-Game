@@ -16,7 +16,8 @@ namespace GameServer
             StartFormThread();
             StartGameThread();
 
-            new GameObjects.TestObject(new Vector2(1,10));
+            new GameObjects.Wall(new Rect(new Vector2(-10, -10), new Vector2(20, 6)));
+            new GameObjects.Wall(new Rect(new Vector2(-4, -2.5f), new Vector2(3, 0.5f)));
         }
         public static void StartGameThread()
         {

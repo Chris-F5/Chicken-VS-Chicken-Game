@@ -14,6 +14,8 @@ namespace GameServer.GameObjects
             allKenimaticColliders.Add(this);
         }
 
+        public override void Update(Packet _packet){}
+
         public override void Destroy()
         {
             allKenimaticColliders.Remove(this);

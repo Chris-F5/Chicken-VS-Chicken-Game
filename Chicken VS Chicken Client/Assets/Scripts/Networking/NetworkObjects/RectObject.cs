@@ -11,6 +11,9 @@ class RectObject : NetworkObject
     [SerializeField]
     BoxCollider2D attachedCollider;
 
+    [SerializeField]
+    bool changeScale = true;
+
     public override void HandleNewObjectData(Packet _packet)
     {
         float _xPos = _packet.ReadFloat();
@@ -19,8 +22,15 @@ class RectObject : NetworkObject
         float _ySize = _packet.ReadFloat();
 
         attachedTransform.position = new Vector2(_xPos, _yPos);
-        attachedCollider.size = new Vector2(_xSize, _ySize);
-        attachedCollider.offset = new Vector2(_xSize / 2, _ySize / 2);
+        if (changeScale)
+        {
+            attachedTransform.localScale = new Vector2(_xSize, _ySize);
+        }
+        else
+        {
+            attachedCollider.size = new Vector2(_xSize, _ySize);
+            attachedCollider.offset = new Vector2(_xSize / 2, _ySize / 2);
+        }
     }
     public override void HandleObjectUpdate(Packet _packet)
     {

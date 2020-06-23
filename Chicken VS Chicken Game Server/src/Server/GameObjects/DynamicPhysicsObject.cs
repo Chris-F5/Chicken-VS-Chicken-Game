@@ -42,27 +42,30 @@ namespace GameServer.GameObjects
 
             rect.position += velocity * Constants.SECONDS_PER_TICK;
 
-            Axis _collisionAxis = rect.CollideWith(new Rect(new Vector2(-10, -10), new Vector2(20, 5)));
-            if (_collisionAxis == Axis.x)
+            grounded = false;
+            foreach (KenimaticColliderObject collider in KenimaticColliderObject.allKenimaticColliders)
             {
-                velocity.x = 0;
-                Friction(Axis.x);
-                grounded = false;
-            }
-            else if(_collisionAxis == Axis.y)
-            {
-                velocity.y = 0;
-                Friction(Axis.y);
-                grounded = true;
-            }
-            else
-            {
-                grounded = false;
+                CollideWith(collider.rect);
             }
 
             Drag();
 
             base.Update(_packet);
+        }
+        private void CollideWith(Rect _rect)
+        {
+            Axis _collisionAxis = rect.CollideWith(_rect);
+            if (_collisionAxis == Axis.x)
+            {
+                velocity.x = 0;
+                Friction(Axis.x);
+            }
+            else if (_collisionAxis == Axis.y)
+            {
+                velocity.y = 0;
+                Friction(Axis.y);
+                grounded = true;
+            }
         }
         private void Drag()
         {

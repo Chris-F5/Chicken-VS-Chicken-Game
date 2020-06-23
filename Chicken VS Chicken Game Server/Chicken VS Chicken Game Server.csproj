@@ -69,6 +69,7 @@
     <Compile Include="src\Server\GameObjects\RectObject.cs" />
     <Compile Include="src\Server\GameObjects\Sealed\Player.cs" />
     <Compile Include="src\Server\GameObjects\Sealed\TestObject.cs" />
+    <Compile Include="src\Server\GameObjects\Sealed\Wall.cs" />
     <Compile Include="src\Server\Networking\Client.cs" />
     <Compile Include="src\Server\Networking\Packet.cs" />
     <Compile Include="src\Server\Networking\ServerManager.cs" />
