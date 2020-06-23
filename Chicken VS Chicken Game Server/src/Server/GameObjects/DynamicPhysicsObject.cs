@@ -62,9 +62,11 @@ namespace GameServer.GameObjects
             }
             else if (_collisionAxis == Axis.y)
             {
+                if (velocity.y < 0)
+                {
+                    grounded = true;
+                }
                 velocity.y = 0;
-                Friction(Axis.y);
-                grounded = true;
             }
         }
         private void Drag()
