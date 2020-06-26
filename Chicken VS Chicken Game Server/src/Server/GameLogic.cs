@@ -11,7 +11,7 @@ namespace GameServer
             ThreadManager.UpdateMain();
 
             // Updates objects and sends their updates
-            ServerSend.SendObjectUpdates();
+            Client.SendObjectUpdatesToAll();
         }
     }
 }

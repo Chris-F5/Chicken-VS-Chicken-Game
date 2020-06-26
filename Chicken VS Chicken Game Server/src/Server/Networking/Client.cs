@@ -8,24 +8,25 @@ namespace GameServer
 {
     class Client
     {
-        public static int dataBufferSize = 4096;
+        private delegate void PacketHandler(Client _fromClient, Packet _packet);
+        private static Dictionary<int, PacketHandler> packetHandlers = new Dictionary<int, PacketHandler>()
+        {
+            { (int) ClientPackets.welcomeReceived, ServerHandle.WelcomeRecieved},
+            { (int) ClientPackets.udpTestRecieve, ServerHandle.UDPTestRecieved},
+            { (int) ClientPackets.buttonDown, ServerHandle.ButtonDown},
+            { (int) ClientPackets.buttonUp, ServerHandle.ButtonUp},
+        };
 
         public readonly int id;
-        public GameObjects.Player playerObject;
-
         public readonly TCP tcp;
         public readonly UDP udp;
+        public GameObjects.Player playerObject;
 
         public Client(int _id)
         {
             id = _id;
-            tcp = new TCP(id);
-            udp = new UDP(id);
-        }
-
-        private void CreatePlayer()
-        {
-            playerObject = new GameObjects.Player(new Vector2(0,10));
+            tcp = new TCP(this);
+            udp = new UDP(this);
         }
         public void TCPConnect(TcpClient _socket)
         {
@@ -48,159 +49,76 @@ namespace GameServer
         {
             return (_iPEndPoint.ToString() == udp.endPoint.ToString());
         }
-        public class TCP
+        private void CreatePlayer()
         {
-            private readonly int id;
-            public TcpClient socket;
-            private NetworkStream stream;
-            private byte[] recieveBuffer;
-            private Packet recievedData;
-
-            public TCP(int _id)
+            playerObject = new GameObjects.Player(new Vector2(0, 10));
+        }
+        public void Welcome()
+        {
+            using (Packet _packet = new Packet((int)ServerPackets.welcome))
             {
-                id = _id;
-            }
+                _packet.WriteString("Welcome to the server");
+                _packet.WriteInt(id);
 
-            public void Connect(TcpClient _socket)
-            {
-                socket = _socket;
-                socket.ReceiveBufferSize = dataBufferSize;
-                socket.SendBufferSize = dataBufferSize;
-                stream = socket.GetStream();
-
-                recievedData = new Packet();
-                recieveBuffer = new byte[dataBufferSize];
-                stream.BeginRead(recieveBuffer, 0, dataBufferSize, RecieveCallback, null);
-
-                
-                ServerSend.Welcome(id, "Welcome!");
-            }
-
-            public void SendData(Packet _packet)
-            {
-                try
-                {
-                    if (socket != null)
-                    {
-                        stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), null, null);
-                    }
-                }
-                catch (Exception _ex)
-                {
-                    Console.WriteLine($"Error sending packet to player {id} via TCP: {_ex}");
-                    //TODO: disconect client
-                }
-            }
-
-            private void RecieveCallback(IAsyncResult _result)
-            {
-                try
-                {
-                    int _byteLength = stream.EndRead(_result);
-                    if (_byteLength <= 0)
-                    {
-                        // TODO: disconect client
-                        return;
-                    }
-                    else
-                    {
-                        byte[] _data = new byte[_byteLength];
-                        Array.Copy(recieveBuffer, _data, _byteLength);
-
-                        recievedData.Reset(HandleData(_data));
-
-                        stream.BeginRead(recieveBuffer, 0, dataBufferSize, RecieveCallback, null);
-                    }
-                }
-                catch (Exception _ex)
-                {
-                    Console.WriteLine($"Error recieving TCP data: {_ex}");
-                    //TODO: disconect client
-                }
-            }
-
-            private bool HandleData(byte[] _data)
-            {
-                int _packetLength = 0;
-
-                recievedData.SetBytes(_data);
-
-                if (recievedData.UnreadLength() >= 4)
-                {
-                    _packetLength = recievedData.ReadInt();
-                    if (_packetLength <= 0)
-                    {
-                        return true;
-                    }
-                }
-
-                while (_packetLength > 0 && _packetLength <= recievedData.UnreadLength())
-                {
-                    byte[] _packetBytes = recievedData.ReadBytes(_packetLength);
-                    ThreadManager.ExecuteOnMainThread(() =>
-                    {
-                        using (Packet _packet = new Packet(_packetBytes))
-                        {
-                            int _packetId = _packet.ReadInt();
-                            ServerManager.packetHandlers[_packetId](id, _packet);
-                        }
-                    });
-
-                    _packetLength = 0;
-                    if (recievedData.UnreadLength() >= 4)
-                    {
-                        _packetLength = recievedData.ReadInt();
-                        if (_packetLength <= 0)
-                        {
-                            return true;
-                        }
-                    }
-                }
-                if (_packetLength <= 1)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                tcp.Send(_packet);
             }
         }
-        public class UDP{
-            public IPEndPoint endPoint;
-
-            private readonly int id;
-
-            public UDP(int _id)
+        /// <summary>
+        /// Sends all game objects to a given client as if the objects had just been created.
+        /// This be used for situations where the client knows nothing about any of the game objects. E.g when a new client joins.
+        /// </summary>
+        public void SendAllObjectsAsNew()
+        {
+            foreach (KeyValuePair<short, GameObject> _gameObjectKeyPair in GameObject.allObjects)
             {
-                id = _id;
+                GameObject _gameObject = _gameObjectKeyPair.Value;
+                _gameObject.SendNewObjectPacket(this);
             }
+        }
 
-            public void Connect(IPEndPoint _endPoint)
+        public void SendUDPTest()
+        {
+            using (Packet _packet = new Packet((int)ServerPackets.udpTest))
             {
-                endPoint = _endPoint;
+                _packet.WriteString("UDP Test!");
 
-                ServerSend.UDPTest(id);
+                udp.Send(_packet);
             }
-
-            public void SendData(Packet _packet)
+        }
+        public void HandlePacket(Packet _packet)
+        {
+            int _packetId = _packet.ReadInt();
+            packetHandlers[_packetId](this, _packet);
+        }
+        public static void SendTCPToAll(Packet _packet)
+        {
+            for (int i = 1; i <= ServerManager.maxPlayers; i++)
             {
-                ServerManager.SendUDPData(endPoint, _packet);
+                ServerManager.clients[i].tcp.Send(_packet);
             }
+        }
 
-            public void HandleData(Packet _packetData)
+        private static void SendUDPToAll(Packet _packet)
+        {
+            for (int i = 1; i <= ServerManager.maxPlayers; i++)
             {
-                int _packetLength = _packetData.ReadInt();
-                byte[] _packetBytes = _packetData.ReadBytes(_packetLength);
+                ServerManager.clients[i].udp.Send(_packet);
+            }
+        }
 
-                ThreadManager.ExecuteOnMainThread(() =>
+        public static void SendObjectUpdatesToAll()
+        {
+            using (Packet _packet = new Packet((int)ServerPackets.gameObjectUpdates))
+            {
+                lock (GameObject.allObjects)
                 {
-                    using (Packet _packet = new Packet(_packetBytes))
+                    // TODO: sometimes i get an error where this cant run because the allObjects dictionary was modified. The lock aint working
+                    foreach (KeyValuePair<short, GameObject> _gameObject in GameObject.allObjects)
                     {
-                        int _packetId = _packet.ReadInt();
-                        ServerManager.packetHandlers[_packetId](id, _packet);
+                        _gameObject.Value.Update(_packet);
                     }
-                });
+                }
+                SendUDPToAll(_packet);
             }
         }
     }

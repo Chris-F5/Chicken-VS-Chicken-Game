@@ -74,8 +74,9 @@
     <Compile Include="src\Server\Networking\Packet.cs" />
     <Compile Include="src\Server\Networking\ServerManager.cs" />
     <Compile Include="src\Server\Networking\ServerHandle.cs" />
-    <Compile Include="src\Server\Networking\ServerSend.cs" />
+    <Compile Include="src\Server\Networking\TCP.cs" />
     <Compile Include="src\Server\Networking\ThreadManager.cs" />
+    <Compile Include="src\Server\Networking\UDP.cs" />
     <Compile Include="src\Server\Physics\Rect.cs" />
     <Compile Include="src\Server\Physics\Vector2.cs" />
     <EmbeddedResource Include="src\GUI\Form1.resx">

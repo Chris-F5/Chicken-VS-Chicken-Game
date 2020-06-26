@@ -73,6 +73,10 @@ namespace GameServer
                 lengthWritten = true;
                 buffer.InsertRange(0, BitConverter.GetBytes(buffer.Count));
             }
+            else
+            {
+                throw new Exception("Length can not be written to buffer twice.");
+            }
         }
 
         /// <summary>Inserts the given int at the start of the buffer.</summary>

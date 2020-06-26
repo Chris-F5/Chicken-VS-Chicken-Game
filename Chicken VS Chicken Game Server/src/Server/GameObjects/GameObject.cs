@@ -35,19 +35,19 @@ namespace GameServer
                 SetNewObjectPacketContent(_packet);
 
                 // Both TCP and UDP are sent to make the game object create quickly and to ensure it is created
-                ServerSend.SendUDPToAll(_packet);
-                ServerSend.SendTCPToAll(_packet);
+                UDP.SendToAll(_packet);
+                TCP.SendToAll(_packet);
             }
         }
-        public void SendNewObjectPacket(int _toClient)
+        public void SendNewObjectPacket(Client _toClient)
         {
             using (Packet _packet = new Packet((int)ServerPackets.newGameObject))
             {
                 SetNewObjectPacketContent(_packet);
 
                 // Both TCP and UDP are sent to make the game object create quickly and to ensure it is created
-                ServerSend.SendUDPData(_toClient, _packet);
-                ServerSend.SendTCPData(_toClient, _packet);
+                _toClient.udp.Send(_packet);
+                _toClient.tcp.Send(_packet);
             }
         }
         public virtual void SetNewObjectPacketContent(Packet _packet)
