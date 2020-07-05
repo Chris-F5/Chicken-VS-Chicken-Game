@@ -20,7 +20,7 @@ namespace GameServer
         public readonly int id;
         public readonly TCP tcp;
         public readonly UDP udp;
-        public GameObjects.Player playerObject;
+        public NetworkSynchronisers.Player playerObject;
 
         public Client(int _id)
         {
@@ -51,11 +51,19 @@ namespace GameServer
         }
         private void CreatePlayer()
         {
-            playerObject = new GameObjects.Player(new Vector2(0, 10));
+            Console.WriteLine("Player object created.");
+            playerObject = new NetworkSynchronisers.Player(new Vector2(0, 10));
         }
+        public void HandlePacket(Packet _packet)
+        {
+            int _packetId = _packet.ReadInt();
+            packetHandlers[_packetId](this, _packet);
+        }
+
         public void Welcome()
         {
-            using (Packet _packet = new Packet((int)ServerPackets.welcome))
+            Console.WriteLine($"Sending welcome packet to client id: {id}");
+            using (Packet _packet = new Packet(ServerPackets.welcome))
             {
                 _packet.WriteString("Welcome to the server");
                 _packet.WriteInt(id);
@@ -63,61 +71,37 @@ namespace GameServer
                 tcp.Send(_packet);
             }
         }
-        /// <summary>
-        /// Sends all game objects to a given client as if the objects had just been created.
-        /// This be used for situations where the client knows nothing about any of the game objects. E.g when a new client joins.
-        /// </summary>
-        public void SendAllObjectsAsNew()
+        public void NetworkSynchroniserStartup()
         {
-            foreach (KeyValuePair<short, GameObject> _gameObjectKeyPair in GameObject.allObjects)
+            Console.WriteLine($"Sending synchroniser startup packet to client id: {id}");
+            using (Packet _packet = NetworkSynchroniser.GenerateStartupPacket())
             {
-                GameObject _gameObject = _gameObjectKeyPair.Value;
-                _gameObject.SendNewObjectPacket(this);
+                tcp.Send(_packet);
             }
         }
 
-        public void SendUDPTest()
+        private static void SendTCPToAll(Packet _packet)
         {
-            using (Packet _packet = new Packet((int)ServerPackets.udpTest))
-            {
-                _packet.WriteString("UDP Test!");
-
-                udp.Send(_packet);
-            }
-        }
-        public void HandlePacket(Packet _packet)
-        {
-            int _packetId = _packet.ReadInt();
-            packetHandlers[_packetId](this, _packet);
-        }
-        public static void SendTCPToAll(Packet _packet)
-        {
+            _packet.WriteLength();
             for (int i = 1; i <= ServerManager.maxPlayers; i++)
             {
-                ServerManager.clients[i].tcp.Send(_packet);
+                ServerManager.clients[i].tcp.Send(_packet, false);
             }
         }
 
         private static void SendUDPToAll(Packet _packet)
         {
+            _packet.WriteLength();
             for (int i = 1; i <= ServerManager.maxPlayers; i++)
             {
-                ServerManager.clients[i].udp.Send(_packet);
+                ServerManager.clients[i].udp.Send(_packet, false);
             }
         }
 
-        public static void SendObjectUpdatesToAll()
+        public static void SynchroniseClients()
         {
-            using (Packet _packet = new Packet((int)ServerPackets.gameObjectUpdates))
+            using (Packet _packet = NetworkSynchroniser.GenerateSynchronizationPacket())
             {
-                lock (GameObject.allObjects)
-                {
-                    // TODO: sometimes i get an error where this cant run because the allObjects dictionary was modified. The lock aint working
-                    foreach (KeyValuePair<short, GameObject> _gameObject in GameObject.allObjects)
-                    {
-                        _gameObject.Value.Update(_packet);
-                    }
-                }
                 SendUDPToAll(_packet);
             }
         }

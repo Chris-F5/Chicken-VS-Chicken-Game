@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3189954769136905885}
   - component: {fileID: 1591116893806787810}
   - component: {fileID: 3524593482350643287}
-  - component: {fileID: 730754653902491520}
+  - component: {fileID: 2046997683338127317}
   m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 617062754540895772}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.95, y: -2.774972, z: -11.749156}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -108,7 +108,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &730754653902491520
+--- !u!114 &2046997683338127317
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -117,9 +117,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 617062754540895772}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a197e453a65fa442976b073f67056b1, type: 3}
+  m_Script: {fileID: 11500000, guid: 6389a6168b8628f42844c664d452ef7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   attachedTransform: {fileID: 3189954769136905885}
   attachedCollider: {fileID: 1591116893806787810}
-  changeScale: 1

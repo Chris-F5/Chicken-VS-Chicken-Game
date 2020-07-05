@@ -8,9 +8,7 @@ namespace GameServer
     public enum ServerPackets
     {
         welcome = 1,
-        udpTest,
-        newGameObject,
-        gameObjectUpdates,
+        synchronise,
     }
 
     /// <summary>Sent from client to server.</summary>
@@ -40,12 +38,12 @@ namespace GameServer
 
         /// <summary>Creates a new packet with a given ID. Used for sending.</summary>
         /// <param name="_id">The packet ID.</param>
-        public Packet(int _id)
+        public Packet(ServerPackets _id)
         {
             buffer = new List<byte>();
             readPos = 0;
 
-            WriteInt(_id);
+            WriteByte((byte)_id);
         }
 
         /// <summary>Creates a packet from which data can be read. Used for receiving.</summary>
@@ -107,6 +105,7 @@ namespace GameServer
             return Length() - readPos;
         }
 
+        // TODO: Clean up this discusting function.
         /// <summary>Resets the packet instance to allow it to be reused.</summary>
         /// <param name="_shouldReset">Whether or not to reset the packet.</param>
         public void Reset(bool _shouldReset = true)

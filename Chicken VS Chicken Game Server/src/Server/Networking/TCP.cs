@@ -39,13 +39,15 @@ namespace GameServer
             client.Welcome();
         }
 
-        public void Send(Packet _packet)
+        public void Send(Packet _packet, bool _writeLength = true)
         {
             try
             {
                 if (socket != null)
                 {
-                    _packet.WriteLength();
+                    if (_writeLength) {
+                        _packet.WriteLength();
+                    }
                     stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), null, null);
                 }
             }
@@ -153,10 +155,6 @@ namespace GameServer
             }
 
             Console.WriteLine($"{_client.Client.RemoteEndPoint} failed to connect: server full");
-        }
-        public static void SendToAll(Packet _packet)
-        {
-
         }
     }
 }

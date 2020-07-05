@@ -2,50 +2,53 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ThreadManager : MonoBehaviour
+namespace GameClient
 {
-    private static readonly List<Action> executeOnMainThread = new List<Action>();
-    private static readonly List<Action> executeCopiedOnMainThread = new List<Action>();
-    private static bool actionToExecuteOnMainThread = false;
-
-    private void Update()
+    public class ThreadManager : MonoBehaviour
     {
-        UpdateMain();
-    }
+        private static readonly List<Action> executeOnMainThread = new List<Action>();
+        private static readonly List<Action> executeCopiedOnMainThread = new List<Action>();
+        private static bool actionToExecuteOnMainThread = false;
 
-    /// <summary>Sets an action to be executed on the main thread.</summary>
-    /// <param name="_action">The action to be executed on the main thread.</param>
-    public static void ExecuteOnMainThread(Action _action)
-    {
-        if (_action == null)
+        private void Update()
         {
-            Debug.Log("No action to execute on main thread!");
-            return;
+            UpdateMain();
         }
 
-        lock (executeOnMainThread)
+        /// <summary>Sets an action to be executed on the main thread.</summary>
+        /// <param name="_action">The action to be executed on the main thread.</param>
+        public static void ExecuteOnMainThread(Action _action)
         {
-            executeOnMainThread.Add(_action);
-            actionToExecuteOnMainThread = true;
-        }
-    }
-
-    /// <summary>Executes all code meant to run on the main thread. NOTE: Call this ONLY from the main thread.</summary>
-    public static void UpdateMain()
-    {
-        if (actionToExecuteOnMainThread)
-        {
-            executeCopiedOnMainThread.Clear();
-            lock (executeOnMainThread)
+            if (_action == null)
             {
-                executeCopiedOnMainThread.AddRange(executeOnMainThread);
-                executeOnMainThread.Clear();
-                actionToExecuteOnMainThread = false;
+                Debug.Log("No action to execute on main thread!");
+                return;
             }
 
-            for (int i = 0; i < executeCopiedOnMainThread.Count; i++)
+            lock (executeOnMainThread)
             {
-                executeCopiedOnMainThread[i]();
+                executeOnMainThread.Add(_action);
+                actionToExecuteOnMainThread = true;
+            }
+        }
+
+        /// <summary>Executes all code meant to run on the main thread. NOTE: Call this ONLY from the main thread.</summary>
+        public static void UpdateMain()
+        {
+            if (actionToExecuteOnMainThread)
+            {
+                executeCopiedOnMainThread.Clear();
+                lock (executeOnMainThread)
+                {
+                    executeCopiedOnMainThread.AddRange(executeOnMainThread);
+                    executeOnMainThread.Clear();
+                    actionToExecuteOnMainThread = false;
+                }
+
+                for (int i = 0; i < executeCopiedOnMainThread.Count; i++)
+                {
+                    executeCopiedOnMainThread[i]();
+                }
             }
         }
     }

@@ -62,15 +62,16 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Server\Constants.cs" />
     <Compile Include="src\Server\GameLogic.cs" />
-    <Compile Include="src\Server\GameObjects\DynamicPhysicsObject.cs" />
-    <Compile Include="src\Server\GameObjects\GameObject.cs" />
-    <Compile Include="src\Server\GameObjects\KenimaticColliderObject.cs" />
-    <Compile Include="src\Server\GameObjects\PositionalGameObject.cs" />
-    <Compile Include="src\Server\GameObjects\RectObject.cs" />
-    <Compile Include="src\Server\GameObjects\Sealed\Player.cs" />
-    <Compile Include="src\Server\GameObjects\Sealed\TestObject.cs" />
-    <Compile Include="src\Server\GameObjects\Sealed\Wall.cs" />
+    <Compile Include="src\Server\Networking\EventIds.cs" />
+    <Compile Include="src\Server\NetworkSynchronsiers\Abstract\GameObjects\DynamicPhysicsRect.cs" />
+    <Compile Include="src\Server\NetworkSynchronsiers\Abstract\GameObjects\GameObject.cs" />
+    <Compile Include="src\Server\NetworkSynchronsiers\Abstract\GameObjects\KenimaticColliderObject.cs" />
+    <Compile Include="src\Server\NetworkSynchronsiers\Abstract\GameObjects\RectObject.cs" />
+    <Compile Include="src\Server\NetworkSynchronsiers\Sealed\Player.cs" />
+    <Compile Include="src\Server\NetworkSynchronsiers\Sealed\TestObject.cs" />
+    <Compile Include="src\Server\NetworkSynchronsiers\Sealed\Wall.cs" />
     <Compile Include="src\Server\Networking\Client.cs" />
+    <Compile Include="src\Server\NetworkSynchronsiers\Abstract\NetworkSynchroniser.cs" />
     <Compile Include="src\Server\Networking\Packet.cs" />
     <Compile Include="src\Server\Networking\ServerManager.cs" />
     <Compile Include="src\Server\Networking\ServerHandle.cs" />
@@ -109,7 +110,10 @@
   <ItemGroup>
     <None Include="Assets\WindowImmage.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="src\Server\NetworkSynchronsiers\Abstract\GameObjects\Items\" />
+    <Folder Include="src\Server\NetworkSynchronsiers\Sealed\Items\" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="Assets\CloseWindowCross.png" />
   </ItemGroup>

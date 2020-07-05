@@ -11,13 +11,13 @@ namespace GameServer
             int _clientIdCheck = _packet.ReadInt();
             string _username = _packet.ReadString();
 
-            Console.WriteLine($"{_fromClient.tcp.socket.Client.RemoteEndPoint} connected successfully and is now player {_fromClient}");
+            Console.WriteLine($"{_fromClient.tcp.socket.Client.RemoteEndPoint} connected successfully and is now player {_fromClient.id}");
             if (_fromClient.id != _clientIdCheck)
             {
                 Console.WriteLine($"Player \"{_username}\" (ID: {_fromClient}) has assumed the wrong client ID ({_clientIdCheck})!");
             }
 
-            _fromClient.SendAllObjectsAsNew();
+            _fromClient.NetworkSynchroniserStartup();
         }
         public static void UDPTestRecieved(Client _fromClient, Packet _packet)
         {

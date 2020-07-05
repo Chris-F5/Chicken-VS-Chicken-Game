@@ -23,17 +23,17 @@ namespace GameServer
         public void Connect(IPEndPoint _endPoint)
         {
             endPoint = _endPoint;
-
-            client.SendUDPTest();
         }
 
-        public void Send(Packet _packet)
+        public void Send(Packet _packet, bool _writeLength = true)
         {
             try
             {
                 if (endPoint != null)
                 {
-                    _packet.WriteLength();
+                    if (_writeLength) {
+                        _packet.WriteLength();
+                    }
                     udpListener.BeginSend(_packet.ToArray(), _packet.Length(), endPoint, null, null);
                 }
             }
@@ -104,11 +104,6 @@ namespace GameServer
             {
                 Console.WriteLine($"Error reciving UDP data: {_ex}");
             }
-        }
-
-        public static void SendToAll(Packet _packet)
-        {
-
         }
     }
 }

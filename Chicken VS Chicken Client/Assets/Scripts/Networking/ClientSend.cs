@@ -1,64 +1,67 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class ClientSend : MonoBehaviour
+namespace GameClient
 {
-    public static void WelcomeRecieved() 
+    public class ClientSend : MonoBehaviour
     {
-        using (Packet _packet = new Packet((int)ClientPackets.welcomeReceived))
+        public static void WelcomeRecieved()
         {
-            _packet.WriteInt(Client.instance.myId);
-            _packet.WriteString(UIManager.instance.usernameField.text);
+            using (Packet _packet = new Packet((int)ClientPackets.welcomeReceived))
+            {
+                _packet.WriteInt(Client.instance.myId);
+                _packet.WriteString(UIManager.instance.usernameField.text);
 
-            SendTCPData(_packet);
+                SendTCPData(_packet);
+            }
         }
-    }
 
-    public static void UDPTestRecieved()
-    {
-        using (Packet _packet = new Packet((int)ClientPackets.udpTestRecieve))
+        public static void UDPTestRecieved()
         {
-            _packet.WriteString("Recieved the udp test");
-            SendUDPData(_packet);
+            using (Packet _packet = new Packet((int)ClientPackets.udpTestRecieve))
+            {
+                _packet.WriteString("Recieved the udp test");
+                SendUDPData(_packet);
+            }
         }
-    }
 
-    public static void ButtonDown(KeyButton _btn)
-    {
-        using (Packet _packet = new Packet((int)ClientPackets.buttonDown))
+        public static void ButtonDown(KeyButton _btn)
         {
-            _packet.WriteByte((byte)_btn);
-            SendUDPData(_packet);
+            using (Packet _packet = new Packet((int)ClientPackets.buttonDown))
+            {
+                _packet.WriteByte((byte)_btn);
+                SendUDPData(_packet);
+            }
         }
-    }
 
-    public static void ButtonUp(KeyButton _btn)
-    {
-        using (Packet _packet = new Packet((int)ClientPackets.buttonUp))
+        public static void ButtonUp(KeyButton _btn)
         {
-            _packet.WriteByte((byte)_btn);
-            SendUDPData(_packet);
+            using (Packet _packet = new Packet((int)ClientPackets.buttonUp))
+            {
+                _packet.WriteByte((byte)_btn);
+                SendUDPData(_packet);
+            }
         }
-    }
 
-    #region SendTo
-    private static void SendTCPData(Packet _packet)
-    {
-        _packet.WriteLength();
-        Client.instance.tcp.SendData(_packet);
-    }
-
-    private static void SendUDPData(Packet _packet)
-    {
-        if (Client.instance.myId != -1) {
+        #region SendTo
+        private static void SendTCPData(Packet _packet)
+        {
             _packet.WriteLength();
-            Client.instance.udp.SendData(_packet);
+            Client.instance.tcp.SendData(_packet);
         }
-        else
+
+        private static void SendUDPData(Packet _packet)
         {
-            Debug.LogWarning("Canot send udp until tcp is connected.");
+            if (Client.instance.myId != -1)
+            {
+                _packet.WriteLength();
+                Client.instance.udp.SendData(_packet);
+            }
+            else
+            {
+                Debug.LogWarning("Canot send udp until tcp is connected.");
+            }
         }
+        #endregion
     }
-    #endregion
 }

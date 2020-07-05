@@ -10,8 +10,9 @@ namespace GameServer
         {
             ThreadManager.UpdateMain();
 
-            // Updates objects and sends their updates
-            Client.SendObjectUpdatesToAll();
+            NetworkSynchronisers.GameObject.UpdateAll();
+
+            Client.SynchroniseClients();
         }
     }
 }
