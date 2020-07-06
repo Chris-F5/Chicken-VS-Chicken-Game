@@ -7,14 +7,16 @@ namespace GameClient
     /// <summary>Sent from server to client.</summary>
     public enum ServerPackets
     {
-        welcome = 1,
+        ping,
+        welcome,
         synchronise,
     }
 
     /// <summary>Sent from client to server.</summary>
     public enum ClientPackets
     {
-        welcomeReceived = 1,
+        pingRespond,
+        welcomeReceived,
         udpTestRecieve,
         buttonDown,
         buttonUp

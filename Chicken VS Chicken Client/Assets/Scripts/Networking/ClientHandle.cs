@@ -2,12 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Net;
-
+using System;
 
 namespace GameClient
 {
     public class ClientHandle : MonoBehaviour
     {
+        public static void RecievePing(Packet _packet)
+        {
+            byte _id = _packet.ReadByte();
+            short _myPing = _packet.ReadShort();
+            ClientSend.PingRecieved(_id);
+            Debug.Log($"Ping (measured in game ticks) : {_myPing}");
+        }
         public static void Welcome(Packet _packet)
         {
             string _msg = _packet.ReadString();
@@ -23,13 +30,11 @@ namespace GameClient
 
         public static void Synchronise(Packet _packet)
         {
-            Debug.Log("Recieved synchronise packet.");
             while (_packet.UnreadLength() > 0)
             {
                 short _synchroniserId = _packet.ReadShort();
                 short _typeId = _packet.ReadShort();
                 NetworkSynchroniser _synchroniser = SynchroniserManager.FindSynchroniser(_synchroniserId);
-                Debug.Log($"Synchronising synchroniser: {_synchroniserId} {_typeId}");
                 if (_synchroniser == null)
                 {
                     SynchroniserManager.instance.HandleNewSynchroniser(_synchroniserId, _typeId, _packet);

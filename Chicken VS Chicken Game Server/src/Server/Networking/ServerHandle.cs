@@ -6,6 +6,11 @@ namespace GameServer
 {
     class ServerHandle
     {
+        public static void PingRespond(Client _fromClient, Packet _packet)
+        {
+            byte _id = _packet.ReadByte();
+            _fromClient.ping = ServerManager.CalcluatePing(_id);
+        }
         public static void WelcomeRecieved(Client _fromClient, Packet _packet)
         {
             int _clientIdCheck = _packet.ReadInt();

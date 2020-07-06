@@ -11,6 +11,7 @@ namespace GameServer
         private delegate void PacketHandler(Client _fromClient, Packet _packet);
         private static Dictionary<int, PacketHandler> packetHandlers = new Dictionary<int, PacketHandler>()
         {
+            { (int) ClientPackets.pingRespond, ServerHandle.PingRespond},
             { (int) ClientPackets.welcomeReceived, ServerHandle.WelcomeRecieved},
             { (int) ClientPackets.udpTestRecieve, ServerHandle.UDPTestRecieved},
             { (int) ClientPackets.buttonDown, ServerHandle.ButtonDown},
@@ -21,6 +22,7 @@ namespace GameServer
         public readonly TCP tcp;
         public readonly UDP udp;
         public NetworkSynchronisers.Player playerObject;
+        public short ping;
 
         public Client(int _id)
         {
@@ -54,8 +56,20 @@ namespace GameServer
             Console.WriteLine("Player object created.");
             playerObject = new NetworkSynchronisers.Player(new Vector2(0, 10));
         }
+
+        private void SendPing(byte _id)
+        {
+            using (Packet _packet = new Packet(ServerPackets.ping))
+            {
+                _packet.WriteByte(_id);
+                _packet.WriteShort(ping);
+                udp.Send(_packet);
+            }
+        }
+
         public void HandlePacket(Packet _packet)
         {
+            // TODO: change client packet id type to byte
             int _packetId = _packet.ReadInt();
             packetHandlers[_packetId](this, _packet);
         }
@@ -103,6 +117,14 @@ namespace GameServer
             using (Packet _packet = NetworkSynchroniser.GenerateSynchronizationPacket())
             {
                 SendUDPToAll(_packet);
+            }
+        }
+
+        public static void PingAllClients(byte _id)
+        {
+            for (int i = 1; i <= ServerManager.maxPlayers; i++)
+            {
+                ServerManager.clients[i].SendPing(_id);
             }
         }
     }

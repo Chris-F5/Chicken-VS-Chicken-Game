@@ -25,8 +25,6 @@ namespace GameClient
         }
         protected virtual void HandleEvent(byte _eventId, Packet _packet)
         {
-            Debug.Log($"Handling (event id: {_eventId}) update of {gameObject.name}");
-
             if (_eventId == EventIds.startupEvents)
             {
                 return;

@@ -6,7 +6,9 @@ namespace GameServer.GUI.ConsoleCommands
     {
         public CreateEmptyGameObject()
         {
-            commandWord = "create_empty_game_object";
+            commandWord = "create_teste_object";
+            description = "Creates a new test object.";
+            peramDescription = "(float x_position, float y_position)";
         }
         protected override string Process(string[] _perams)
         {

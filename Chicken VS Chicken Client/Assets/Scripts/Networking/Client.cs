@@ -52,6 +52,7 @@ namespace GameClient
         {
             packetHandlers = new Dictionary<byte, PacketHandler>()
             {
+                { (byte)ServerPackets.ping, ClientHandle.RecievePing},
                 { (byte)ServerPackets.welcome, ClientHandle.Welcome },
                 { (byte)ServerPackets.synchronise, ClientHandle.Synchronise },
             };

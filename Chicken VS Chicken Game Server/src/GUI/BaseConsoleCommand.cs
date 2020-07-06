@@ -9,8 +9,14 @@ namespace GameServer.GUI.ConsoleCommands
     abstract class BaseConsoleCommand
     {
         public string commandWord { get; protected set; }
+        public string description { get; protected set; }
+        public string peramDescription { get; protected set; }
         public string Process(string _permas)
         {
+            if (_permas == "" || _permas == " ")
+            {
+                return Process(new string[0]);
+            }
             string[] _peramsArray = _permas.Split(' ');
             return Process(_peramsArray);
         }

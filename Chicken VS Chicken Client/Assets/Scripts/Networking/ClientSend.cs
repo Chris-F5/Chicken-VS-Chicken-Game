@@ -5,6 +5,16 @@ namespace GameClient
 {
     public class ClientSend : MonoBehaviour
     {
+        public static void PingRecieved(byte _id)
+        {
+            using (Packet _packet = new Packet((int)ClientPackets.pingRespond))
+            {
+                _packet.WriteByte(_id);
+
+                SendUDPData(_packet);
+            }
+        }
+
         public static void WelcomeRecieved()
         {
             using (Packet _packet = new Packet((int)ClientPackets.welcomeReceived))

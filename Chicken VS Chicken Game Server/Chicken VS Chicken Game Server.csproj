@@ -49,8 +49,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\GUI\ConsoleCommands\BaseConsoleCommand.cs" />
+    <Compile Include="src\GUI\BaseConsoleCommand.cs" />
     <Compile Include="src\GUI\ConsoleCommands\CreateEmptyGameObject.cs" />
+    <Compile Include="src\GUI\ConsoleCommands\GetGameTick.cs" />
     <Compile Include="src\GUI\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
