@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GameServer.GUI.ConsoleCommands
 {
-    abstract class BaseConsoleCommand
+    public abstract class BaseConsoleCommand
     {
         public string commandWord { get; protected set; }
         public string description { get; protected set; }

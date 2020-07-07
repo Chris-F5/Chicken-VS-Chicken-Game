@@ -12,7 +12,7 @@ namespace GameServer.GUI
     public static class GUIConsole
     {
         private static RichTextBox consoleControl;
-        private static List<ConsoleCommands.BaseConsoleCommand> commands;
+        public static List<ConsoleCommands.BaseConsoleCommand> commands;
         public static void Init(RichTextBox _consoleControl)
         {
             consoleControl = _consoleControl;
