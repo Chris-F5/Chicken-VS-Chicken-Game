@@ -50,12 +50,10 @@ namespace GameServer
             {
                 currentPingId += 1;
             }
-            Console.WriteLine($"Sending Ping {currentPingId}");
             Client.PingAllClients(currentPingId);
         }
         public static byte CalcluatePing(byte _id)
         {
-            Console.WriteLine($"Recieved Ping {_id}");
             byte _ping;
             if (_id > currentPingId)
             {
