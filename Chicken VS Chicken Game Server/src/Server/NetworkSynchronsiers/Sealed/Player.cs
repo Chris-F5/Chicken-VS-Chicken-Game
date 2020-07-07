@@ -22,13 +22,11 @@ namespace GameServer.NetworkSynchronisers
         private float acceleration = 1;
         private float jumpForce = 5;
 
-        public bool upKey;
-        public bool downKey;
-        public bool leftKey;
-        public bool rightKey;
+        private PlayerController controller;
 
-        public Player(Vector2 _position) : base(SynchroniserType.player, new Rect(_position, new Vector2(1,1)),1,1,1,0)
+        public Player(PlayerController _controller, Vector2 _position) : base(SynchroniserType.player, new Rect(_position, new Vector2(1,1)),1,1,1,0)
         {
+            controller = _controller;
         }
 
         protected override void AddStartupEventsToPacket(Packet _packet)
@@ -39,15 +37,15 @@ namespace GameServer.NetworkSynchronisers
 
         public override void Update()
         {
-            if (rightKey)
+            if (controller.rightKey)
             {
                 AddForce(new Vector2(acceleration * Constants.SECONDS_PER_TICK, 0));
             }
-            if (leftKey)
+            if (controller.leftKey)
             {
                 AddForce(new Vector2(-acceleration * Constants.SECONDS_PER_TICK, 0));
             }
-            if (upKey && grounded)
+            if (controller.upKey && grounded)
             {
                 AddForce(new Vector2(0, jumpForce));
             }

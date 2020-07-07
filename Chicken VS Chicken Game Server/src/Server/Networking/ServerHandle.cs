@@ -34,15 +34,15 @@ namespace GameServer
             byte _key = _packet.ReadByte();
             if (_key == (byte)KeyButton.right)
             {
-                _fromClient.playerObject.rightKey = true;
+                _fromClient.playerController.rightKey = true;
             }
             else if (_key == (byte)KeyButton.left)
             {
-                _fromClient.playerObject.leftKey = true;
+                _fromClient.playerController.leftKey = true;
             }
             else if (_key == (byte)KeyButton.up)
             {
-                _fromClient.playerObject.upKey = true;
+                _fromClient.playerController.upKey = true;
             }
             // TODO: Send key confirmation message
         }
@@ -51,15 +51,15 @@ namespace GameServer
             byte _key = _packet.ReadByte();
             if (_key == (byte)KeyButton.right)
             {
-                _fromClient.playerObject.rightKey = false;
+                _fromClient.playerController.rightKey = false;
             }
             else if (_key == (byte)KeyButton.left)
             {
-                _fromClient.playerObject.leftKey = false;
+                _fromClient.playerController.leftKey = false;
             }
             else if (_key == (byte)KeyButton.up)
             {
-                _fromClient.playerObject.upKey = false;
+                _fromClient.playerController.upKey = false;
             }
             // TODO: Send key confirmation message
         }

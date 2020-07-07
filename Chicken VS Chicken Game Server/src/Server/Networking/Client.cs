@@ -21,7 +21,7 @@ namespace GameServer
         public readonly int id;
         public readonly TCP tcp;
         public readonly UDP udp;
-        public NetworkSynchronisers.Player playerObject;
+        public PlayerController playerController;
         public short ping;
 
         public Client(int _id)
@@ -54,7 +54,7 @@ namespace GameServer
         private void CreatePlayer()
         {
             Console.WriteLine("Player object created.");
-            playerObject = new NetworkSynchronisers.Player(new Vector2(0, 10));
+            playerController = new PlayerController();
         }
 
         private void SendPing(byte _id)

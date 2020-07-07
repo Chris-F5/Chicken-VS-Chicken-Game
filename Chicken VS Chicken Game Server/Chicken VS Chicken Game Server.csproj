@@ -82,6 +82,7 @@
     <Compile Include="src\Server\Networking\UDP.cs" />
     <Compile Include="src\Server\Physics\Rect.cs" />
     <Compile Include="src\Server\Physics\Vector2.cs" />
+    <Compile Include="src\Server\PlayerController.cs" />
     <EmbeddedResource Include="src\GUI\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
