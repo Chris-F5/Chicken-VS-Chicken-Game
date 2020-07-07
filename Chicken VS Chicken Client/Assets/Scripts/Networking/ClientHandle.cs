@@ -13,7 +13,7 @@ namespace GameClient
             byte _id = _packet.ReadByte();
             byte _myPing = _packet.ReadByte();
             ClientSend.PingRecieved(_id);
-            Debug.Log($"Ping (measured in game ticks) : {_myPing}");
+            //Debug.Log($"Ping (measured in game ticks) : {_myPing}");
         }
         public static void Welcome(Packet _packet)
         {
