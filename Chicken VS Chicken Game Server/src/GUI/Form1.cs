@@ -123,6 +123,8 @@ namespace GameServer.GUI
             if (e.KeyCode == Keys.Enter)
             {
                 Submit();
+                e.Handled = true;
+                e.SuppressKeyPress = true;
             }
         }
         #endregion
