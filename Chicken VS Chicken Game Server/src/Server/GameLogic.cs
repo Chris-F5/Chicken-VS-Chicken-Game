@@ -16,9 +16,9 @@ namespace GameServer
             }
             gameTick += 1;
 
-            ServerManager.PingClients();
-
             ThreadManager.UpdateMain();
+
+            ServerManager.PingClients();
 
             NetworkSynchronisers.GameObject.UpdateAll();
 

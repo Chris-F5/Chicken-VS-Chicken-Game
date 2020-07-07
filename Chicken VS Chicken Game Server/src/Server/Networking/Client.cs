@@ -22,7 +22,7 @@ namespace GameServer
         public readonly TCP tcp;
         public readonly UDP udp;
         public PlayerController playerController;
-        public short ping;
+        public byte ping;
 
         public Client(int _id)
         {
@@ -62,7 +62,7 @@ namespace GameServer
             using (Packet _packet = new Packet(ServerPackets.ping))
             {
                 _packet.WriteByte(_id);
-                _packet.WriteShort(ping);
+                _packet.WriteByte(ping);
                 udp.Send(_packet);
             }
         }

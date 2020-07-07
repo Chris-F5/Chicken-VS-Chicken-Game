@@ -16,7 +16,6 @@ namespace GameServer
         public delegate void PacketHandler(int _fromClient, Packet _packet);
 
         public static byte currentPingId = 255;
-        public static uint pingLoopStartTick;
 
         public static void StartServer(int _port, int _maxPlayers)
         {
@@ -51,36 +50,21 @@ namespace GameServer
             {
                 currentPingId += 1;
             }
-
-            if (currentPingId == 0)
-            {
-                pingLoopStartTick = GameLogic.gameTick;
-            }
-
+            Console.WriteLine($"Sending Ping {currentPingId}");
             Client.PingAllClients(currentPingId);
         }
-        public static short CalcluatePing(byte _id)
+        public static byte CalcluatePing(byte _id)
         {
-            uint _pingSentTick;
+            Console.WriteLine($"Recieved Ping {_id}");
+            byte _ping;
             if (_id > currentPingId)
             {
-                _pingSentTick = pingLoopStartTick - 256 + _id;
+                _ping = (byte)(currentPingId + (256 - _id));
             }
             else
             {
-                _pingSentTick = pingLoopStartTick + _id;
+                _ping = (byte)(currentPingId - _id);
             }
-
-            double _pingDouble = GameLogic.gameTick - _pingSentTick;
-            _pingDouble = Math.Floor(_pingDouble);
-            if (_pingDouble > short.MaxValue)
-            {
-                Console.WriteLine("Ping of a client is too high to reprosent as a short. Disconnecting client.");
-                // TODO: Disconnect client
-                return 0;
-            }
-
-            short _ping = (short)_pingDouble;
             return _ping;
         }
     }
