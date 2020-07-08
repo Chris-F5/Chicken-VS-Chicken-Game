@@ -6,6 +6,7 @@ namespace GameServer
 {
     public class Constants
     {
+        // TODO: Setting tick rate to very high number is a good way of finding bugs. Especially thread related.
         public const int TICKS_PER_SECOND = 30;
         public const float GLOBAL_GRAVITY_SCALE = 10;
 

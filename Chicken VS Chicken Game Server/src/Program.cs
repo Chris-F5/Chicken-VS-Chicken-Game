@@ -46,6 +46,9 @@ namespace GameServer
 
                     if (_nextLoop > DateTime.Now)
                     {
+                        // TODO: te following line occasionally throws error
+                        // System.ArgumentOutOfRangeException: 'Number must be either non-negative and less than or equal to Int32.MaxValue or -1. Parameter name: timeout'
+
                         Thread.Sleep(_nextLoop - DateTime.Now);
                     }
                 }

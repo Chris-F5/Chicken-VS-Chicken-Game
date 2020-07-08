@@ -67,6 +67,7 @@
     <Compile Include="src\Server\Networking\EventIds.cs" />
     <Compile Include="src\Server\NetworkSynchronsiers\Abstract\GameObjects\DynamicPhysicsRect.cs" />
     <Compile Include="src\Server\NetworkSynchronsiers\Abstract\GameObjects\GameObject.cs" />
+    <Compile Include="src\Server\NetworkSynchronsiers\Abstract\GameObjects\Items\Item.cs" />
     <Compile Include="src\Server\NetworkSynchronsiers\Abstract\GameObjects\KenimaticColliderObject.cs" />
     <Compile Include="src\Server\NetworkSynchronsiers\Abstract\GameObjects\RectObject.cs" />
     <Compile Include="src\Server\NetworkSynchronsiers\Sealed\Player.cs" />
@@ -114,7 +115,6 @@
     <None Include="Assets\WindowImmage.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="src\Server\NetworkSynchronsiers\Abstract\GameObjects\Items\" />
     <Folder Include="src\Server\NetworkSynchronsiers\Sealed\Items\" />
   </ItemGroup>
   <ItemGroup>
