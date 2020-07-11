@@ -20,7 +20,7 @@ namespace GameServer
 
             ServerManager.PingClients();
 
-            NetworkSynchronisers.GameObject.UpdateAll();
+            NetworkObject.UpdateAll();
 
             Client.SynchroniseClients();
         }
