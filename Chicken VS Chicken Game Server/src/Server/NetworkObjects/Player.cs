@@ -15,9 +15,9 @@ namespace GameServer
     }
 }
 
-namespace GameServer.NetworkSynchronisers
+namespace GameServer
 {
-    sealed class Player : DynamicPhysicsRect
+    sealed class Player : NetworkObject
     {
         private float acceleration = 1;
         private float jumpForce = 5;

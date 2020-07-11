@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameServer.NetworkSynchronisers
+namespace GameServer
 {
-    sealed class Wall : KenimaticColliderObject
+    sealed class Wall : NetworkObject
     {
         public Wall(Rect _rect) : base(SynchroniserType.wall, _rect) {}
     }
