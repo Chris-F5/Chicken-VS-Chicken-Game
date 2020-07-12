@@ -27,6 +27,11 @@ namespace GameServer
             components = _components;
             objectTypeId = (short)_ojectType;
 
+            if (components.Length > byte.MaxValue)
+            {
+                throw new Exception("Too many components attached to a single object.");
+            }
+
             // Sellect object id that is not in use.
 
             List<short> _takenObjectIds = new List<short>();
@@ -51,6 +56,33 @@ namespace GameServer
             }
         }
 
+        public void AddComponentEventsToPacket(Packet _packet)
+        {
+            for (byte i = 0; i < components.Length; i++)
+            {
+                if (components[i].pegingEventCount != 0) {
+                    _packet.WriteByte(i);
+                    components[i].AddEventsToPacket(_packet);
+                }
+            }
+            // 0 is the end events constant id.
+            _packet.WriteShort(0);
+        }
+
+        public void AddStartupEventsToPacket(Packet _packet)
+        {
+            for (byte i = 0; i < components.Length; i++)
+            {
+                if (components[i].pegingEventCount != 0)
+                {
+                    _packet.WriteByte(i);
+                    components[i].AddStartupEventsToPacket(_packet);
+                }
+            }
+            // 0 is the end events constant id.
+            _packet.WriteShort(0);
+        }
+
         // This method is virtual so component update order can be overridden.
         protected virtual void UpdateComponents()
         {
@@ -66,6 +98,30 @@ namespace GameServer
             {
                 _networkObject.UpdateComponents();
             }
+        }
+
+        public static Packet GenerateSynchronisationPacket()
+        {
+            Packet _packet = new Packet(ServerPackets.synchronise);
+            for (int i = 0; i < allNetworkObjects.Count; i++)
+            {
+                _packet.WriteShort(allNetworkObjects[i].objectId);
+                _packet.WriteShort(allNetworkObjects[i].objectTypeId);
+                allNetworkObjects[i].AddComponentEventsToPacket(_packet);
+            }
+            return _packet;
+        }
+
+        public static Packet GenerateStartupPacket()
+        {
+            Packet _packet = new Packet(ServerPackets.synchronise);
+            for (int i = 0; i < allNetworkObjects.Count; i++)
+            {
+                _packet.WriteShort(allNetworkObjects[i].objectId);
+                _packet.WriteShort(allNetworkObjects[i].objectTypeId);
+                allNetworkObjects[i].AddStartupEventsToPacket(_packet);
+            }
+            return _packet;
         }
     }
 }
