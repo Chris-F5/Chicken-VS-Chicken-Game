@@ -11,7 +11,7 @@ namespace GameServer
         none
     }
 
-    public class Vector2
+    public struct Vector2
     {
         public float x;
         public float y;
@@ -36,6 +36,14 @@ namespace GameServer
         public static Vector2 operator *(Vector2 a, float b)
         {
             return new Vector2(a.x * b, a.y * b);
+        }
+        public static bool operator ==(Vector2 v1, Vector2 v2)
+        {
+            return (v1.x == v2.x && v1.y == v2.y);
+        }
+        public static bool operator !=(Vector2 v1, Vector2 v2)
+        {
+            return !(v1.x == v2.x && v1.y == v2.y);
         }
     }
 }

@@ -35,7 +35,7 @@ namespace GameServer
             new SetPropertiesEvent(this).AddEventToPacket(_packet);
         }
 
-        public override void Update()
+        protected override void Update()
         {
             if (controller.rightKey)
             {

@@ -63,8 +63,11 @@
     <Compile Include="src\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Server\Component.cs" />
+    <Compile Include="src\Server\Components\Abstract\RectCollider.cs" />
+    <Compile Include="src\Server\Components\PositionComponent.cs" />
     <Compile Include="src\Server\Constants.cs" />
     <Compile Include="src\Server\GameLogic.cs" />
+    <Compile Include="src\Server\Networking\EventIds.cs" />
     <Compile Include="src\Server\NetworkObject.cs" />
     <Compile Include="src\Server\NetworkObjects\Player.cs" />
     <Compile Include="src\Server\NetworkObjects\TestObject.cs" />
@@ -110,7 +113,6 @@
     <None Include="Assets\WindowImmage.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="src\Server\Components\" />
     <Folder Include="src\Server\NetworkObjects\Items\" />
   </ItemGroup>
   <ItemGroup>

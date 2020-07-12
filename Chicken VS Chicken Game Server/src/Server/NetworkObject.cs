@@ -92,6 +92,32 @@ namespace GameServer
             }
         }
 
+        public ComponentType GetComponent<ComponentType>() where ComponentType : Component
+        {
+            foreach (Component _component in components)
+            {
+                if (_component.GetType() == typeof(ComponentType))
+                {
+                    return _component as ComponentType;
+                }
+            }
+            throw new Exception($"Object {this} does not have attached component of type {typeof(ComponentType)}.");
+        }
+
+        public ComponentType[] GetComponents<ComponentType>() where ComponentType : Component
+        {
+            List<ComponentType> _attachedComponentsOfTypeList = new List<ComponentType>();
+            foreach (Component _component in components)
+            {
+                if (_component.GetType() == typeof(ComponentType))
+                {
+                    _attachedComponentsOfTypeList.Add(_component as ComponentType);
+                }
+            }
+            return _attachedComponentsOfTypeList.ToArray();
+            throw new Exception($"Object {this} does not have attached component of type {typeof(ComponentType)}.");
+        }
+
         public static void UpdateAll()
         {
             foreach (NetworkObject _networkObject in allNetworkObjects)
