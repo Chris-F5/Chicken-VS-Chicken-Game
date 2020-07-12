@@ -65,7 +65,6 @@
     <Compile Include="src\Server\Component.cs" />
     <Compile Include="src\Server\Constants.cs" />
     <Compile Include="src\Server\GameLogic.cs" />
-    <Compile Include="src\Server\Networking\EventIds.cs" />
     <Compile Include="src\Server\NetworkObject.cs" />
     <Compile Include="src\Server\NetworkObjects\Player.cs" />
     <Compile Include="src\Server\NetworkObjects\TestObject.cs" />
