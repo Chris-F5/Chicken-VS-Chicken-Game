@@ -24,6 +24,13 @@ namespace GameServer
             rect.position += networkObject.GetComponent<PositionComponent>().position;
         }
 
+        public override void AddStartupEventsToPacket(Packet _packet)
+        {
+            base.AddStartupEventsToPacket(_packet);
+            new SetSizeEvent(rect.size).AddEventToPacket(_packet);
+            new SetOfsetEvent(ofset).AddEventToPacket(_packet);
+        }
+
         public override void Update()
         {
             if (ofset != lastUpdateOfset) {

@@ -18,7 +18,12 @@ namespace GameServer
         {
             public const byte SetSize = 2;
             public const byte SetOfset = 3;
-        }
+            public static class DynamicPhysicsRect
+            {
+                public const byte SetVelocity = 4;
+                public const byte SetProperties = 5;
+            }
 
+        }
     }
 }
