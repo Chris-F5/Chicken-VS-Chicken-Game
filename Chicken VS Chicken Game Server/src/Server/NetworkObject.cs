@@ -111,7 +111,6 @@ namespace GameServer
             }
             return _packet;
         }
-
         public static Packet GenerateStartupPacket()
         {
             Packet _packet = new Packet(ServerPackets.synchronise);
