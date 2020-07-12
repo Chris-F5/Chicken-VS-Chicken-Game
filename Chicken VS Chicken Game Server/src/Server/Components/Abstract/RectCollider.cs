@@ -14,14 +14,14 @@ namespace GameServer
         private Vector2 lastUpdateOfset;
         private Vector2 lastUpdateSize;
 
-        public RectCollider(NetworkObject _networkObject, Vector2 _size, Vector2 _ofset) : base(_networkObject)
+        public RectCollider(NetworkObject _networkObject, Rect _rect) : base(_networkObject)
         {
-            ofset = _ofset;
+            ofset = rect.position;
             lastUpdateOfset = ofset;
 
-            lastUpdateSize = _size;
+            lastUpdateSize = rect.size;
 
-            rect = new Rect(_networkObject.GetComponent<PositionComponent>().position + ofset, _size);
+            rect.position += networkObject.GetComponent<PositionComponent>().position;
         }
 
         public override void Update()

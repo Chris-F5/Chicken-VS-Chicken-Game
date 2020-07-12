@@ -45,6 +45,11 @@ namespace GameServer
             }
         }
 
+        public virtual void Dispose()
+        {
+
+        }
+
         // TODO: look into turning events into structs if the gc is not keeping up
         protected abstract class Event
         {

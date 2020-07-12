@@ -118,6 +118,16 @@ namespace GameServer
             throw new Exception($"Object {this} does not have attached component of type {typeof(ComponentType)}.");
         }
 
+        public virtual void Destroy()
+        {
+            foreach (Component _component in components)
+            {
+                _component.Dispose();
+            }
+
+            // TODO: Destroy the object.
+        }
+
         public static void UpdateAll()
         {
             foreach (NetworkObject _networkObject in allNetworkObjects)
