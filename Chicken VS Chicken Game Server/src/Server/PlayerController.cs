@@ -6,6 +6,14 @@ using System.Threading.Tasks;
 
 namespace GameServer
 {
+    enum KeyButton
+    {
+        up = 1,
+        down,
+        left,
+        right
+    }
+
     class PlayerController
     {
         public bool rightKey = false;

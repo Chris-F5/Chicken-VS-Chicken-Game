@@ -8,6 +8,26 @@ namespace GameServer
 {
     sealed class Wall : NetworkObject
     {
-        public Wall(Rect _rect) : base(SynchroniserType.wall, _rect) {}
+        private Rect initRect;
+        private Vector2 initPos;
+        public Wall(Vector2 _position, Rect _rect) : base(NetworkObjectType.wall)
+        {
+            initPos = _position;
+            initRect = _rect;
+        }
+        protected override Component[] InitComponents()
+        {
+            return new Component[2] 
+            {
+                new PositionComponent(
+                    this,
+                    initPos
+                    ),
+                new KenimaticColliderRect(
+                    this,
+                    initRect
+                    ),
+            };
+        }
     }
 }

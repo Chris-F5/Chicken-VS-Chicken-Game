@@ -66,6 +66,7 @@
     <Compile Include="src\Server\Components\Abstract\RectCollider.cs" />
     <Compile Include="src\Server\Components\DynamicPhysicsRect.cs" />
     <Compile Include="src\Server\Components\KenimaticColliderRect.cs" />
+    <Compile Include="src\Server\Components\PlayerMovement.cs" />
     <Compile Include="src\Server\Components\PositionComponent.cs" />
     <Compile Include="src\Server\Constants.cs" />
     <Compile Include="src\Server\GameLogic.cs" />

@@ -6,66 +6,33 @@ using System.Threading.Tasks;
 
 namespace GameServer
 {
-    enum KeyButton
-    {
-        up = 1,
-        down,
-        left,
-        right
-    }
-}
-
-namespace GameServer
-{
     sealed class Player : NetworkObject
     {
-        private float acceleration = 1;
-        private float jumpForce = 5;
-
-        private PlayerController controller;
-
-        public Player(PlayerController _controller, Vector2 _position) : base(SynchroniserType.player, new Rect(_position, new Vector2(1,1)),1,1,1,0)
+        private Vector2 initPosition;
+        private PlayerController initController;
+        public Player(PlayerController _controller, Vector2 _position) : base(NetworkObjectType.player)
         {
-            controller = _controller;
+            initPosition = _position;
+            initController = _controller;
         }
 
-        protected override void AddStartupEventsToPacket(Packet _packet)
+        protected override Component[] InitComponents()
         {
-            base.AddStartupEventsToPacket(_packet);
-            new SetPropertiesEvent(this).AddEventToPacket(_packet);
-        }
-
-        protected override void Update()
-        {
-            if (controller.rightKey)
+            return new Component[3]
             {
-                AddForce(new Vector2(acceleration * Constants.SECONDS_PER_TICK, 0));
-            }
-            if (controller.leftKey)
-            {
-                AddForce(new Vector2(-acceleration * Constants.SECONDS_PER_TICK, 0));
-            }
-            if (controller.upKey && grounded)
-            {
-                AddForce(new Vector2(0, jumpForce));
-            }
-
-            base.Update();
-        }
-
-        private class SetPropertiesEvent : SetFloatArrayEvent
-        {
-            public SetPropertiesEvent(Player _player) :
-                base
-                (
-                    EventIds.GameObjects.RectObjects.DynamicPhysicsRects.Player.setProperties,
-                    new float[2]
-                    {
-                        _player.acceleration,
-                        _player.jumpForce
-                    }
-                )
-            { }
+                new PositionComponent(
+                    this,
+                    initPosition
+                    ),
+                new DynamicPhysicsRect(
+                    this,
+                    new Rect(new Vector2(-0.5f,0), new Vector2(1,1))
+                    ),
+                new PlayerMovement(
+                    this,
+                    initController
+                    ),
+            };
         }
     }
 }

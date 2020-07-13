@@ -6,6 +6,20 @@ namespace GameServer
 {
     sealed class TestObject : NetworkObject
     {
-        public TestObject(Vector2 _position) : base(SynchroniserType.testObject, new Rect(_position,new Vector2(1,1))) {}
+        Vector2 initPosition;
+        public TestObject(Vector2 _position) : base(NetworkObjectType.testObject)
+        {
+            initPosition = _position;
+        }
+        protected override Component[] InitComponents()
+        {
+            return new Component[1]
+            {
+                new PositionComponent(
+                    this,
+                    initPosition
+                    ),
+            };
+        }
     }
 }

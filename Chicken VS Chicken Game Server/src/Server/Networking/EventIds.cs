@@ -25,5 +25,9 @@ namespace GameServer
             }
 
         }
+        public static class PlayerMovement
+        {
+            public const byte SetProperties = 2;
+        }
     }
 }

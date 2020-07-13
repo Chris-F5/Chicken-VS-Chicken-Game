@@ -21,11 +21,11 @@ namespace GameServer
 
         private readonly Component[] components;
 
-        public NetworkObject(NetworkObjectType _ojectType, Component[] _components)
+        public NetworkObject(NetworkObjectType _ojectType)
         {
             allNetworkObjects.Add(this);
-            components = _components;
             objectTypeId = (short)_ojectType;
+            components = InitComponents();
 
             if (components.Length > byte.MaxValue)
             {
@@ -82,6 +82,8 @@ namespace GameServer
             // 0 is the end events constant id.
             _packet.WriteShort(0);
         }
+
+        protected abstract Component[] InitComponents();
 
         // This method is virtual so component update order can be overridden.
         protected virtual void UpdateComponents()
