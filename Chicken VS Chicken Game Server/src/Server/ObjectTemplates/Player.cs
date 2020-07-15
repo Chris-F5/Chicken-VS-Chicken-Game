@@ -6,34 +6,34 @@ using System.Threading.Tasks;
 
 namespace GameServer
 {
-    sealed class Player : NetworkObject
+    sealed class Player : ObjectTemplate
     {
-        private Vector2 initPosition;
-        private PlayerController initController;
+        readonly Vector2 position;
+        readonly PlayerController controller;
         public Player(PlayerController _controller, Vector2 _position) : base(NetworkObjectType.player)
         {
             if (_position == null)
                 throw new ArgumentNullException("_position is null");
 
-            initPosition = _position;
-            initController = _controller;
+            position = _position;
+            controller = _controller;
         }
 
-        protected override Component[] InitComponents()
+        public override Component[] GenerateCompoentSet(NetworkObject _objectReference)
         {
             return new Component[3]
             {
                 new PositionComponent(
-                    this,
-                    initPosition
+                    _objectReference,
+                    position
                     ),
                 new DynamicPhysicsRect(
-                    this,
+                    _objectReference,
                     new Rect(new Vector2(-0.5f,0), new Vector2(1,1))
                     ),
                 new PlayerMovement(
-                    this,
-                    initController
+                    _objectReference,
+                    controller
                     ),
             };
         }

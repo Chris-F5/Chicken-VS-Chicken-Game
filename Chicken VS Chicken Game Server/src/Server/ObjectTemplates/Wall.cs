@@ -6,26 +6,31 @@ using System.Threading.Tasks;
 
 namespace GameServer
 {
-    sealed class Wall : NetworkObject
+    sealed class Wall : ObjectTemplate
     {
-        private Rect initRect;
-        private Vector2 initPos;
+        private Rect rect;
+        private Vector2 position;
         public Wall(Vector2 _position, Rect _rect) : base(NetworkObjectType.wall)
         {
-            initPos = _position;
-            initRect = _rect;
+            if (_position == null)
+                throw new ArgumentNullException("_position is null.");
+            if (_rect == null)
+                throw new ArgumentNullException("_rect is null.");
+
+            position = _position;
+            rect = _rect;
         }
-        protected override Component[] InitComponents()
+        public override Component[] GenerateCompoentSet(NetworkObject _objectReference)
         {
             return new Component[2] 
             {
                 new PositionComponent(
-                    this,
-                    initPos
+                    _objectReference,
+                    position
                     ),
                 new KenimaticColliderRect(
-                    this,
-                    initRect
+                    _objectReference,
+                    rect
                     ),
             };
         }

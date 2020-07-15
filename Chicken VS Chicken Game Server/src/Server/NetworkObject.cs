@@ -12,7 +12,7 @@ namespace GameServer
         wall,
         testObject
     }
-    class NetworkObject
+    sealed class NetworkObject
     {
         private static List<NetworkObject> allNetworkObjects = new List<NetworkObject>();
 
@@ -24,7 +24,7 @@ namespace GameServer
         public NetworkObject(ObjectTemplate _template)
         {
             objectTypeId = _template.typeId;
-            components = _template.GenerateCompoentSet();
+            components = _template.GenerateCompoentSet(this);
             if (components == null)
                 throw new Exception($"InitComponents returned null on object type {objectTypeId}.");
 
@@ -86,8 +86,7 @@ namespace GameServer
             _packet.WriteShort(0);
         }
 
-        // This method is virtual so component update order can be overridden.
-        protected virtual void UpdateComponents()
+        private void UpdateComponents()
         {
             foreach (Component _component in components)
             {
@@ -121,8 +120,10 @@ namespace GameServer
             throw new Exception($"Object {this} does not have attached component of type {typeof(ComponentType)}.");
         }
 
-        public virtual void Destroy()
+        public void Destroy()
         {
+            allNetworkObjects.Remove(this);
+
             foreach (Component _component in components)
             {
                 _component.Dispose();

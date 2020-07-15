@@ -4,23 +4,24 @@ using System.Text;
 
 namespace GameServer
 {
-    sealed class TestObject : NetworkObject
+    sealed class TestObject : ObjectTemplate
     {
-        Vector2 initPosition;
+        readonly Vector2 position;
         public TestObject(Vector2 _position) : base(NetworkObjectType.testObject)
         {
             if (_position == null)
                 throw new ArgumentNullException("_position is null.");
 
-            initPosition = _position;
+            position = _position;
         }
-        protected override Component[] InitComponents()
+
+        public override Component[] GenerateCompoentSet(NetworkObject _objectReference)
         {
             return new Component[1]
             {
                 new PositionComponent(
-                    this,
-                    initPosition
+                    _objectReference,
+                    position
                     ),
             };
         }
