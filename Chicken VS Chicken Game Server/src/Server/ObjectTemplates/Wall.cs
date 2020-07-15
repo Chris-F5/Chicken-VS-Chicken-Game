@@ -20,19 +20,20 @@ namespace GameServer
             position = _position;
             rect = _rect;
         }
-        public override Component[] GenerateCompoentSet(NetworkObject _objectReference)
+        public override void AddComponentsToArray(NetworkObject _objectReference, ref Component[] _componentArray)
         {
-            return new Component[2] 
-            {
+            // Components have to be added one by one incase one of them needs to access (through the network object refrence) a previously added one.
+            _componentArray = new Component[2];
+            _componentArray[0] = 
                 new PositionComponent(
                     _objectReference,
                     position
-                    ),
+                );
+            _componentArray[1] =
                 new KenimaticColliderRect(
                     _objectReference,
                     rect
-                    ),
-            };
+                );
         }
     }
 }

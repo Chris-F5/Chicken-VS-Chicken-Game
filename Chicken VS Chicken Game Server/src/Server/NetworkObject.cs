@@ -24,7 +24,7 @@ namespace GameServer
         public NetworkObject(ObjectTemplate _template)
         {
             objectTypeId = _template.typeId;
-            components = _template.GenerateCompoentSet(this);
+            _template.AddComponentsToArray(this, ref components);
             if (components == null)
                 throw new Exception($"InitComponents returned null on object type {objectTypeId}.");
 

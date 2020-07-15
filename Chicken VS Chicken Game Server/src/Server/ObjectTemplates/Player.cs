@@ -19,23 +19,27 @@ namespace GameServer
             controller = _controller;
         }
 
-        public override Component[] GenerateCompoentSet(NetworkObject _objectReference)
+        public override void AddComponentsToArray(NetworkObject _objectReference, ref Component[] _componentArray)
         {
-            return new Component[3]
-            {
+            _componentArray = new Component[3];
+            _componentArray[0] =
                 new PositionComponent(
                     _objectReference,
                     position
-                    ),
+                    );
+            _componentArray[1] =
                 new DynamicPhysicsRect(
                     _objectReference,
-                    new Rect(new Vector2(-0.5f,0), new Vector2(1,1))
-                    ),
+                    new Rect(
+                        new Vector2(-0.5f, 0),
+                        new Vector2(1, 1)
+                        )
+                    );
+            _componentArray[2] =
                 new PlayerMovement(
                     _objectReference,
                     controller
-                    ),
-            };
+                    );
         }
     }
 }

@@ -13,7 +13,7 @@ namespace GameServer
         {
             typeId = (short)_typeId;
         }
-        public abstract Component[] GenerateCompoentSet(NetworkObject _objectReference);
+        public abstract void AddComponentsToArray(NetworkObject _objectReference, ref Component[] _componentArray);
         public NetworkObject CreateObjectInstance()
         {
             return new NetworkObject(this);

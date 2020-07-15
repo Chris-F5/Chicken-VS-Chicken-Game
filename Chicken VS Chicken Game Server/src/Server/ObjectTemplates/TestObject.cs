@@ -15,15 +15,14 @@ namespace GameServer
             position = _position;
         }
 
-        public override Component[] GenerateCompoentSet(NetworkObject _objectReference)
+        public override void AddComponentsToArray(NetworkObject _objectReference, ref Component[] _componentArray)
         {
-            return new Component[1]
-            {
+            _componentArray = new Component[1];
+            _componentArray[0] =
                 new PositionComponent(
                     _objectReference,
                     position
-                    ),
-            };
+                );
         }
     }
 }
