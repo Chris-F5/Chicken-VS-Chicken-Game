@@ -14,5 +14,9 @@ namespace GameServer
             typeId = (short)_typeId;
         }
         public abstract Component[] GenerateCompoentSet(NetworkObject _objectReference);
+        public NetworkObject CreateObjectInstance()
+        {
+            return new NetworkObject(this);
+        }
     }
 }

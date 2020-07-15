@@ -16,8 +16,8 @@ namespace GameServer
             StartFormThread();
             StartGameThread();
 
-            new Wall(new Vector2(-10, -10),new Rect(new Vector2(0,0), new Vector2(20, 6)));
-            new Wall(new Vector2(-4, -2.5f), new Rect(new Vector2(0,0), new Vector2(3, 0.5f)));
+            new Wall(new Vector2(-10, -10),new Rect(new Vector2(0,0), new Vector2(20, 6))).CreateObjectInstance();
+            new Wall(new Vector2(-4, -2.5f), new Rect(new Vector2(0,0), new Vector2(3, 0.5f))).CreateObjectInstance();
         }
         public static void StartGameThread()
         {

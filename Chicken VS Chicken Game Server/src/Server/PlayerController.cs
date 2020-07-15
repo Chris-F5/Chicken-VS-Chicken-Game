@@ -20,10 +20,10 @@ namespace GameServer
         public bool leftKey = false;
         public bool upKey = false;
 
-        private Player player;
+        private NetworkObject player;
         public PlayerController()
         {
-            player = new Player(this, new Vector2(0, 10));
+            player = new Player(this, new Vector2(0, 10)).CreateObjectInstance();
         }
     }
 }
