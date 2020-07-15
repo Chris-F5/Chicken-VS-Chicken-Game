@@ -12,6 +12,9 @@ namespace GameServer
         private PlayerController initController;
         public Player(PlayerController _controller, Vector2 _position) : base(NetworkObjectType.player)
         {
+            if (_position == null)
+                throw new ArgumentNullException("_position is null");
+
             initPosition = _position;
             initController = _controller;
         }

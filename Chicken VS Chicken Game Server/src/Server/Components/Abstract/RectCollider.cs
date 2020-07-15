@@ -16,6 +16,11 @@ namespace GameServer
 
         public RectCollider(NetworkObject _networkObject, Rect _rect) : base(_networkObject)
         {
+            if (_rect == null)
+                throw new ArgumentNullException("_rect is null.");
+
+            rect = _rect;
+
             ofset = rect.position;
             lastUpdateOfset = ofset;
 

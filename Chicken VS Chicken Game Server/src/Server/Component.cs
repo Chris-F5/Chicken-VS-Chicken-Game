@@ -10,7 +10,7 @@ namespace GameServer
     {
         protected readonly NetworkObject networkObject;
 
-        protected List<Event> pendingEvents;
+        protected List<Event> pendingEvents = new List<Event>();
 
         public int pegingEventCount { get { return pendingEvents.Count; } }
 
@@ -21,6 +21,9 @@ namespace GameServer
 
         public Component(NetworkObject _networkObject)
         {
+            if (_networkObject == null)
+                throw new ArgumentNullException("_networkObject is null.");
+
             networkObject = _networkObject;
             pendingEvents.Add(new StartupEvents(this));
         }

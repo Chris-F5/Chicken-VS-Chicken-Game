@@ -18,6 +18,9 @@ namespace GameServer
 
         public PlayerMovement(NetworkObject _networkObject, PlayerController _controller, float _acceleration = 2, float _jumpForce = 8) : base(_networkObject)
         {
+            if (_controller == null)
+                throw new ArgumentNullException("_controller is null.");
+
             controller = _controller;
             acceleration = _acceleration;
             jumpForce = _jumpForce;

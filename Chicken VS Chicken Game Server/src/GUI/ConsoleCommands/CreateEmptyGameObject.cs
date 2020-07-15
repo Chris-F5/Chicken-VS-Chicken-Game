@@ -30,7 +30,7 @@ namespace GameServer.GUI.ConsoleCommands
                 return ThrowError(_ex.Message);
             }
 
-            new NetworkSynchronisers.TestObject(new Vector2(_x,_y));
+            new TestObject(new Vector2(_x,_y));
 
             return $"Object Created at x: {_perams[0]}, y: {_perams[1]}.";
         }

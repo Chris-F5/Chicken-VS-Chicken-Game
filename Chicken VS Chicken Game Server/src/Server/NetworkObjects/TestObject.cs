@@ -9,6 +9,9 @@ namespace GameServer
         Vector2 initPosition;
         public TestObject(Vector2 _position) : base(NetworkObjectType.testObject)
         {
+            if (_position == null)
+                throw new ArgumentNullException("_position is null.");
+
             initPosition = _position;
         }
         protected override Component[] InitComponents()

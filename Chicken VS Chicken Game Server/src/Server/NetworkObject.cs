@@ -12,7 +12,7 @@ namespace GameServer
         wall,
         testObject
     }
-    abstract class NetworkObject
+    class NetworkObject
     {
         private static List<NetworkObject> allNetworkObjects = new List<NetworkObject>();
 
@@ -21,11 +21,14 @@ namespace GameServer
 
         private readonly Component[] components;
 
-        public NetworkObject(NetworkObjectType _ojectType)
+        public NetworkObject(NetworkObjectType _ojectType, Component[] _components)
         {
-            allNetworkObjects.Add(this);
             objectTypeId = (short)_ojectType;
-            components = InitComponents();
+            components = _components;
+            if (components == null)
+                throw new Exception($"InitComponents returned null on object type {objectTypeId}.");
+
+            allNetworkObjects.Add(this);
 
             if (components.Length > byte.MaxValue)
             {
@@ -82,8 +85,6 @@ namespace GameServer
             // 0 is the end events constant id.
             _packet.WriteShort(0);
         }
-
-        protected abstract Component[] InitComponents();
 
         // This method is virtual so component update order can be overridden.
         protected virtual void UpdateComponents()
