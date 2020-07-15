@@ -21,10 +21,10 @@ namespace GameServer
 
         private readonly Component[] components;
 
-        public NetworkObject(NetworkObjectType _ojectType, Component[] _components)
+        public NetworkObject(ObjectTemplate _template)
         {
-            objectTypeId = (short)_ojectType;
-            components = _components;
+            objectTypeId = _template.typeId;
+            components = _template.GenerateCompoentSet();
             if (components == null)
                 throw new Exception($"InitComponents returned null on object type {objectTypeId}.");
 
