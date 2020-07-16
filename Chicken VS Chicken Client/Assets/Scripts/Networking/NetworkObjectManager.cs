@@ -5,15 +5,15 @@ using GameClient.NetworkSynchronisers;
 
 namespace GameClient
 {
-    public class SynchroniserManager : MonoBehaviour
+    public class NetworkObjectManager : MonoBehaviour
     {
-        public static SynchroniserManager instance { get; private set; }
+        public static NetworkObjectManager instance { get; private set; }
 
 
         [SerializeField]
-        private UnityEngine.GameObject[] synchroniserPrefabs;
+        private UnityEngine.GameObject[] networkObjectPrefabs;
 
-        private static Dictionary<short, NetworkSynchroniser> allSynchronisers = new Dictionary<short, NetworkSynchroniser>();
+        private static Dictionary<short, NetworkObject> allNetworkObjects = new Dictionary<short, NetworkObject>();
 
         private void Awake()
         {
@@ -27,11 +27,11 @@ namespace GameClient
                 Destroy(this);
             }
         }
-        public static NetworkSynchroniser FindSynchroniser(short _id)
+        public static NetworkObject FindObject(short _id)
         {
-            if (allSynchronisers.ContainsKey(_id))
+            if (allNetworkObjects.ContainsKey(_id))
             {
-                return allSynchronisers[_id];
+                return allNetworkObjects[_id];
             }
             else
             {
@@ -41,7 +41,7 @@ namespace GameClient
 
         public void HandleNewSynchroniser(short _synchroniserId, short _typeId, Packet _packet)
         {
-            if (_typeId < synchroniserPrefabs.Length)
+            if (_typeId < networkObjectPrefabs.Length && networkObjectPrefabs[_typeId] != null)
             {
                 short _firstEvent = _packet.ReadByte(false);
                 if (_firstEvent != EventIds.startupEvents)
@@ -50,13 +50,13 @@ namespace GameClient
                     Debug.Log("Object created without startup event. A packet must have been lost.");
                 }
 
-                UnityEngine.GameObject _synchroniserGameObject = Instantiate(synchroniserPrefabs[_typeId]);
-                _synchroniserGameObject.GetComponent<NetworkSynchroniser>().HandleSynchronise(_packet);
-                allSynchronisers.Add(_synchroniserId, _synchroniserGameObject.GetComponent<NetworkSynchroniser>());
+                GameObject _newGameObject = Instantiate(networkObjectPrefabs[_typeId]);
+                _newGameObject.GetComponent<NetworkObject>().HandleSynchronise(_packet);
+                allNetworkObjects.Add(_synchroniserId, _newGameObject.GetComponent<NetworkObject>());
             }
             else
             {
-                Debug.LogWarning("Synchroniser type ID given by server does not have corresponding prefab.");
+                Debug.LogWarning("Network object type ID given by server does not have corresponding prefab.");
             }
         }
     }

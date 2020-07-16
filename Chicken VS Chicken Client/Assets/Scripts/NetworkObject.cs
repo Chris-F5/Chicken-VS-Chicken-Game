@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace GameClient
 {
-    public abstract class NetworkSynchroniser : MonoBehaviour
+    public abstract class NetworkObject : MonoBehaviour
     {
-        public short synchroniserId { get; protected set; }
+        public short objectId { get; protected set; }
 
         public void HandleSynchronise(Packet _packet)
         {

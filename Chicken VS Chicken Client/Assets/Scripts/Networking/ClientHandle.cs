@@ -32,16 +32,16 @@ namespace GameClient
         {
             while (_packet.UnreadLength() > 0)
             {
-                short _synchroniserId = _packet.ReadShort();
+                short _objectId = _packet.ReadShort();
                 short _typeId = _packet.ReadShort();
-                NetworkSynchroniser _synchroniser = SynchroniserManager.FindSynchroniser(_synchroniserId);
-                if (_synchroniser == null)
+                NetworkObject _networkObject = NetworkObjectManager.FindObject(_objectId);
+                if (_networkObject == null)
                 {
-                    SynchroniserManager.instance.HandleNewSynchroniser(_synchroniserId, _typeId, _packet);
+                    NetworkObjectManager.instance.HandleNewSynchroniser(_objectId, _typeId, _packet);
                 }
                 else
                 {
-                    _synchroniser.HandleSynchronise(_packet);
+                    _networkObject.HandleSynchronise(_packet);
                 }
             }
         }

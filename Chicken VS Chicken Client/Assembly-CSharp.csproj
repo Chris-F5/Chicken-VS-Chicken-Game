@@ -70,13 +70,13 @@
     <Compile Include="Assets\Scripts\Networking\ClientSend.cs" />
     <Compile Include="Assets\Scripts\Networking\EventIds.cs" />
     <Compile Include="Assets\Scripts\Networking\Packet.cs" />
-    <Compile Include="Assets\Scripts\Networking\SynchroniserManager.cs" />
+    <Compile Include="Assets\Scripts\Networking\NetworkObjectManager.cs" />
     <Compile Include="Assets\Scripts\Networking\ThreadManager.cs" />
     <Compile Include="Assets\Scripts\NetworkSynchronisers\Abstract\GameObjects\DynamicPhysicsRect.cs" />
     <Compile Include="Assets\Scripts\NetworkSynchronisers\Abstract\GameObjects\GameObject.cs" />
     <Compile Include="Assets\Scripts\NetworkSynchronisers\Abstract\GameObjects\KenimaticColliderObject.cs" />
     <Compile Include="Assets\Scripts\NetworkSynchronisers\Abstract\GameObjects\RectObject.cs" />
-    <Compile Include="Assets\Scripts\NetworkSynchronisers\Abstract\NetworkSynchronsier.cs" />
+    <Compile Include="Assets\Scripts\NetworkObject.cs" />
     <Compile Include="Assets\Scripts\NetworkSynchronisers\Sealed\Player.cs" />
     <Compile Include="Assets\Scripts\NetworkSynchronisers\Sealed\TestObject.cs" />
     <Compile Include="Assets\Scripts\NetworkSynchronisers\Sealed\Wall.cs" />
