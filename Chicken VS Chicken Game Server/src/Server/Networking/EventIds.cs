@@ -9,7 +9,7 @@ namespace GameServer
     static class EventIds
     {
         public const byte EventEnd = 0;
-        public const byte StartupEvents = 1;
+        public const byte ObjectCreated = 1;
         public static class PositionComponent
         {
             public const byte SetPosition = 2;

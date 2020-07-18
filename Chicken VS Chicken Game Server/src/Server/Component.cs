@@ -14,11 +14,6 @@ namespace GameServer
 
         public int pegingEventCount { get { return pendingEvents.Count; } }
 
-        private enum EventId
-        {
-            startupEvent = 1
-        }
-
         public Component(NetworkObject _networkObject)
         {
             if (_networkObject == null)
@@ -27,12 +22,11 @@ namespace GameServer
             networkObject = _networkObject;
             pendingEvents.Add(new StartupEvents(this));
         }
-        public abstract void Update();
+        public virtual void Update() { }
 
         /// <summary>The packet this generates will be sent via TCP and UDP to all clients when the object is created. When a new client joins this will also be called and sent to only that client.</summary>
         public virtual void AddStartupEventsToPacket(Packet _packet)
         {
-            _packet.WriteByte((byte)EventId.startupEvent);
             //new ExampleStartupEvent(this).AddEventToPacket(_packet);
         }
 

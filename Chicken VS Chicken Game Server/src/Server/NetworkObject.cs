@@ -25,6 +25,12 @@ namespace GameServer
         {
             objectTypeId = _template.typeId;
             _template.AddComponentsToArray(this, ref components);
+
+            // Shift component array allong one space.
+            Array.Copy(components, 0, components,  1, components.Length);
+            // Set the first component to ObjectComponent
+            components[0] = new ObjectComponent(this);
+
             if (components == null)
                 throw new Exception($"InitComponents returned null on object type {objectTypeId}.");
 
@@ -82,8 +88,7 @@ namespace GameServer
                     components[i].AddStartupEventsToPacket(_packet);
                 }
             }
-            // 0 is the end events constant id.
-            _packet.WriteByte(0);
+            _packet.WriteByte(EventIds.EventEnd);
         }
 
         private void UpdateComponents()
@@ -161,6 +166,22 @@ namespace GameServer
                 allNetworkObjects[i].AddStartupEventsToPacket(_packet);
             }
             return _packet;
+        }
+
+        private sealed class ObjectComponent : Component
+        {
+            public ObjectComponent(NetworkObject _networkObject) : base(_networkObject) { }
+            public override void AddStartupEventsToPacket(Packet _packet)
+            {
+                base.AddStartupEventsToPacket(_packet);
+                new ObjectCreatedEvent().AddEventToPacket(_packet);
+            }
+
+            // If this event is sent, it means the startup events for components in this netowrk object are present in the packet.
+            private class ObjectCreatedEvent : Event
+            {
+                public ObjectCreatedEvent() : base(EventIds.ObjectCreated) { }
+            }
         }
     }
 }
