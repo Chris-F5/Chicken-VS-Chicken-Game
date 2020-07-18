@@ -83,7 +83,7 @@ namespace GameServer
                 }
             }
             // 0 is the end events constant id.
-            _packet.WriteShort(0);
+            _packet.WriteByte(0);
         }
 
         private void UpdateComponents()

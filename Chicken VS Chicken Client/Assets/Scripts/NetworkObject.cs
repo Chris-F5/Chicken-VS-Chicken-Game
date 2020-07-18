@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace GameClient
 {
-    public abstract class NetworkObject : MonoBehaviour
+    class NetworkObject : MonoBehaviour
     {
         public short objectId { get; protected set; }
 
