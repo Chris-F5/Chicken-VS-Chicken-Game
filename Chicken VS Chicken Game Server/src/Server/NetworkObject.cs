@@ -31,6 +31,11 @@ namespace GameServer
             // Set the first component to ObjectComponent
             components[0] = new ObjectComponent(this);
 
+            if (components.Length >= 255)
+            {
+                throw new Exception("Too many components attached to network object.");
+            }
+
             if (components == null)
                 throw new Exception($"InitComponents returned null on object type {objectTypeId}.");
 
@@ -69,26 +74,24 @@ namespace GameServer
         {
             for (byte i = 0; i < components.Length; i++)
             {
-                if (components[i].pegingEventCount != 0) {
+                if (components[i].pendingEventCount != 0) {
                     _packet.WriteByte(i);
                     components[i].AddEventsToPacket(_packet);
+                    _packet.WriteByte(EventIds.EventEnd);
                 }
             }
-            // 0 is the end events constant id.
-            _packet.WriteShort(0);
+            _packet.WriteByte(255);
         }
 
         public void AddStartupEventsToPacket(Packet _packet)
         {
             for (byte i = 0; i < components.Length; i++)
             {
-                if (components[i].pegingEventCount != 0)
-                {
-                    _packet.WriteByte(i);
-                    components[i].AddStartupEventsToPacket(_packet);
-                }
+                _packet.WriteByte(i);
+                components[i].AddStartupEventsToPacket(_packet);
+                _packet.WriteByte(EventIds.EventEnd);
             }
-            _packet.WriteByte(EventIds.EventEnd);
+            _packet.WriteByte(255);
         }
 
         private void UpdateComponents()

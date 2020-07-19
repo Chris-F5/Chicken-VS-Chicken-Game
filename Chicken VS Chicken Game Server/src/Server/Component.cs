@@ -12,7 +12,7 @@ namespace GameServer
 
         protected List<Event> pendingEvents = new List<Event>();
 
-        public int pegingEventCount { get { return pendingEvents.Count; } }
+        public int pendingEventCount { get { return pendingEvents.Count; } }
 
         public Component(NetworkObject _networkObject)
         {

@@ -6,30 +6,50 @@ namespace GameClient
 {
     class NetworkObject : MonoBehaviour
     {
+        [SerializeField]
+        public readonly NetworkObjectComponent[] components;
         public short objectId { get; protected set; }
+        public bool startupInfoSent { get; private set; } = false;
 
         public void HandleSynchronise(Packet _packet)
         {
             while (true)
             {
-                byte _eventId = _packet.ReadByte();
-                if (_eventId == EventIds.eventsEnd)
+                byte _componentIndex = _packet.ReadByte();
+                if (_componentIndex == EventIds.EventEnd)
                 {
                     break;
                 }
                 else
                 {
-                    HandleEvent(_eventId, _packet);
+                    // If this component is the network object component
+                    if (_componentIndex == 0)
+                    {
+                        HandleNetworkObjectComponentEvents(_packet);
+                    }
+                    components[_componentIndex].HandleSynchronise(_packet);
                 }
             }
         }
-        protected virtual void HandleEvent(byte _eventId, Packet _packet)
+        private void HandleNetworkObjectComponentEvents(Packet _packet)
         {
-            if (_eventId == EventIds.startupEvents)
+            while (true)
             {
-                return;
+                byte _eventId = _packet.ReadByte();
+                if (_eventId == EventIds.EventEnd)
+                {
+                    break;
+                }
+                else
+                {
+                    switch (_eventId)
+                    {
+                        case EventIds.ObjectCreated:
+                            startupInfoSent = true;
+                            break;
+                    }
+                }
             }
-            // TODO: Handle destroy event
         }
         protected Vector2 ReadVector2Event(Packet _packet)
         {
