@@ -26,10 +26,11 @@ namespace GameServer
             objectTypeId = _template.typeId;
             _template.AddComponentsToArray(this, ref components);
 
-            // Shift component array allong one space.
-            Array.Copy(components, 0, components,  1, components.Length);
-            // Set the first component to ObjectComponent
-            components[0] = new ObjectComponent(this);
+            // Shift component array allong one space and add the network object component.
+            Component[] _componentsWithObjectComponent = new Component[components.Length + 1];
+            Array.Copy(components, 0, _componentsWithObjectComponent,  1, components.Length);
+            _componentsWithObjectComponent[0] = new ObjectComponent(this);
+            components = _componentsWithObjectComponent;
 
             if (components.Length >= 255)
             {

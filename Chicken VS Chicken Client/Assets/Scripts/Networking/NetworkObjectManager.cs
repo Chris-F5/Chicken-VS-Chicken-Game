@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using GameClient.NetworkSynchronisers;
 
 namespace GameClient
 {
@@ -43,16 +42,15 @@ namespace GameClient
         {
             if (_typeId < networkObjectPrefabs.Length && networkObjectPrefabs[_typeId] != null)
             {
-                short _firstEvent = _packet.ReadByte(false);
-                if (_firstEvent != EventIds.startupEvents)
+                GameObject _newGameObject = Instantiate(networkObjectPrefabs[_typeId]);
+                _newGameObject.GetComponent<NetworkObject>().HandleSynchronise(_packet);
+                allNetworkObjects.Add(_synchroniserId, _newGameObject.GetComponent<NetworkObject>());
+
+                if (!_newGameObject.GetComponent<NetworkObject>().startupInfoSent)
                 {
                     // TODO: ask server for the startup infomation every set interval of frames until its retrieved.
                     Debug.Log("Object created without startup event. A packet must have been lost.");
                 }
-
-                GameObject _newGameObject = Instantiate(networkObjectPrefabs[_typeId]);
-                _newGameObject.GetComponent<NetworkObject>().HandleSynchronise(_packet);
-                allNetworkObjects.Add(_synchroniserId, _newGameObject.GetComponent<NetworkObject>());
             }
             else
             {

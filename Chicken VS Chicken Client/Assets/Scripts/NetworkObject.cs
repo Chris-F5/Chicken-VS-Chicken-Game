@@ -4,19 +4,23 @@ using UnityEngine;
 
 namespace GameClient
 {
-    class NetworkObject : MonoBehaviour
+    public class NetworkObject : MonoBehaviour
     {
-        [SerializeField]
-        public readonly NetworkObjectComponent[] components;
+        private NetworkObjectComponent[] components;
         public short objectId { get; protected set; }
         public bool startupInfoSent { get; private set; } = false;
+
+        private void Awake()
+        {
+            components = gameObject.GetComponents<NetworkObjectComponent>();
+        }
 
         public void HandleSynchronise(Packet _packet)
         {
             while (true)
             {
                 byte _componentIndex = _packet.ReadByte();
-                if (_componentIndex == EventIds.EventEnd)
+                if (_componentIndex == 255)
                 {
                     break;
                 }
@@ -27,7 +31,11 @@ namespace GameClient
                     {
                         HandleNetworkObjectComponentEvents(_packet);
                     }
-                    components[_componentIndex].HandleSynchronise(_packet);
+                    else
+                    {
+                        Debug.Log(_componentIndex);
+                        components[_componentIndex - 1].HandleSynchronise(_packet);
+                    }
                 }
             }
         }
@@ -50,21 +58,6 @@ namespace GameClient
                     }
                 }
             }
-        }
-        protected Vector2 ReadVector2Event(Packet _packet)
-        {
-            float _x = _packet.ReadFloat();
-            float _y = _packet.ReadFloat();
-            return new Vector2(_x, _y);
-        }
-        protected float[] ReadFloatArrayEvent(Packet _packet, int _length)
-        {
-            float[] _array = new float[_length];
-            for (int i = 0; i < _length; i++)
-            {
-                _array[i] = _packet.ReadFloat();
-            }
-            return _array;
         }
     }
 }

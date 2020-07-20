@@ -14,8 +14,6 @@ namespace GameServer
             allKenimaticColliderRects.Add(this);
         }
 
-        public override void Update() { }
-
         public override void Dispose()
         {
             allKenimaticColliderRects.Remove(this);

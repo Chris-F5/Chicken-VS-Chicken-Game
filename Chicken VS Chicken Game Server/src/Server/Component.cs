@@ -99,7 +99,7 @@ namespace GameServer
         private class StartupEvents : Event
         {
             private readonly Component component;
-            public StartupEvents(Component _component) : base((byte)EventId.startupEvent)
+            public StartupEvents(Component _component) : base(0) // 0 because it wont be used anyway
             {
                 component = _component;
             }

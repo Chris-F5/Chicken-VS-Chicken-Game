@@ -8,8 +8,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <ProjectGuid>{06F46B25-3266-FF42-9C1F-86EDC580FE8C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -69,19 +68,34 @@
     <Compile Include="Assets\Scripts\Networking\ClientHandle.cs" />
     <Compile Include="Assets\Scripts\Networking\ClientSend.cs" />
     <Compile Include="Assets\Scripts\Networking\EventIds.cs" />
-    <Compile Include="Assets\Scripts\Networking\Packet.cs" />
     <Compile Include="Assets\Scripts\Networking\NetworkObjectManager.cs" />
+    <Compile Include="Assets\Scripts\Networking\Packet.cs" />
     <Compile Include="Assets\Scripts\Networking\ThreadManager.cs" />
-    <Compile Include="Assets\Scripts\NetworkObjectComponent.cs" />
-    <Compile Include="Assets\Scripts\NetworkSynchronisers\Abstract\GameObjects\DynamicPhysicsRect.cs" />
-    <Compile Include="Assets\Scripts\NetworkSynchronisers\Abstract\GameObjects\GameObject.cs" />
-    <Compile Include="Assets\Scripts\NetworkSynchronisers\Abstract\GameObjects\KenimaticColliderObject.cs" />
-    <Compile Include="Assets\Scripts\NetworkSynchronisers\Abstract\GameObjects\RectObject.cs" />
     <Compile Include="Assets\Scripts\NetworkObject.cs" />
-    <Compile Include="Assets\Scripts\NetworkSynchronisers\Sealed\Player.cs" />
-    <Compile Include="Assets\Scripts\NetworkSynchronisers\Sealed\TestObject.cs" />
-    <Compile Include="Assets\Scripts\NetworkSynchronisers\Sealed\Wall.cs" />
+    <Compile Include="Assets\Scripts\NetworkObjectComponent.cs" />
+    <Compile Include="Assets\Scripts\NetworkObjectComponents\Abstract\RectColliderNetworkComponent.cs" />
+    <Compile Include="Assets\Scripts\NetworkObjectComponents\DynamicPhysicsRectNetworkComponent.cs" />
+    <Compile Include="Assets\Scripts\NetworkObjectComponents\PlayerMovementNetworkComponent.cs" />
+    <Compile Include="Assets\Scripts\NetworkObjectComponents\PositionNetworkComponent.cs" />
     <Compile Include="Assets\Scripts\UIManager.cs" />
+    <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface-Mobile.shader" />
+    <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
+    <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro_Properties.cginc" />
+    <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
+    <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
+    <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
+    <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile Masking.shader" />
+    <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_Bitmap-Mobile.shader" />
+    <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF Overlay.shader" />
+    <None Include="Assets\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
+    <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro_Surface.cginc" />
+    <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile Overlay.shader" />
+    <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_Bitmap.shader" />
+    <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro.cginc" />
+    <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF.shader" />
+    <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile.shader" />
+    <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_Sprite.shader" />
+    <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface.shader" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/p/Documents/Unity Games/Chicken VS Chicken/Chicken VS Chicken Client/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>

@@ -34,6 +34,7 @@ namespace GameClient
             {
                 short _objectId = _packet.ReadShort();
                 short _typeId = _packet.ReadShort();
+                Debug.Log($"Processing synchronise on object id: {_objectId} type: {_typeId}.");
                 NetworkObject _networkObject = NetworkObjectManager.FindObject(_objectId);
                 if (_networkObject == null)
                 {

@@ -63,7 +63,7 @@
     <Compile Include="src\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Server\Component.cs" />
-    <Compile Include="src\Server\Components\Abstract\RectCollider.cs" />
+    <Compile Include="src\Server\Components\RectCollider.cs" />
     <Compile Include="src\Server\Components\DynamicPhysicsRect.cs" />
     <Compile Include="src\Server\Components\KenimaticColliderRect.cs" />
     <Compile Include="src\Server\Components\PlayerMovement.cs" />
