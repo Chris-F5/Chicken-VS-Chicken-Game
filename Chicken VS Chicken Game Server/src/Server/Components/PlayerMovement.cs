@@ -12,7 +12,7 @@ namespace GameServer
         public float jumpForce;
 
         private PlayerController controller;
-        private DynamicPhysicsRect physicsRect;
+        private DynamicPhysicsBehaviour physicsRect;
         private float lastUpdateAcceleration;
         private float lastUpdateJumpForce;
 
@@ -25,7 +25,7 @@ namespace GameServer
             acceleration = _acceleration;
             jumpForce = _jumpForce;
 
-            physicsRect = _networkObject.GetComponent<DynamicPhysicsRect>();
+            physicsRect = _networkObject.GetComponent<DynamicPhysicsBehaviour>();
             lastUpdateAcceleration = acceleration;
             lastUpdateJumpForce = jumpForce;
         }

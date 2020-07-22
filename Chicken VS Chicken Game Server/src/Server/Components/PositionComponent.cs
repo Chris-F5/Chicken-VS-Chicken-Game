@@ -14,6 +14,8 @@ namespace GameServer
         public PositionComponent(NetworkObject _object, Vector2 _position) : base(_object) 
         {
             position = _position;
+
+            lastUpdatePosition = position;
         }
 
         public override void AddStartupEventsToPacket(Packet _packet)

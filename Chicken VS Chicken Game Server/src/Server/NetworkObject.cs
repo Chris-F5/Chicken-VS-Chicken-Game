@@ -107,7 +107,11 @@ namespace GameServer
         {
             foreach (Component _component in components)
             {
-                if (_component.GetType() == typeof(ComponentType))
+                if (_component == null)
+                {
+                    break;
+                }
+                if (_component.GetType() == typeof(ComponentType) || _component.GetType().IsSubclassOf(typeof(ComponentType)))
                 {
                     return _component as ComponentType;
                 }
@@ -120,7 +124,11 @@ namespace GameServer
             List<ComponentType> _attachedComponentsOfTypeList = new List<ComponentType>();
             foreach (Component _component in components)
             {
-                if (_component.GetType() == typeof(ComponentType))
+                if (_component == null)
+                {
+                    break;
+                }
+                if (_component.GetType() == typeof(ComponentType) || _component.GetType().IsSubclassOf(typeof(ComponentType)))
                 {
                     _attachedComponentsOfTypeList.Add(_component as ComponentType);
                 }

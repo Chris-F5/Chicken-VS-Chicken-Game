@@ -8,32 +8,30 @@ namespace GameServer
 {
     sealed class Wall : ObjectTemplate
     {
-        private Rect rect;
-        private Vector2 position;
-        public Wall(Vector2 _position, Rect _rect) : base(NetworkObjectType.wall)
+        private readonly Vector2 size;
+        private readonly Vector2 position;
+        public Wall(Vector2 _position, Vector2 _size) : base(NetworkObjectType.wall)
         {
-            if (_position == null)
-                throw new ArgumentNullException("_position is null.");
-            if (_rect == null)
-                throw new ArgumentNullException("_rect is null.");
-
             position = _position;
-            rect = _rect;
+            size = _size;
         }
         public override void AddComponentsToArray(NetworkObject _objectReference, ref Component[] _componentArray)
         {
             // Components have to be added one by one incase one of them needs to access (through the network object refrence) a previously added one.
-            _componentArray = new Component[2];
+            _componentArray = new Component[3];
+
             _componentArray[0] = 
                 new PositionComponent(
                     _objectReference,
-                    position
-                );
+                    position);
+
             _componentArray[1] =
-                new KenimaticColliderRect(
+                new RectCollider(
                     _objectReference,
-                    rect
-                );
+                    size);
+
+            _componentArray[2] =
+                new KenimaticCollider(_objectReference);
         }
     }
 }

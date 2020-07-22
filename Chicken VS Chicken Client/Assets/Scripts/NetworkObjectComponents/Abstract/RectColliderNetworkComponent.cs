@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace GameClient
 {
-    class RectColliderNetworkComponent : NetworkObjectComponent
+    class RectColliderNetworkComponent : ColliderNetworkComponent
     {
         [SerializeField]
         BoxCollider2D attachedCollider;
@@ -16,12 +16,12 @@ namespace GameClient
         {
             switch (_eventId)
             {
-                case EventIds.RectCollider.SetSize:
+                case EventIds.Collider.RectCollider.SetSize:
                     size = ReadVector2Event(_packet);
                     attachedCollider.size = size;
                     attachedCollider.offset = ofset + (attachedCollider.size / 2);
                     break;
-                case EventIds.RectCollider.SetOfset:
+                case EventIds.Collider.RectCollider.SetOfset:
                     ofset = ReadVector2Event(_packet);
                     attachedCollider.offset = ofset + (attachedCollider.size / 2);
                     break;

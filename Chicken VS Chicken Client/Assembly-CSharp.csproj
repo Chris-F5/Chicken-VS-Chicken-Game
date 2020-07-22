@@ -73,8 +73,10 @@
     <Compile Include="Assets\Scripts\Networking\ThreadManager.cs" />
     <Compile Include="Assets\Scripts\NetworkObject.cs" />
     <Compile Include="Assets\Scripts\NetworkObjectComponent.cs" />
+    <Compile Include="Assets\Scripts\NetworkObjectComponents\Abstract\ColliderNetworkComponent.cs" />
     <Compile Include="Assets\Scripts\NetworkObjectComponents\Abstract\RectColliderNetworkComponent.cs" />
-    <Compile Include="Assets\Scripts\NetworkObjectComponents\DynamicPhysicsRectNetworkComponent.cs" />
+    <Compile Include="Assets\Scripts\NetworkObjectComponents\DynamicPhysicsBehaviourNetworkComponent.cs" />
+    <Compile Include="Assets\Scripts\NetworkObjectComponents\GenericNetworkComponent.cs" />
     <Compile Include="Assets\Scripts\NetworkObjectComponents\PlayerMovementNetworkComponent.cs" />
     <Compile Include="Assets\Scripts\NetworkObjectComponents\PositionNetworkComponent.cs" />
     <Compile Include="Assets\Scripts\UIManager.cs" />

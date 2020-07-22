@@ -21,25 +21,25 @@ namespace GameServer
 
         public override void AddComponentsToArray(NetworkObject _objectReference, ref Component[] _componentArray)
         {
-            _componentArray = new Component[3];
+            _componentArray = new Component[4];
+
             _componentArray[0] =
                 new PositionComponent(
                     _objectReference,
-                    position
-                    );
+                    position);
+
             _componentArray[1] =
-                new DynamicPhysicsRect(
+                new RectCollider(
                     _objectReference,
-                    new Rect(
-                        new Vector2(-0.5f, 0),
-                        new Vector2(1, 1)
-                        )
-                    );
+                    new Vector2(1,1));
+
             _componentArray[2] =
+                new DynamicPhysicsBehaviour(_objectReference);
+
+            _componentArray[3] =
                 new PlayerMovement(
                     _objectReference,
-                    controller
-                    );
+                    controller);
         }
     }
 }
