@@ -88,7 +88,7 @@ namespace GameServer
         public void NetworkSynchroniserStartup()
         {
             Console.WriteLine($"Sending synchroniser startup packet to client id: {id}");
-            using (Packet _packet = NetworkSynchroniser.GenerateStartupPacket())
+            using (Packet _packet = NetworkObject.GenerateStartupPacket())
             {
                 tcp.Send(_packet);
             }
@@ -114,7 +114,7 @@ namespace GameServer
 
         public static void SynchroniseClients()
         {
-            using (Packet _packet = NetworkSynchroniser.GenerateSynchronizationPacket())
+            using (Packet _packet = NetworkObject.GenerateSynchronisationPacket())
             {
                 SendUDPToAll(_packet);
             }
