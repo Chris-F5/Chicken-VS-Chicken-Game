@@ -84,7 +84,6 @@ namespace GameServer
                 if (_exitBounds != null)
                 {
                     positionComponent.position += _exitBounds.Value;
-                    Console.WriteLine(_exitBounds.Value);
                     CollisionFriction(_exitBounds.Value);
                 }
             }
