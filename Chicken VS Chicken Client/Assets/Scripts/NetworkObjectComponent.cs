@@ -6,8 +6,6 @@ namespace GameClient
 {
     public abstract class NetworkObjectComponent : MonoBehaviour
     {
-        [SerializeField]
-        public readonly byte componentIndex;
         public void HandleSynchronise(Packet _packet)
         {
             while (true)
@@ -23,7 +21,7 @@ namespace GameClient
                 }
             }
         }
-        public abstract void HandleEvent(Packet _packet, byte _eventId);
+        public virtual void HandleEvent(Packet _packet, byte _eventId) { }
         protected Vector2 ReadVector2Event(Packet _packet)
         {
             float _x = _packet.ReadFloat();

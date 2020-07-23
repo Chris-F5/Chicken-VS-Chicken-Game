@@ -12,7 +12,7 @@ namespace GameServer
         public float jumpForce;
 
         private PlayerController controller;
-        private DynamicPhysicsBehaviour physicsRect;
+        private DynamicPhysicsBehaviour physicsBehaviour;
         private float lastUpdateAcceleration;
         private float lastUpdateJumpForce;
 
@@ -25,7 +25,7 @@ namespace GameServer
             acceleration = _acceleration;
             jumpForce = _jumpForce;
 
-            physicsRect = _networkObject.GetComponent<DynamicPhysicsBehaviour>();
+            physicsBehaviour = _networkObject.GetComponent<DynamicPhysicsBehaviour>();
             lastUpdateAcceleration = acceleration;
             lastUpdateJumpForce = jumpForce;
         }
@@ -46,15 +46,15 @@ namespace GameServer
 
             if (controller.rightKey)
             {
-                physicsRect.AddForce(new Vector2(acceleration * Constants.SECONDS_PER_TICK, 0));
+                physicsBehaviour.AddForce(new Vector2(acceleration * Constants.SECONDS_PER_TICK, 0));
             }
             if (controller.leftKey)
             {
-                physicsRect.AddForce(new Vector2(-acceleration * Constants.SECONDS_PER_TICK, 0));
+                physicsBehaviour.AddForce(new Vector2(-acceleration * Constants.SECONDS_PER_TICK, 0));
             }
-            if (controller.upKey && physicsRect.grounded)
+            if (controller.upKey && physicsBehaviour.grounded)
             {
-                physicsRect.AddForce(new Vector2(0, jumpForce));
+                physicsBehaviour.AddForce(new Vector2(0, jumpForce));
             }
         }
 

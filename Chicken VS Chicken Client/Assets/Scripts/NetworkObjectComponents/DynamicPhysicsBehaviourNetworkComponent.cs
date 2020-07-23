@@ -11,6 +11,8 @@ namespace GameClient
 
         public override void HandleEvent(Packet _packet, byte _eventId)
         {
+            base.HandleEvent(_packet, _eventId);
+            
             switch (_eventId)
             {
                 case EventIds.DynamicPhysicsRect.SetVelocity:

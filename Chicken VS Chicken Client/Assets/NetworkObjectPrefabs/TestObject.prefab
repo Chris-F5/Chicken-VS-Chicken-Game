@@ -44,8 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddd43249fe1258146b3ab1e938e4a8bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  components:
-  - {fileID: 4937232975768221545}
 --- !u!114 &4937232975768221545
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58,3 +56,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b20c4b6dbff35246ba4b7acbb990b42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attachedTransform: {fileID: 7900974032158560180}

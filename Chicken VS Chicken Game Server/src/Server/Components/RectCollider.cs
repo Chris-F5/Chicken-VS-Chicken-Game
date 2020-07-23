@@ -81,9 +81,14 @@ namespace GameServer
                 };
 
             byte _lowestIndex = 0;
+            if (_overlaps[0] <= 0)
+            {
+                // Not colliding
+                return null;
+            }
             for (byte i = 1; i < 4; i++)
             {
-                if (_overlaps[i] < 0)
+                if (_overlaps[i] <= 0)
                 {
                     // Not colliding
                     return null;
