@@ -21,7 +21,7 @@ namespace GameClient
                 }
             }
         }
-        public abstract void HandleEvent(Packet _packet, byte _eventId);
+        public virtual void HandleEvent(Packet _packet, byte _eventId) { }
         protected Vector2 ReadVector2Event(Packet _packet)
         {
             float _x = _packet.ReadFloat();
