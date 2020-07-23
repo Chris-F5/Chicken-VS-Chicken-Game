@@ -9,7 +9,7 @@ namespace GameClient
     {
         [SerializeField]
         BoxCollider2D attachedCollider;
-        [SerializeField]
+        [ReadOnly] [SerializeField]
         Vector2 ofset, size;
 
         public override void HandleEvent(Packet _packet, byte _eventId)

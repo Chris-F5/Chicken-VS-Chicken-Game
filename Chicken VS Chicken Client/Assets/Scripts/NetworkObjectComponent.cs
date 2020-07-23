@@ -6,8 +6,6 @@ namespace GameClient
 {
     public abstract class NetworkObjectComponent : MonoBehaviour
     {
-        [SerializeField]
-        public readonly byte componentIndex;
         public void HandleSynchronise(Packet _packet)
         {
             while (true)
