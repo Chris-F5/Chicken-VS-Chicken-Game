@@ -69,7 +69,6 @@
     <Compile Include="src\Server\Components\KenimaticCollider.cs" />
     <Compile Include="src\Server\Components\PlayerMovement.cs" />
     <Compile Include="src\Server\Components\PositionComponent.cs" />
-    <Compile Include="src\Server\Constants.cs" />
     <Compile Include="src\Server\GameLogic.cs" />
     <Compile Include="src\Server\Networking\EventIds.cs" />
     <Compile Include="src\Server\NetworkObject.cs" />
@@ -136,6 +135,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\SubmitButtonActive.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharedGameLogic\SharedGameLogic.csproj">
+      <Project>{2af5edd3-e98f-48cf-af7b-453e7cd61a48}</Project>
+      <Name>SharedGameLogic</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
