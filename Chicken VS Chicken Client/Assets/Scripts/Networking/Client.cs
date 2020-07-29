@@ -75,7 +75,7 @@ namespace GameClient
 
                 recieveBuffer = new byte[dataBufferSize];
 
-                socket.BeginConnect(instance.serverIp, instance.serverPort, ConnectCallback, socket);
+                socket.BeginConnect(instance.serverIp, instance.serverPort, ConnectCallback, null);
             }
 
             private void ConnectCallback(IAsyncResult _result)

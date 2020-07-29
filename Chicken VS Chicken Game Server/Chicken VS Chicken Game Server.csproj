@@ -136,11 +136,5 @@
   <ItemGroup>
     <None Include="Assets\SubmitButtonActive.png" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SharedGameLogic\SharedGameLogic.csproj">
-      <Project>{2af5edd3-e98f-48cf-af7b-453e7cd61a48}</Project>
-      <Name>SharedGameLogic</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

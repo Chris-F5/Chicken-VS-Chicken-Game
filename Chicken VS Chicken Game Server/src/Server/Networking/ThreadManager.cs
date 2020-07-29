@@ -16,8 +16,7 @@ namespace GameServer
         {
             if (_action == null)
             {
-                Console.WriteLine("No action to execute on main thread!");
-                return;
+                throw new ArgumentNullException("_action is null.");
             }
 
             lock (executeOnMainThread)
