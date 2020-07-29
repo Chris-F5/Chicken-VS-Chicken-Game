@@ -309,8 +309,8 @@
     <Reference Include="UnityEngine.XRModule">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.2.0f1/Editor/Data/Managed/UnityEngine/UnityEngine.XRModule.dll</HintPath>
     </Reference>
-    <Reference Include="SharedGameLogic">
-      <HintPath>C:/Users/p/Documents/Unity Games/Chicken VS Chicken/Chicken VS Chicken Client/Assets/Scripts/SharedGameLogic.dll</HintPath>
+    <Reference Include="SharedClassLibrary">
+      <HintPath>C:/Users/p/Documents/Unity Games/Chicken VS Chicken/Chicken VS Chicken Client/Assets/Scripts/SharedClassLibrary.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.2.0f1/Editor/Data/MonoBleedingEdge/lib/mono/4.7.1-api/mscorlib.dll</HintPath>

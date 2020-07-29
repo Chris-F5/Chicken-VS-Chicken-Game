@@ -136,5 +136,11 @@
   <ItemGroup>
     <None Include="Assets\SubmitButtonActive.png" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharedClassLibrary\SharedClassLibrary.csproj">
+      <Project>{4847219c-7486-4033-adcc-ff6d92b9ae7e}</Project>
+      <Name>SharedClassLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

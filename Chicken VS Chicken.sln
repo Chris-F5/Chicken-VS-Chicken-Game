@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chicken VS Chicken Game Server", "Chicken VS Chicken Game Server\Chicken VS Chicken Game Server.csproj", "{FE661E39-7427-468C-AA7E-DD5D9893E41C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Chicken VS Chicken Client\Assembly-CSharp.csproj", "{06F46B25-3266-FF42-9C1F-86EDC580FE8C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4847219C-7486-4033-ADCC-FF6D92B9AE7E} = {4847219C-7486-4033-ADCC-FF6D92B9AE7E}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedClassLibrary", "SharedClassLibrary\SharedClassLibrary.csproj", "{4847219C-7486-4033-ADCC-FF6D92B9AE7E}"
 EndProject

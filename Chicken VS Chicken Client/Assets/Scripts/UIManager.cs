@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using SharedGameLogic;
+using SharedClassLibrary;
 
 namespace GameClient
 {
@@ -19,6 +19,7 @@ namespace GameClient
 
         private void Awake()
         {
+            Debug.Log(Constants.GLOBAL_GRAVITY_SCALE);
             if (instance == null)
             {
                 instance = this;
