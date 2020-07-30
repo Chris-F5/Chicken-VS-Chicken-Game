@@ -16,29 +16,29 @@ namespace SharedClassLibrary.Networking
         public readonly IPEndPoint remoteEndPoint;
 
         private readonly TCPConnection tcpConnection;
-        private readonly PacketHandler packetHandler;
+        private readonly PacketHandler tcpPacketHandler;
 
-        public Connection(IPAddress _remoteIp, int _remotePort, PacketHandler _packetHandler)
+        public Connection(IPAddress _remoteIp, int _remotePort, PacketHandler _tcpPacketHandler)
         {
             remoteEndPoint = new IPEndPoint(_remoteIp, _remotePort);
-            packetHandler = _packetHandler;
+            tcpPacketHandler = _tcpPacketHandler;
 
-            tcpConnection = new TCPConnection(new PacketHandler(HandlePacket));
+            tcpConnection = new TCPConnection(new PacketHandler(HandleTcpPacket));
             tcpConnection.Connect(_remoteIp, _remotePort);
         }
 
-        public Connection(TcpClient _client, PacketHandler _packetHandler)
+        public Connection(TcpClient _client, PacketHandler _tcpPacketHandler)
         {
             remoteEndPoint = (IPEndPoint)_client.Client.RemoteEndPoint;
-            packetHandler = _packetHandler;
+            tcpPacketHandler = _tcpPacketHandler;
 
-            tcpConnection = new TCPConnection(new PacketHandler(HandlePacket));
+            tcpConnection = new TCPConnection(new PacketHandler(HandleTcpPacket));
             tcpConnection.AcceptConnection(_client);
         }
 
-        public void HandlePacket(Packet _packet)
+        public void HandleTcpPacket(Packet _packet)
         {
-            packetHandler(_packet);
+            tcpPacketHandler(_packet);
         }
 
         public static void ListenForNewConnections(NewConnectionHandler _newConnectionHandler, int _localPort)
