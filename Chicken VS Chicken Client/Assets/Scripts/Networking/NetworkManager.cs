@@ -1,7 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using SharedClassLibrary.Networking;
+using SharedClassLibrary.Logging;
 using System.Net;
 
 namespace GameClient
