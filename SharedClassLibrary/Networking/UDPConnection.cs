@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
+using SharedClassLibrary.Logging;
 
 namespace SharedClassLibrary.Networking
 {
@@ -10,14 +11,16 @@ namespace SharedClassLibrary.Networking
     {
         public static bool IsListening { get { return listener != null; } }
         private static UdpClient listener = null;
-        private static Connection.UdpPacketHandler packetHandler;
+        private static Connection.UdpSenderIdentifier udpSenderIdentifier;
 
-        public static void StartListening(int _port, Connection.UdpPacketHandler _udpPacketHandler)
+        public static void StartListening(int _port, Connection.UdpSenderIdentifier _udpSenderIdentifier)
         {
-            packetHandler = _udpPacketHandler;
-            listener = new UdpClient(_port);
-            listener.BeginReceive(RecieveCallback, null);
-            Console.WriteLine($"Started listening for UDP on port {_port}");
+            udpSenderIdentifier = _udpSenderIdentifier;
+            if (!IsListening) {
+                listener = new UdpClient(_port);
+                listener.BeginReceive(RecieveCallback, null);
+                Logger.WriteLine($"Started listening for UDP on port {_port}");
+            }
         }
         private static void RecieveCallback(IAsyncResult _result)
         {
@@ -29,14 +32,20 @@ namespace SharedClassLibrary.Networking
             if (_data.Length < 4)
             {
                 // Something went wrong while transporting the packet. For now, it will be ignored.
-                Console.WriteLine("Something went wrong while transporting a UDP packet. For now, it will be ignored.");
+                Logger.WriteLine("Something went wrong while transporting a UDP packet. For now, it will be ignored.");
                 return;
             }
             else
             {
-                using (Packet _packet = new Packet(_data))
+                Packet _packet = new Packet(_data);
+                Connection connection = udpSenderIdentifier(_packet, _remoteEndPoint);
+                if (connection != null)
                 {
-                    packetHandler(_packet, _remoteEndPoint);
+                    connection.HandlePacket(_packet);
+                }
+                else
+                {
+                    Logger.WriteLine("An incoming UDP message was rejected based on its endpoint.");
                 }
             }
         }

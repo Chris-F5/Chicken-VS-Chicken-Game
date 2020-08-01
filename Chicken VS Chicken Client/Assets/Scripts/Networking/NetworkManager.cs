@@ -8,7 +8,15 @@ namespace GameClient
 {
     public class NetworkManager : MonoBehaviour
     {
+        const string remoteIp = "127.0.0.1";
+        const int remotePort = 25680;
+        const int localPort = 25681;
+
         public static NetworkManager instance;
+
+        readonly IPEndPoint remoteEndPoint;
+
+        private Connection connection;
 
         NetworkManager()
         {
@@ -23,12 +31,6 @@ namespace GameClient
 
             remoteEndPoint = new IPEndPoint(IPAddress.Parse(remoteIp), remotePort);
         }
-
-        private Connection connection;
-        const string remoteIp = "127.0.0.1";
-        const int remotePort = 25680;
-        const int localPort = 25681;
-        readonly IPEndPoint remoteEndPoint;
 
         public void ConnectToServer()
         {

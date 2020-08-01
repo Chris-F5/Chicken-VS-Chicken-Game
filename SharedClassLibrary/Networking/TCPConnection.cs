@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
+using SharedClassLibrary.Logging;
 
 namespace SharedClassLibrary.Networking
 {
@@ -14,16 +15,17 @@ namespace SharedClassLibrary.Networking
         private static TcpListener listener;
         private static Connection.NewConnectionHandler newConnectionHandler;
 
+        private readonly Connection connection;
+
         private TcpClient socket;
         private NetworkStream stream;
 
         private byte[] recieveBuffer;
         private Packet recievedData;
-        private Connection.PacketHandler packetHandler;
 
-        public TCPConnection(Connection.PacketHandler _packetHandler)
+        public TCPConnection(Connection _connection)
         {
-            packetHandler = _packetHandler;
+            connection = _connection;
         }
 
         public void Connect(IPAddress _remoteIp, int _remotePort)
@@ -72,7 +74,7 @@ namespace SharedClassLibrary.Networking
             }
             catch (Exception _ex)
             {
-                Console.WriteLine($"Error recieving TCP data: {_ex}");
+                Logger.WriteLine($"Error recieving TCP data: {_ex}");
                 //TODO: disconect client
             }
         }
@@ -92,7 +94,7 @@ namespace SharedClassLibrary.Networking
             }
             catch (Exception _ex)
             {
-                Console.WriteLine($"Error sending packet to player via TCP: {_ex}");
+                Logger.WriteLine($"Error sending packet to player via TCP: {_ex}");
                 //TODO: disconect client
             }
         }
@@ -116,9 +118,9 @@ namespace SharedClassLibrary.Networking
             while (_packetLength > 0 && _packetLength <= recievedData.UnreadLength())
             {
                 byte[] _packetBytes = recievedData.ReadBytes(_packetLength);
-                using (Packet _packet = new Packet(_packetBytes))
-                {
-                    packetHandler(_packet);
+
+                using (Packet _packet = new Packet(_packetBytes)) {
+                    connection.HandlePacket(_packet);
                 }
 
                 _packetLength = 0;
@@ -143,18 +145,20 @@ namespace SharedClassLibrary.Networking
 
         public static void StartListening(int _port, Connection.NewConnectionHandler _newConnectionHandler)
         {
-            newConnectionHandler = _newConnectionHandler; 
-            listener = new TcpListener(IPAddress.Any, _port);
-            listener.Start();
-            listener.BeginAcceptTcpClient(new AsyncCallback(ConnectCallback), null);
-            Console.WriteLine($"Started listening for TCP on port {_port}.");
+            newConnectionHandler = _newConnectionHandler;
+            if (!IsListening) {
+                listener = new TcpListener(IPAddress.Any, _port);
+                listener.Start();
+                listener.BeginAcceptTcpClient(new AsyncCallback(ConnectCallback), null);
+                Logger.WriteLine($"Started listening for TCP on port {_port}.");
+            }
         }
         public static void ConnectCallback(IAsyncResult _result)
         {
             TcpClient _client = listener.EndAcceptTcpClient(_result);
             listener.BeginAcceptTcpClient(new AsyncCallback(ConnectCallback), null);
 
-            Console.WriteLine($"Incoming TCP connection from {_client.Client.RemoteEndPoint}.");
+            Logger.WriteLine($"Incoming TCP connection from {_client.Client.RemoteEndPoint}.");
 
             newConnectionHandler(_client);
         }

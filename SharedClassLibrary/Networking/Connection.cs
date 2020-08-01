@@ -5,54 +5,44 @@ using System.Net.Sockets;
 
 namespace SharedClassLibrary.Networking
 {
-    public class Connection
+    public abstract class Connection
     {
-        public delegate void PacketHandler(Packet _packet);
         public delegate void NewConnectionHandler(TcpClient _client);
-        public delegate void UdpPacketHandler(Packet _packet, IPEndPoint _endpoint);
-
-        public static Connection[] connections;
+        public delegate Connection UdpSenderIdentifier(Packet _packet, IPEndPoint _ipEndPoint);
 
         public readonly IPEndPoint remoteEndPoint;
+        private readonly TCPConnection tcpConnection; 
 
-        private readonly TCPConnection tcpConnection;
-        private readonly PacketHandler tcpPacketHandler;
-
-        public Connection(IPAddress _remoteIp, int _remotePort, PacketHandler _tcpPacketHandler)
+        protected Connection(IPAddress _remoteIp, int _remotePort)
         {
             remoteEndPoint = new IPEndPoint(_remoteIp, _remotePort);
-            tcpPacketHandler = _tcpPacketHandler;
 
-            tcpConnection = new TCPConnection(new PacketHandler(HandleTcpPacket));
+            tcpConnection = new TCPConnection(this);
             tcpConnection.Connect(_remoteIp, _remotePort);
         }
 
-        public Connection(TcpClient _client, PacketHandler _tcpPacketHandler)
+        public Connection(TcpClient _client)
         {
             remoteEndPoint = (IPEndPoint)_client.Client.RemoteEndPoint;
-            tcpPacketHandler = _tcpPacketHandler;
 
-            tcpConnection = new TCPConnection(new PacketHandler(HandleTcpPacket));
+            tcpConnection = new TCPConnection(this);
             tcpConnection.AcceptConnection(_client);
         }
 
-        public void HandleTcpPacket(Packet _packet)
-        {
-            tcpPacketHandler(_packet);
-        }
+        public abstract void HandlePacket(Packet _packet);
 
-        public static void ListenForNewConnections(NewConnectionHandler _newConnectionHandler, int _localPort)
+        public static void ListenForNewConnections(int _localPort, NewConnectionHandler _newConnectionHandler)
         {
             if (!TCPConnection.IsListening)
             {
                 TCPConnection.StartListening(_localPort, _newConnectionHandler);
             }
         }
-        public static void ListenForUDP(int _localPort, UdpPacketHandler _udpPacketHandler)
+        public static void StartListeningForUDP(int _localPort, UdpSenderIdentifier _udpSenderIdentifier)
         {
             if (!UDP.IsListening)
             {
-                UDP.StartListening(_localPort, _udpPacketHandler);
+                UDP.StartListening(_localPort, _udpSenderIdentifier);
             }
         }
     }
