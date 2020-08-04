@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Net;
-using System;
+using SharedClassLibrary.Networking;
 
 namespace GameClient
 {
@@ -13,19 +11,21 @@ namespace GameClient
             byte _id = _packet.ReadByte();
             byte _myPing = _packet.ReadByte();
             ClientSend.PingRecieved(_id);
-            //Debug.Log($"Ping (measured in game ticks) : {_myPing}");
+            Debug.Log($"Ping (measured in game ticks) : {_myPing}");
         }
         public static void Welcome(Packet _packet)
         {
+            Debug.Log("test");
+            byte _myId = _packet.ReadByte();
+            Debug.Log($"test 2 {_myId}");
             string _msg = _packet.ReadString();
-            int _myId = _packet.ReadInt();
+            Debug.Log("test 3");
 
             Debug.Log($"Welcome message form server: {_msg}");
-            Client.instance.myId = _myId;
+
+            NetworkManager.instance.TcpConnectionConfirmed(_myId);
 
             ClientSend.WelcomeRecieved();
-
-            Client.instance.udp.Connect(((IPEndPoint)Client.instance.tcp.socket.Client.LocalEndPoint).Port);
         }
 
         public static void Synchronise(Packet _packet)

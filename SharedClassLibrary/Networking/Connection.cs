@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
+using SharedClassLibrary.Logging;
 
 namespace SharedClassLibrary.Networking
 {
@@ -11,25 +10,46 @@ namespace SharedClassLibrary.Networking
         public delegate Connection UdpSenderIdentifier(Packet _packet, IPEndPoint _ipEndPoint);
 
         public readonly IPEndPoint remoteEndPoint;
-        private readonly TCPConnection tcpConnection; 
+        private readonly TCPConnection tcpConnection;
+        private readonly UDPConnection udpConnection;
 
-        protected Connection(IPAddress _remoteIp, int _remotePort)
+        protected Connection(IPEndPoint _remoteEndPoint)
         {
-            remoteEndPoint = new IPEndPoint(_remoteIp, _remotePort);
+            remoteEndPoint = _remoteEndPoint;
 
-            tcpConnection = new TCPConnection(this);
-            tcpConnection.Connect(_remoteIp, _remotePort);
+            tcpConnection = new TCPConnection(this, remoteEndPoint);
+            udpConnection = new UDPConnection(this, remoteEndPoint);
         }
 
         public Connection(TcpClient _client)
         {
             remoteEndPoint = (IPEndPoint)_client.Client.RemoteEndPoint;
 
-            tcpConnection = new TCPConnection(this);
+            tcpConnection = new TCPConnection(this, remoteEndPoint);
             tcpConnection.AcceptConnection(_client);
         }
 
         public abstract void HandlePacket(Packet _packet);
+
+        public void ConnectTcp()
+        {
+            tcpConnection.Connect();
+        }
+
+        public void ConnectUdp(int _localPort)
+        {
+            udpConnection.Connect(_localPort);
+        }
+
+        public void SendUdp(Packet _packet)
+        {
+            UDPConnection.SendPacket(remoteEndPoint, _packet);
+        }
+
+        public void SendTcp(Packet _packet)
+        {
+            tcpConnection.SendPacket(_packet);
+        }
 
         public static void ListenForNewConnections(int _localPort, NewConnectionHandler _newConnectionHandler)
         {
@@ -40,10 +60,14 @@ namespace SharedClassLibrary.Networking
         }
         public static void StartListeningForUDP(int _localPort, UdpSenderIdentifier _udpSenderIdentifier)
         {
-            if (!UDP.IsListening)
+            if (!UDPConnection.IsListening)
             {
-                UDP.StartListening(_localPort, _udpSenderIdentifier);
+                UDPConnection.StartListening(_localPort, _udpSenderIdentifier);
             }
+        }
+        public static void SetDataBufferSize(int _dataBufferSize)
+        {
+            TCPConnection.dataBufferSize = _dataBufferSize;
         }
     }
 }

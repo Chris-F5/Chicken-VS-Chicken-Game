@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using SharedClassLibrary.Logging;
@@ -16,6 +14,7 @@ namespace SharedClassLibrary.Networking
         private static Connection.NewConnectionHandler newConnectionHandler;
 
         private readonly Connection connection;
+        private readonly IPEndPoint remoteIpEndPoint;
 
         private TcpClient socket;
         private NetworkStream stream;
@@ -23,13 +22,26 @@ namespace SharedClassLibrary.Networking
         private byte[] recieveBuffer;
         private Packet recievedData;
 
-        public TCPConnection(Connection _connection)
+        public TCPConnection(Connection _connection, IPEndPoint _remoteIpEndPoint)
         {
             connection = _connection;
+            remoteIpEndPoint = _remoteIpEndPoint;
         }
 
-        public void Connect(IPAddress _remoteIp, int _remotePort)
+        public void SendPacket(Packet _packet)
         {
+            if (_packet == null)
+            {
+                throw new ArgumentNullException("_packet can't be null.");
+            }
+            _packet.WriteLength();
+            stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), null, null);
+        }
+
+        public void Connect()
+        {
+            Logger.LogDebug("TCPConnection is connecting...");
+
             socket = new TcpClient
             {
                 ReceiveBufferSize = dataBufferSize,
@@ -37,7 +49,24 @@ namespace SharedClassLibrary.Networking
             };
 
             recieveBuffer = new byte[dataBufferSize];
-            socket.BeginConnect(_remoteIp, _remotePort, RecieveCallback, null);
+            socket.BeginConnect(remoteIpEndPoint.Address, remoteIpEndPoint.Port, ConnectCallback, null);
+        }
+        private void ConnectCallback(IAsyncResult _result)
+        {
+            Logger.LogDebug("Connect callback 1");
+            socket.EndConnect(_result);
+            Logger.LogDebug("Connect callback 2");
+            if (!socket.Connected)
+            {
+                Logger.LogDebug("Connect callback canceled");
+                return;
+            }
+
+            stream = socket.GetStream();
+
+            recievedData = new Packet();
+
+            stream.BeginRead(recieveBuffer, 0, dataBufferSize, RecieveCallback, null);
         }
         public void AcceptConnection(TcpClient _socket)
         {
@@ -54,48 +83,27 @@ namespace SharedClassLibrary.Networking
 
         private void RecieveCallback(IAsyncResult _result)
         {
-            try
+            Logger.LogDebug("Recieved TCP data.");
+            Logger.LogDebug("0");
+            // This line is waiting for a pending asynchronous read to complete.
+            int _byteLength = stream.EndRead(_result);
+            Logger.LogDebug("1");
+            if (_byteLength <= 0)
             {
-                int _byteLength = stream.EndRead(_result);
-                if (_byteLength <= 0)
-                {
-                    // TODO: disconect client
-                    return;
-                }
-                else
-                {
-                    byte[] _data = new byte[_byteLength];
-                    Array.Copy(recieveBuffer, _data, _byteLength);
-
-                    recievedData.Reset(HandleData(_data));
-
-                    stream.BeginRead(recieveBuffer, 0, dataBufferSize, RecieveCallback, null);
-                }
+                // TODO: disconect client
+                Logger.LogWarning("Byte length was smaller than or equal to zero.");
+                Logger.LogDebug("3");
+                return;
             }
-            catch (Exception _ex)
+            else
             {
-                Logger.WriteLine($"Error recieving TCP data: {_ex}");
-                //TODO: disconect client
-            }
-        }
+                Logger.LogDebug("2");
+                byte[] _data = new byte[_byteLength];
+                Array.Copy(recieveBuffer, _data, _byteLength);
 
-        public void Send(Packet _packet, bool _writeLength = true)
-        {
-            try
-            {
-                if (socket != null)
-                {
-                    if (_writeLength)
-                    {
-                        _packet.WriteLength();
-                    }
-                    stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), null, null);
-                }
-            }
-            catch (Exception _ex)
-            {
-                Logger.WriteLine($"Error sending packet to player via TCP: {_ex}");
-                //TODO: disconect client
+                recievedData.Reset(HandleData(_data));
+
+                stream.BeginRead(recieveBuffer, 0, dataBufferSize, RecieveCallback, null);
             }
         }
 
@@ -111,15 +119,21 @@ namespace SharedClassLibrary.Networking
                 _packetLength = recievedData.ReadInt();
                 if (_packetLength <= 0)
                 {
+                    Logger.LogWarning("Packet length was smaller than or equal to zero.");
                     return true;
                 }
             }
+
+            Logger.LogDebug($"Packet length: {_packetLength} / {recievedData.UnreadLength()}");
 
             while (_packetLength > 0 && _packetLength <= recievedData.UnreadLength())
             {
                 byte[] _packetBytes = recievedData.ReadBytes(_packetLength);
 
-                using (Packet _packet = new Packet(_packetBytes)) {
+                Logger.LogDebug("Recieved TCP packet.");
+
+                using (Packet _packet = new Packet(_packetBytes))
+                {
                     connection.HandlePacket(_packet);
                 }
 
@@ -146,19 +160,20 @@ namespace SharedClassLibrary.Networking
         public static void StartListening(int _port, Connection.NewConnectionHandler _newConnectionHandler)
         {
             newConnectionHandler = _newConnectionHandler;
-            if (!IsListening) {
+            if (!IsListening)
+            {
                 listener = new TcpListener(IPAddress.Any, _port);
                 listener.Start();
-                listener.BeginAcceptTcpClient(new AsyncCallback(ConnectCallback), null);
-                Logger.WriteLine($"Started listening for TCP on port {_port}.");
+                listener.BeginAcceptTcpClient(new AsyncCallback(NewConnectionCallback), null);
+                Logger.LogDebug($"Started listening for TCP on port {_port}.");
             }
         }
-        public static void ConnectCallback(IAsyncResult _result)
+        public static void NewConnectionCallback(IAsyncResult _result)
         {
             TcpClient _client = listener.EndAcceptTcpClient(_result);
-            listener.BeginAcceptTcpClient(new AsyncCallback(ConnectCallback), null);
+            listener.BeginAcceptTcpClient(new AsyncCallback(NewConnectionCallback), null);
 
-            Logger.WriteLine($"Incoming TCP connection from {_client.Client.RemoteEndPoint}.");
+            Logger.LogDebug($"Incoming TCP connection from {_client.Client.RemoteEndPoint}.");
 
             newConnectionHandler(_client);
         }

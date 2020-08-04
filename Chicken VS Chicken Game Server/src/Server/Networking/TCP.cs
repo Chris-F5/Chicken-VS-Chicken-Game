@@ -35,7 +35,6 @@ namespace GameServer
             recieveBuffer = new byte[dataBufferSize];
             stream.BeginRead(recieveBuffer, 0, dataBufferSize, RecieveCallback, null);
 
-
             client.Welcome();
         }
 

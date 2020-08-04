@@ -70,13 +70,13 @@
     <Compile Include="src\Server\Components\PlayerMovement.cs" />
     <Compile Include="src\Server\Components\PositionComponent.cs" />
     <Compile Include="src\Server\GameLogic.cs" />
+    <Compile Include="src\Server\Networking\Client.cs" />
     <Compile Include="src\Server\Networking\EventIds.cs" />
     <Compile Include="src\Server\NetworkObject.cs" />
     <Compile Include="src\Server\ObjectTemplate.cs" />
     <Compile Include="src\Server\ObjectTemplates\Player.cs" />
     <Compile Include="src\Server\ObjectTemplates\TestObject.cs" />
     <Compile Include="src\Server\ObjectTemplates\Wall.cs" />
-    <Compile Include="src\Server\Networking\Client.cs" />
     <Compile Include="src\Server\Networking\Packet.cs" />
     <Compile Include="src\Server\Networking\ServerManager.cs" />
     <Compile Include="src\Server\Networking\ServerHandle.cs" />

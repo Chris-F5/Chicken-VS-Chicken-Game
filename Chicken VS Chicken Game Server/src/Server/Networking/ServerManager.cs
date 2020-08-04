@@ -11,13 +11,13 @@ namespace GameServer
     static class ServerManager
     {
         public static int port { get; private set; }
-        public static int maxPlayers { get; private set; }
+        public static byte maxPlayers { get; private set; }
         public static Dictionary<int, Client> clients = new Dictionary<int, Client>();
         public delegate void PacketHandler(int _fromClient, Packet _packet);
 
         public static byte currentPingId = 255;
 
-        public static void StartServer(int _port, int _maxPlayers)
+        public static void StartServer(int _port, byte _maxPlayers)
         {
             port = _port;
             maxPlayers = _maxPlayers;
@@ -34,7 +34,7 @@ namespace GameServer
 
         private static void InitClientDict()
         {
-            for (int i = 1; i <= maxPlayers; i++)
+            for (byte i = 1; i <= maxPlayers; i++)
             {
                 clients.Add(i, new Client(i));
             }

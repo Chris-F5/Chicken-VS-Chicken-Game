@@ -1,19 +1,30 @@
-﻿using UnityEngine;
-using SharedClassLibrary.Networking;
-using SharedClassLibrary.Logging;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using System.Net;
+using SharedClassLibrary.Networking;
 
 namespace GameClient
 {
     public class NetworkManager : MonoBehaviour
     {
         const string remoteIp = "127.0.0.1";
-        const int remotePort = 25680;
-        const int localPort = 25681;
+        const int remotePort = 26950;
+        const int localPort = 26950;
+
+        public delegate void PacketHandler(Packet _packet);
 
         public static NetworkManager instance;
 
-        readonly IPEndPoint remoteEndPoint;
+        public static readonly Dictionary<byte, PacketHandler> packetHandlers = new Dictionary<byte, PacketHandler>()
+        {
+             { (byte)ServerPacketIds.ping, ClientHandle.RecievePing},
+             { (byte)ServerPacketIds.welcome, ClientHandle.Welcome },
+             { (byte)ServerPacketIds.synchronise, ClientHandle.Synchronise },
+        };
+
+        public byte  myId = 255;
+
+        private readonly IPEndPoint remoteEndPoint;
 
         private Connection connection;
 
@@ -31,25 +42,31 @@ namespace GameClient
             remoteEndPoint = new IPEndPoint(IPAddress.Parse(remoteIp), remotePort);
         }
 
+        public void SendTcp(Packet _packet)
+        {
+            connection.SendTcp(_packet);
+        }
+
+        public void SendUdp(Packet _packet)
+        {
+            connection.SendUdp(_packet);
+        }
+
+        public void TcpConnectionConfirmed(byte _assignedClientId)
+        {
+            Debug.Log("Listening For UDP");
+            myId = _assignedClientId;
+            connection.ConnectUdp(localPort);
+        }
+
         public void ConnectToServer()
         {
-            connection = new Connection(IPAddress.Parse(remoteIp), remotePort, new Connection.PacketHandler(HandlePacket));
-            Connection.ListenForUDP(localPort, new Connection.UdpPacketHandler(HandleUdpPacket));
-        }
-        private void HandleUdpPacket(Packet _packet, IPEndPoint _endPoint)
-        {
-            if (IPEndPoint.Equals(_endPoint, remoteEndPoint))
+            if (connection == null)
             {
-                HandlePacket(_packet);
+                connection = new ClientToServerConnection(remoteEndPoint);
+                Debug.Log($"Connecting to {remoteEndPoint}");
+                connection.ConnectTcp();
             }
-            else
-            {
-                Debug.LogWarning($"An unrecognised endpoint is sending UDP to port {localPort}.");
-            }
-        }
-        public void HandlePacket(Packet _packet)
-        {
-
         }
     }
 }

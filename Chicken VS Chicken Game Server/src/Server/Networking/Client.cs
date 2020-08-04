@@ -18,13 +18,13 @@ namespace GameServer
             { (int) ClientPackets.buttonUp, ServerHandle.ButtonUp},
         };
 
-        public readonly int id;
+        public readonly byte id;
         public readonly TCP tcp;
         public readonly UDP udp;
         public PlayerController playerController;
         public byte ping;
 
-        public Client(int _id)
+        public Client(byte _id)
         {
             id = _id;
             tcp = new TCP(this);
@@ -79,8 +79,8 @@ namespace GameServer
             Console.WriteLine($"Sending welcome packet to client id: {id}");
             using (Packet _packet = new Packet(ServerPackets.welcome))
             {
+                _packet.WriteByte(id);
                 _packet.WriteString("Welcome to the server");
-                _packet.WriteInt(id);
 
                 tcp.Send(_packet);
             }

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 using SharedClassLibrary;
 
@@ -14,12 +12,9 @@ namespace GameClient
         GameObject startMenu;
         [SerializeField]
         public TMP_InputField usernameField;
-        [SerializeField]
-        private Client client;
 
         private void Awake()
         {
-            Debug.Log(Constants.GLOBAL_GRAVITY_SCALE);
             if (instance == null)
             {
                 instance = this;
@@ -35,7 +30,7 @@ namespace GameClient
         {
             startMenu.SetActive(false);
             usernameField.interactable = false;
-            client.ConnectToServer();
+            NetworkManager.instance.ConnectToServer();
         }
     }
 }

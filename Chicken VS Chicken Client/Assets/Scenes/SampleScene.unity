@@ -231,7 +231,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startMenu: {fileID: 130689326}
   usernameField: {fileID: 1081647388}
-  client: {fileID: 1296559446}
 --- !u!114 &155521450
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -949,10 +948,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1296559447}
-  - component: {fileID: 1296559446}
   - component: {fileID: 1296559448}
   - component: {fileID: 1296559449}
   - component: {fileID: 1296559450}
+  - component: {fileID: 1296559451}
+  - component: {fileID: 1296559446}
   m_Layer: 0
   m_Name: ClientManager
   m_TagString: Untagged
@@ -969,12 +969,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1296559445}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04e61d636bb307747ab56851ab9faec4, type: 3}
+  m_Script: {fileID: 11500000, guid: 1ebb61cd372e1c648a59076cdfc98b41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myId: 0
-  serverIp: 127.0.0.1
-  serverPort: 26950
 --- !u!4 &1296559447
 Transform:
   m_ObjectHideFlags: 0
@@ -1033,6 +1030,19 @@ MonoBehaviour:
   down: 274
   left: 276
   right: 275
+--- !u!114 &1296559451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1296559445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d48bd04f32e7ca45ada859068f6fd82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myId: 255
 --- !u!1 &1690971998
 GameObject:
   m_ObjectHideFlags: 0

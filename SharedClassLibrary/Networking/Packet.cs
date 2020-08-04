@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using SharedClassLibrary.Logging;
 
 namespace SharedClassLibrary.Networking
 {
     /// <summary>Sent from server to client.</summary>
-    public enum ServerPackets
+    public enum ServerPacketIds
     {
         ping,
         welcome,
@@ -13,7 +14,7 @@ namespace SharedClassLibrary.Networking
     }
 
     /// <summary>Sent from client to server.</summary>
-    public enum ClientPackets
+    public enum ClientPacketIds
     {
         pingRespond,
         welcomeReceived,
@@ -40,7 +41,7 @@ namespace SharedClassLibrary.Networking
 
         /// <summary>Creates a new packet with a given ID. Used for sending.</summary>
         /// <param name="_id">The packet ID.</param>
-        public Packet(ServerPackets _id)
+        public Packet(byte _id)
         {
             buffer = new List<byte>();
             readPos = 0;
@@ -335,16 +336,22 @@ namespace SharedClassLibrary.Networking
         /// <param name="_moveReadPos">Whether or not to move the buffer's read position.</param>
         public string ReadString(bool _moveReadPos = true)
         {
+            Logger.LogDebug("Reading String");
             try
             {
+                Logger.LogDebug("Reading String 1");
                 // Get the length of the string
                 int _length = ReadInt();
+                Logger.LogDebug("Reading String 2");
+                // TODO: Sometimes the program just waits on the following line if something is wrong with the string. This could made dos attacks very easy.
                 string _value = Encoding.ASCII.GetString(readableBuffer, readPos, _length);
+                Logger.LogDebug("Reading String 3");
                 if (_moveReadPos && _value.Length > 0)
                 {
                     // If _moveReadPos is true string is not empty
                     readPos += _length;
                 }
+                Logger.LogDebug("Reading String 4");
                 return _value;
             }
             catch

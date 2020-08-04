@@ -6,12 +6,12 @@ namespace SharedClassLibrary.Networking
 {
     public class TestConnection : Connection
     {
-        TestConnection(IPAddress _remoteIp, int _remotePort) : base(_remoteIp, _remotePort) { }
-        TestConnection(TcpClient _client) : base(_client) { }
+        public TestConnection(IPEndPoint _remoteEndPoint) : base(_remoteEndPoint) { }
+        public TestConnection(TcpClient _client) : base(_client) { }
 
         public override void HandlePacket(Packet _packet)
         {
-            Logger.WriteLine(_packet.ToString());
+            Logger.LogDebug(_packet.ToString());
         }
     }
 }
