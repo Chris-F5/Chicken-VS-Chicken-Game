@@ -12,7 +12,7 @@ namespace GameServer
 
         static void Main()
         {
-            ServerManager.StartServer(26950, 5);
+            ServerManager.StartServer(25680, 5);
 
             StartFormThread();
             StartGameThread();

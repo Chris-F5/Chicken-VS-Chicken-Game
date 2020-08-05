@@ -79,7 +79,7 @@ namespace GameServer
                 {
                     using (Packet _packet = new Packet(_data))
                     {
-                        int _claimedClientId = _packet.ReadInt();
+                        byte _claimedClientId = _packet.ReadByte();
 
                         if (_claimedClientId <= 0 || _claimedClientId > ServerManager.maxPlayers)
                         {

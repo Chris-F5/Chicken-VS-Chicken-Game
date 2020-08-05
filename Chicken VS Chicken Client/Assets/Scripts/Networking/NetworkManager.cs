@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Net;
+using System.Net.Sockets;
 using SharedClassLibrary.Networking;
 
 namespace GameClient
@@ -8,8 +9,8 @@ namespace GameClient
     public class NetworkManager : MonoBehaviour
     {
         const string remoteIp = "127.0.0.1";
-        const int remotePort = 26950;
-        const int localPort = 26950;
+        const int remotePort = 25680;
+        const int localPort = 25681;
 
         public delegate void PacketHandler(Packet _packet);
 
@@ -22,11 +23,9 @@ namespace GameClient
              { (byte)ServerPacketIds.synchronise, ClientHandle.Synchronise },
         };
 
-        public byte  myId = 255;
+        public byte myId = 255;
 
         private readonly IPEndPoint remoteEndPoint;
-
-        private Connection connection;
 
         NetworkManager()
         {
@@ -42,31 +41,25 @@ namespace GameClient
             remoteEndPoint = new IPEndPoint(IPAddress.Parse(remoteIp), remotePort);
         }
 
-        public void SendTcp(Packet _packet)
-        {
-            connection.SendTcp(_packet);
-        }
-
-        public void SendUdp(Packet _packet)
-        {
-            connection.SendUdp(_packet);
-        }
-
         public void TcpConnectionConfirmed(byte _assignedClientId)
         {
-            Debug.Log("Listening For UDP");
+            Debug.Log("test 1");
             myId = _assignedClientId;
-            connection.ConnectUdp(localPort);
+            UDPConnection.Connect(localPort, remoteEndPoint);
         }
 
         public void ConnectToServer()
         {
-            if (connection == null)
-            {
-                connection = new ClientToServerConnection(remoteEndPoint);
-                Debug.Log($"Connecting to {remoteEndPoint}");
-                connection.ConnectTcp();
-            }
+            TCPConnection.Connect(remoteEndPoint);
+        }
+
+        public void HandlePacket(Packet _packet)
+        {
+            byte _typeId = _packet.ReadByte();
+
+            Debug.Log($"Handling Packet id: {_typeId}");
+
+            packetHandlers[_typeId](_packet);
         }
     }
 }

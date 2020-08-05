@@ -89,6 +89,10 @@ namespace SharedClassLibrary.Networking
                 buffer.InsertRange(0, BitConverter.GetBytes(_value));
             }
         }
+        public void InsertByte(byte _value)
+        {
+            buffer.Insert(0, _value);
+        }
 
         /// <summary>Gets the packet's content in array form.</summary>
         public byte[] ToArray()
@@ -336,22 +340,17 @@ namespace SharedClassLibrary.Networking
         /// <param name="_moveReadPos">Whether or not to move the buffer's read position.</param>
         public string ReadString(bool _moveReadPos = true)
         {
-            Logger.LogDebug("Reading String");
             try
             {
-                Logger.LogDebug("Reading String 1");
                 // Get the length of the string
                 int _length = ReadInt();
-                Logger.LogDebug("Reading String 2");
-                // TODO: Sometimes the program just waits on the following line if something is wrong with the string. This could made dos attacks very easy.
+                // TODO: Handle errors that are sometimes thrown on the following line. (idk null charachters or something)
                 string _value = Encoding.ASCII.GetString(readableBuffer, readPos, _length);
-                Logger.LogDebug("Reading String 3");
                 if (_moveReadPos && _value.Length > 0)
                 {
                     // If _moveReadPos is true string is not empty
                     readPos += _length;
                 }
-                Logger.LogDebug("Reading String 4");
                 return _value;
             }
             catch

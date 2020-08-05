@@ -11,7 +11,7 @@ namespace GameClient
             {
                 _packet.WriteByte(_id);
 
-                NetworkManager.instance.SendUdp(_packet);
+                UDPConnection.SendPacket(_packet);
             }
         }
 
@@ -22,7 +22,7 @@ namespace GameClient
                 _packet.WriteInt(NetworkManager.instance.myId);
                 _packet.WriteString(UIManager.instance.usernameField.text);
 
-                NetworkManager.instance.SendTcp(_packet);
+                TCPConnection.SendPacket(_packet);
             }
         }
 
@@ -31,7 +31,7 @@ namespace GameClient
             using (Packet _packet = new Packet((byte)ClientPacketIds.udpTestRecieve))
             {
                 _packet.WriteString("Recieved the udp test");
-                NetworkManager.instance.SendUdp(_packet);
+                UDPConnection.SendPacket(_packet);
             }
         }
 
@@ -40,7 +40,7 @@ namespace GameClient
             using (Packet _packet = new Packet((byte)ClientPacketIds.buttonDown))
             {
                 _packet.WriteByte((byte)_btn);
-                NetworkManager.instance.SendUdp(_packet);
+                UDPConnection.SendPacket(_packet);
             }
         }
 
@@ -49,7 +49,7 @@ namespace GameClient
             using (Packet _packet = new Packet((byte)ClientPacketIds.buttonUp))
             {
                 _packet.WriteByte((byte)_btn);
-                NetworkManager.instance.SendUdp(_packet);
+                UDPConnection.SendPacket(_packet);
             }
         }
     }

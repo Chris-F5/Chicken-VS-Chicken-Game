@@ -15,11 +15,8 @@ namespace GameClient
         }
         public static void Welcome(Packet _packet)
         {
-            Debug.Log("test");
             byte _myId = _packet.ReadByte();
-            Debug.Log($"test 2 {_myId}");
             string _msg = _packet.ReadString();
-            Debug.Log("test 3");
 
             Debug.Log($"Welcome message form server: {_msg}");
 

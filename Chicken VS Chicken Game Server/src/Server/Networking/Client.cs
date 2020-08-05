@@ -70,7 +70,7 @@ namespace GameServer
         public void HandlePacket(Packet _packet)
         {
             // TODO: change client packet id type to byte
-            int _packetId = _packet.ReadInt();
+            byte _packetId = _packet.ReadByte();
             packetHandlers[_packetId](this, _packet);
         }
 
