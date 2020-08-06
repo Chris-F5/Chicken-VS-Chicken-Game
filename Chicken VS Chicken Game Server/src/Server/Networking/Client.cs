@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
+using SharedClassLibrary.Networking;
 
 namespace GameServer
 {
     class Client
     {
         private delegate void PacketHandler(Client _fromClient, Packet _packet);
-        private static Dictionary<int, PacketHandler> packetHandlers = new Dictionary<int, PacketHandler>()
+        private static Dictionary<byte, PacketHandler> packetHandlers = new Dictionary<byte, PacketHandler>()
         {
-            { (int) ClientPackets.pingRespond, ServerHandle.PingRespond},
-            { (int) ClientPackets.welcomeReceived, ServerHandle.WelcomeRecieved},
-            { (int) ClientPackets.udpTestRecieve, ServerHandle.UDPTestRecieved},
-            { (int) ClientPackets.buttonDown, ServerHandle.ButtonDown},
-            { (int) ClientPackets.buttonUp, ServerHandle.ButtonUp},
+            { (byte) ClientPacketIds.pingRespond, ServerHandle.PingRespond},
+            { (byte) ClientPacketIds.welcomeReceived, ServerHandle.WelcomeRecieved},
+            { (byte) ClientPacketIds.udpTestRecieve, ServerHandle.UDPTestRecieved},
+            { (byte) ClientPacketIds.buttonDown, ServerHandle.ButtonDown},
+            { (byte) ClientPacketIds.buttonUp, ServerHandle.ButtonUp},
         };
 
         public readonly byte id;
@@ -59,7 +60,7 @@ namespace GameServer
 
         private void SendPing(byte _id)
         {
-            using (Packet _packet = new Packet(ServerPackets.ping))
+            using (Packet _packet = new Packet((byte)ServerPacketIds.ping))
             {
                 _packet.WriteByte(_id);
                 _packet.WriteByte(ping);
@@ -77,7 +78,7 @@ namespace GameServer
         public void Welcome()
         {
             Console.WriteLine($"Sending welcome packet to client id: {id}");
-            using (Packet _packet = new Packet(ServerPackets.welcome))
+            using (Packet _packet = new Packet((byte)ServerPacketIds.welcome))
             {
                 _packet.WriteByte(id);
                 _packet.WriteString("Welcome to the server");

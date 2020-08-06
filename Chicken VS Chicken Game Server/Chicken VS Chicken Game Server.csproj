@@ -77,7 +77,6 @@
     <Compile Include="src\Server\ObjectTemplates\Player.cs" />
     <Compile Include="src\Server\ObjectTemplates\TestObject.cs" />
     <Compile Include="src\Server\ObjectTemplates\Wall.cs" />
-    <Compile Include="src\Server\Networking\Packet.cs" />
     <Compile Include="src\Server\Networking\ServerManager.cs" />
     <Compile Include="src\Server\Networking\ServerHandle.cs" />
     <Compile Include="src\Server\Networking\TCP.cs" />

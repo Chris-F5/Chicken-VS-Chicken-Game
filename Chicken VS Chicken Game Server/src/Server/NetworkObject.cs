@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SharedClassLibrary.Networking;
 
 namespace GameServer
 {
@@ -159,7 +157,7 @@ namespace GameServer
 
         public static Packet GenerateSynchronisationPacket()
         {
-            Packet _packet = new Packet(ServerPackets.synchronise);
+            Packet _packet = new Packet((byte)ServerPacketIds.synchronise);
             for (int i = 0; i < allNetworkObjects.Count; i++)
             {
                 _packet.WriteShort(allNetworkObjects[i].objectId);
@@ -170,7 +168,7 @@ namespace GameServer
         }
         public static Packet GenerateStartupPacket()
         {
-            Packet _packet = new Packet(ServerPackets.synchronise);
+            Packet _packet = new Packet((byte)ServerPacketIds.synchronise);
             for (int i = 0; i < allNetworkObjects.Count; i++)
             {
                 _packet.WriteShort(allNetworkObjects[i].objectId);

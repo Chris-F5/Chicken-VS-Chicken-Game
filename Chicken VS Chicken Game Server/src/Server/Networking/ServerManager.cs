@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Net;
-using System.Net.Sockets;
-using System.Windows.Forms;
-using System.Net.NetworkInformation;
+using SharedClassLibrary.Networking;
 
 namespace GameServer
 {
