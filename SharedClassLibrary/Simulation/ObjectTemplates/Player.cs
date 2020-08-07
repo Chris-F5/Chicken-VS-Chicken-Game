@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SharedClassLibrary.Networking;
+using SharedClassLibrary.Simulation.Components;
 
-namespace GameServer
+namespace SharedClassLibrary.Simulation.ObjectTemplates
 {
     sealed class Player : ObjectTemplate
     {
         readonly Vector2 position;
         readonly PlayerController controller;
-        public Player(PlayerController _controller, Vector2 _position) : base(NetworkObjectType.player)
+        public Player(PlayerController _controller, Vector2 _position) : base(NetworkObjectTemplateIds.player)
         {
             if (_position == null)
                 throw new ArgumentNullException("_position is null");

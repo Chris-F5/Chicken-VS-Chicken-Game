@@ -1,7 +1,7 @@
 ﻿using System;
 using SharedClassLibrary.Networking;
 
-namespace GameServer
+namespace SharedClassLibrary.Simulation.Components
 {
     class RectCollider : Collider
     {

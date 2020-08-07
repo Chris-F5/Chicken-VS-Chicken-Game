@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using SharedClassLibrary.Networking;
 
-namespace GameServer
+namespace SharedClassLibrary.Simulation
 {
     abstract class Component
     {

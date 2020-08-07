@@ -1,7 +1,6 @@
-﻿using System;
-using SharedClassLibrary.Networking;
+﻿using SharedClassLibrary.Networking;
 
-namespace GameServer
+namespace SharedClassLibrary.Simulation.Components
 {
     class PositionComponent : Component
     {

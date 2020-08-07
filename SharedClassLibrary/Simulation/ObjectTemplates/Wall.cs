@@ -1,17 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SharedClassLibrary.Networking;
+using SharedClassLibrary.Simulation.Components;
 
-namespace GameServer
+namespace SharedClassLibrary.Simulation.ObjectTemplates
 {
     sealed class Wall : ObjectTemplate
     {
         private readonly Vector2 size;
         private readonly Vector2 position;
-        public Wall(Vector2 _position, Vector2 _size) : base(NetworkObjectType.wall)
+        public Wall(Vector2 _position, Vector2 _size) : base(NetworkObjectTemplateIds.wall)
         {
+            if (_position == null)
+                throw new ArgumentNullException("_position is null.");
+            if (_size == null)
+                throw new ArgumentNullException("_size is null.");
+
             position = _position;
             size = _size;
         }

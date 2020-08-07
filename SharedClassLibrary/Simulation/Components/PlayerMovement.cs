@@ -1,8 +1,7 @@
 ﻿using System;
-using SharedClassLibrary;
 using SharedClassLibrary.Networking;
 
-namespace GameServer
+namespace SharedClassLibrary.Simulation.Components
 {
     class PlayerMovement : Component
     {

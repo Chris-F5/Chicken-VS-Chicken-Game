@@ -2,14 +2,8 @@
 using System.Collections.Generic;
 using SharedClassLibrary.Networking;
 
-namespace GameServer
+namespace SharedClassLibrary.Simulation
 {
-    enum NetworkObjectType
-    {
-        player,
-        wall,
-        testObject
-    }
     sealed class NetworkObject
     {
         private static List<NetworkObject> allNetworkObjects = new List<NetworkObject>();

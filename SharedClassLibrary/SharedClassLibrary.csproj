@@ -4,6 +4,12 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Simulation\ObjectTemplates\items\**" />
+    <EmbeddedResource Remove="Simulation\ObjectTemplates\items\**" />
+    <None Remove="Simulation\ObjectTemplates\items\**" />
+  </ItemGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="xcopy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)Chicken VS Chicken Client\Assets\Scripts\&quot;&#xD;&#xA;xcopy /Y &quot;$(OutDir)SharedClassLibrary.pdb&quot; &quot;$(SolutionDir)Chicken VS Chicken Client\Assets\Scripts\&quot;" />
   </Target>

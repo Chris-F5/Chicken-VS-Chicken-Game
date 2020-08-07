@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace GameServer
+namespace SharedClassLibrary.Simulation
 {
     public struct Vector2
     {

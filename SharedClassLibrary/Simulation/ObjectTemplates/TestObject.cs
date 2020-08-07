@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using SharedClassLibrary.Networking;
+using SharedClassLibrary.Simulation.Components;
 
-namespace GameServer
+namespace SharedClassLibrary.Simulation.ObjectTemplates
 {
     sealed class TestObject : ObjectTemplate
     {
         readonly Vector2 position;
-        public TestObject(Vector2 _position) : base(NetworkObjectType.testObject)
+        public TestObject(Vector2 _position) : base(NetworkObjectTemplateIds.testObject)
         {
             if (_position == null)
                 throw new ArgumentNullException("_position is null.");

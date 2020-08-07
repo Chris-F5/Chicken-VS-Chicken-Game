@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SharedClassLibrary.Networking;
 
-namespace GameServer
+namespace SharedClassLibrary.Simulation
 {
     abstract class ObjectTemplate
     {
         public readonly short typeId;
-        public ObjectTemplate(NetworkObjectType _typeId)
+        public ObjectTemplate(NetworkObjectTemplateIds _typeId)
         {
             typeId = (short)_typeId;
         }

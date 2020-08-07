@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SharedClassLibrary.Simulation.ObjectTemplates;
 
-namespace GameServer
+namespace SharedClassLibrary.Simulation
 {
     enum KeyButton
     {
@@ -14,7 +10,7 @@ namespace GameServer
         right
     }
 
-    class PlayerController
+    public class PlayerController
     {
         public bool rightKey = false;
         public bool leftKey = false;

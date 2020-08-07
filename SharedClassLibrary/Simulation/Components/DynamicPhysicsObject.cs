@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SharedClassLibrary;
-using SharedClassLibrary.Networking;
+﻿using SharedClassLibrary.Networking;
 
-namespace GameServer
+namespace SharedClassLibrary.Simulation.Components
 {
     class DynamicPhysicsBehaviour : Component
     {
