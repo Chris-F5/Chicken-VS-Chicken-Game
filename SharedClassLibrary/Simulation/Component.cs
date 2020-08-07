@@ -4,7 +4,7 @@ using SharedClassLibrary.Networking;
 
 namespace SharedClassLibrary.Simulation
 {
-    abstract class Component
+    public abstract class Component
     {
         protected readonly NetworkObject networkObject;
 

@@ -4,24 +4,6 @@ using System.Text;
 
 namespace SharedClassLibrary.Networking
 {
-    /// <summary>Sent from server to client.</summary>
-    public enum ServerPacketIds
-    {
-        ping,
-        welcome,
-        synchronise,
-    }
-
-    /// <summary>Sent from client to server.</summary>
-    public enum ClientPacketIds
-    {
-        pingRespond,
-        welcomeReceived,
-        udpTestRecieve,
-        buttonDown,
-        buttonUp
-    }
-
     public class Packet : IDisposable
     {
         private List<byte> buffer;

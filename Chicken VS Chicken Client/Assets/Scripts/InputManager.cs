@@ -1,36 +1,28 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using SharedClassLibrary.Networking;
 
 namespace GameClient
 {
-    public enum KeyButton
-    {
-        up = 1,
-        down,
-        left,
-        right
-    }
-
     public class InputManager : MonoBehaviour
     {
         [SerializeField]
         KeyCode up, down, left, right;
-        private Dictionary<KeyButton, KeyCode> keys;
+        private Dictionary<ClientInputIds, KeyCode> keys;
         private void Awake()
         {
-            keys = new Dictionary<KeyButton, KeyCode>()
+            keys = new Dictionary<ClientInputIds, KeyCode>()
         {
-            { KeyButton.up, up },
-            { KeyButton.down, down },
-            { KeyButton.left, left },
-            { KeyButton.right, right }
+            { ClientInputIds.up, up },
+            { ClientInputIds.down, down },
+            { ClientInputIds.left, left },
+            { ClientInputIds.right, right }
         };
         }
 
         void Update()
         {
-            foreach (KeyValuePair<KeyButton, KeyCode> _key in keys)
+            foreach (KeyValuePair<ClientInputIds, KeyCode> _key in keys)
             {
                 if (Input.GetKeyDown(_key.Value))
                 {

@@ -2,7 +2,7 @@
 
 namespace SharedClassLibrary.Simulation.Components
 {
-    class DynamicPhysicsBehaviour : Component
+    public class DynamicPhysicsBehaviour : Component
     {
         private Vector2 velocity;
         public float gravityScale { get; private set; }

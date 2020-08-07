@@ -2,7 +2,7 @@
 
 namespace SharedClassLibrary.Simulation.Components
 {
-    class KenimaticCollider : Component
+    public class KenimaticCollider : Component
     {
         public static List<NetworkObject> allKenimaticColliders = new List<NetworkObject>();
         public readonly Collider[] colliders;

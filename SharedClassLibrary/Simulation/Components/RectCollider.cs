@@ -3,7 +3,7 @@ using SharedClassLibrary.Networking;
 
 namespace SharedClassLibrary.Simulation.Components
 {
-    class RectCollider : Collider
+    public class RectCollider : Collider
     {
 
         private Vector2 size;

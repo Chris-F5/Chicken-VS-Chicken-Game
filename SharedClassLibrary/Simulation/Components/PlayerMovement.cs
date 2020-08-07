@@ -3,7 +3,7 @@ using SharedClassLibrary.Networking;
 
 namespace SharedClassLibrary.Simulation.Components
 {
-    class PlayerMovement : Component
+    public class PlayerMovement : Component
     {
         public float acceleration;
         public float jumpForce;

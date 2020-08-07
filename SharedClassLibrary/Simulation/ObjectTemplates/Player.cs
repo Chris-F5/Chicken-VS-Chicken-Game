@@ -4,7 +4,7 @@ using SharedClassLibrary.Simulation.Components;
 
 namespace SharedClassLibrary.Simulation.ObjectTemplates
 {
-    sealed class Player : ObjectTemplate
+    public sealed class Player : ObjectTemplate
     {
         readonly Vector2 position;
         readonly PlayerController controller;

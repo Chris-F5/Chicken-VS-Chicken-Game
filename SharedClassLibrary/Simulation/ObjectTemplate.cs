@@ -2,10 +2,10 @@
 
 namespace SharedClassLibrary.Simulation
 {
-    abstract class ObjectTemplate
+    public abstract class ObjectTemplate
     {
         public readonly short typeId;
-        public ObjectTemplate(NetworkObjectTemplateIds _typeId)
+        protected ObjectTemplate(NetworkObjectTemplateIds _typeId)
         {
             typeId = (short)_typeId;
         }

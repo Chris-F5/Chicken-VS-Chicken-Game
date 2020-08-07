@@ -1,6 +1,6 @@
 ﻿namespace SharedClassLibrary.Networking
 {
-    static class EventIds
+    internal static class EventIds
     {
         public const byte EventEnd = 0;
         public const byte ObjectCreated = 1;

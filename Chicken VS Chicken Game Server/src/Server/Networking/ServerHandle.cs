@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using SharedClassLibrary.Networking;
 
 namespace GameServer
@@ -32,15 +31,15 @@ namespace GameServer
         public static void ButtonDown(Client _fromClient, Packet _packet)
         {
             byte _key = _packet.ReadByte();
-            if (_key == (byte)KeyButton.right)
+            if (_key == (byte)ClientInputIds.right)
             {
                 _fromClient.playerController.rightKey = true;
             }
-            else if (_key == (byte)KeyButton.left)
+            else if (_key == (byte)ClientInputIds.left)
             {
                 _fromClient.playerController.leftKey = true;
             }
-            else if (_key == (byte)KeyButton.up)
+            else if (_key == (byte)ClientInputIds.up)
             {
                 _fromClient.playerController.upKey = true;
             }
@@ -49,15 +48,15 @@ namespace GameServer
         public static void ButtonUp(Client _fromClient, Packet _packet)
         {
             byte _key = _packet.ReadByte();
-            if (_key == (byte)KeyButton.right)
+            if (_key == (byte)ClientInputIds.right)
             {
                 _fromClient.playerController.rightKey = false;
             }
-            else if (_key == (byte)KeyButton.left)
+            else if (_key == (byte)ClientInputIds.left)
             {
                 _fromClient.playerController.leftKey = false;
             }
-            else if (_key == (byte)KeyButton.up)
+            else if (_key == (byte)ClientInputIds.up)
             {
                 _fromClient.playerController.upKey = false;
             }

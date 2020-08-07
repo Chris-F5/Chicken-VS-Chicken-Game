@@ -35,7 +35,7 @@ namespace GameClient
             }
         }
 
-        public static void ButtonDown(KeyButton _btn)
+        public static void ButtonDown(ClientInputIds _btn)
         {
             using (Packet _packet = new Packet((byte)ClientPacketIds.buttonDown))
             {
@@ -44,7 +44,7 @@ namespace GameClient
             }
         }
 
-        public static void ButtonUp(KeyButton _btn)
+        public static void ButtonUp(ClientInputIds _btn)
         {
             using (Packet _packet = new Packet((byte)ClientPacketIds.buttonUp))
             {

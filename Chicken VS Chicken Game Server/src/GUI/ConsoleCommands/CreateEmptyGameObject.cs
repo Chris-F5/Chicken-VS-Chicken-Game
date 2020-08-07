@@ -1,4 +1,6 @@
 ﻿using System;
+using SharedClassLibrary.Simulation;
+using SharedClassLibrary.Simulation.ObjectTemplates;
 
 namespace GameServer.GUI.ConsoleCommands
 {

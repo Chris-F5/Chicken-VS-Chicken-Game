@@ -4,7 +4,7 @@ using SharedClassLibrary.Simulation.Components;
 
 namespace SharedClassLibrary.Simulation.ObjectTemplates
 {
-    sealed class Wall : ObjectTemplate
+    public sealed class Wall : ObjectTemplate
     {
         private readonly Vector2 size;
         private readonly Vector2 position;

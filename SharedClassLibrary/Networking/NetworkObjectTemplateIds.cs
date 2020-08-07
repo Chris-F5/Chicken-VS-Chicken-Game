@@ -1,6 +1,6 @@
 ﻿namespace SharedClassLibrary.Networking
 {
-    enum NetworkObjectTemplateIds
+    public enum NetworkObjectTemplateIds
     {
         player,
         wall,

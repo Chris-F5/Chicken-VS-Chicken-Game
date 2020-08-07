@@ -4,7 +4,7 @@ using SharedClassLibrary.Networking;
 
 namespace SharedClassLibrary.Simulation
 {
-    sealed class NetworkObject
+    public sealed class NetworkObject
     {
         private static List<NetworkObject> allNetworkObjects = new List<NetworkObject>();
 
@@ -13,7 +13,7 @@ namespace SharedClassLibrary.Simulation
 
         private readonly Component[] components;
 
-        public NetworkObject(ObjectTemplate _template)
+        internal NetworkObject(ObjectTemplate _template)
         {
             objectTypeId = _template.typeId;
             _template.AddComponentsToArray(this, ref components);
@@ -63,7 +63,7 @@ namespace SharedClassLibrary.Simulation
             }
         }
 
-        public void AddComponentEventsToPacket(Packet _packet)
+        internal void AddComponentEventsToPacket(Packet _packet)
         {
             for (byte i = 0; i < components.Length; i++)
             {

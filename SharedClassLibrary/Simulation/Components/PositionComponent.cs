@@ -2,7 +2,7 @@
 
 namespace SharedClassLibrary.Simulation.Components
 {
-    class PositionComponent : Component
+    public class PositionComponent : Component
     {
         public Vector2 position;
         private Vector2 lastUpdatePosition;

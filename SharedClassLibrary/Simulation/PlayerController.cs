@@ -2,14 +2,6 @@
 
 namespace SharedClassLibrary.Simulation
 {
-    enum KeyButton
-    {
-        up = 1,
-        down,
-        left,
-        right
-    }
-
     public class PlayerController
     {
         public bool rightKey = false;

@@ -4,7 +4,7 @@ using SharedClassLibrary.Simulation.Components;
 
 namespace SharedClassLibrary.Simulation.ObjectTemplates
 {
-    sealed class TestObject : ObjectTemplate
+    public sealed class TestObject : ObjectTemplate
     {
         readonly Vector2 position;
         public TestObject(Vector2 _position) : base(NetworkObjectTemplateIds.testObject)

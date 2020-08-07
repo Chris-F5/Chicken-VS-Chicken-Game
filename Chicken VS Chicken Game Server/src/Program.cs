@@ -2,6 +2,8 @@
 using System.Windows.Forms;
 using System.Threading;
 using SharedClassLibrary;
+using SharedClassLibrary.Simulation;
+using SharedClassLibrary.Simulation.ObjectTemplates;
 
 namespace GameServer
 {
