@@ -4,11 +4,11 @@ using SharedClassLibrary.Simulation.ObjectTemplates;
 
 namespace GameServer.GUI.ConsoleCommands
 {
-    class CreateEmptyGameObject : BaseConsoleCommand
+    class CreateTestNetworkObject : BaseConsoleCommand
     {
-        public CreateEmptyGameObject()
+        public CreateTestNetworkObject()
         {
-            commandWord = "create_teste_object";
+            commandWord = "create_test_object";
             description = "Creates a new test object.";
             peramDescription = "(float x_position, float y_position)";
         }

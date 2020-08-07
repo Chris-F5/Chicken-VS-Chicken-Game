@@ -49,40 +49,40 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\GUI\BaseConsoleCommand.cs" />
-    <Compile Include="src\GUI\ConsoleCommands\Commands.cs" />
-    <Compile Include="src\GUI\ConsoleCommands\CreateEmptyGameObject.cs" />
-    <Compile Include="src\GUI\ConsoleCommands\GetGameTick.cs" />
-    <Compile Include="src\GUI\Form1.cs">
+    <Compile Include="GUI\BaseConsoleCommand.cs" />
+    <Compile Include="GUI\ConsoleCommands\Commands.cs" />
+    <Compile Include="GUI\ConsoleCommands\CreateTestNetworkObject.cs" />
+    <Compile Include="GUI\ConsoleCommands\GetGameTick.cs" />
+    <Compile Include="GUI\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="src\GUI\Form1.Designer.cs">
+    <Compile Include="GUI\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="src\GUI\GUIConsole.cs" />
-    <Compile Include="src\Program.cs" />
+    <Compile Include="GUI\GUIConsole.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\Server\GameLogic.cs" />
-    <Compile Include="src\Server\Networking\Client.cs" />
-    <Compile Include="src\Server\Networking\ServerManager.cs" />
-    <Compile Include="src\Server\Networking\ServerHandle.cs" />
-    <Compile Include="src\Server\Networking\TCP.cs" />
-    <Compile Include="src\Server\Networking\ThreadManager.cs" />
-    <Compile Include="src\Server\Networking\UDP.cs" />
-    <EmbeddedResource Include="src\GUI\Form1.resx">
+    <Compile Include="GameLogic.cs" />
+    <Compile Include="Networking\Client.cs" />
+    <Compile Include="Networking\ServerManager.cs" />
+    <Compile Include="Networking\ServerHandle.cs" />
+    <Compile Include="Networking\TCP.cs" />
+    <Compile Include="Networking\ThreadManager.cs" />
+    <Compile Include="Networking\UDP.cs" />
+    <EmbeddedResource Include="GUI\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <None Include="Assets\Grand9K Pixel.ttf" />
+    <None Include="GUI\Assets\Grand9K Pixel.ttf" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -97,26 +97,26 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\WindowImmage.png" />
+    <None Include="GUI\Assets\WindowImmage.png" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <None Include="Assets\CloseWindowCross.png" />
+    <None Include="GUI\Assets\CloseWindowCross.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\CloseWindowCrossActive.png" />
+    <None Include="GUI\Assets\CloseWindowCrossActive.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\MinimizeWindow.png" />
+    <None Include="GUI\Assets\MinimizeWindow.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\MinimizeWindowActive.png" />
+    <None Include="GUI\Assets\MinimizeWindowActive.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\SubmitButton.png" />
+    <None Include="GUI\Assets\SubmitButton.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\SubmitButtonActive.png" />
+    <None Include="GUI\Assets\SubmitButtonActive.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SharedClassLibrary\SharedClassLibrary.csproj">
