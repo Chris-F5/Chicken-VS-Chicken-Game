@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using SharedClassLibrary.Networking;
 
 namespace SharedClassLibrary.Simulation.Components
@@ -26,16 +27,16 @@ namespace SharedClassLibrary.Simulation.Components
             lastUpdateAcceleration = acceleration;
             lastUpdateJumpForce = jumpForce;
         }
-        public override void AddStartupEventsToPacket(Packet _packet)
+        public override void AddStartupEventsToQueue(ref Queue<Event> _queue)
         {
-            base.AddStartupEventsToPacket(_packet);
-            new SetPropertiesEvent(this).AddEventToPacket(_packet);
+            base.AddStartupEventsToQueue(ref _queue);
+            new SetPropertiesEvent(this).AddEventToQueue(ref _queue);
         }
         public override void Update()
         {
             if (acceleration != lastUpdateAcceleration || jumpForce != lastUpdateJumpForce)
             {
-                pendingEvents.Add(new SetPropertiesEvent(this));
+                new SetPropertiesEvent(this).AddEventToQueue(ref pendingEvents);
 
                 lastUpdateAcceleration = acceleration;
                 lastUpdateJumpForce = jumpForce;
@@ -55,19 +56,15 @@ namespace SharedClassLibrary.Simulation.Components
             }
         }
 
-        private class SetPropertiesEvent : SetFloatArrayEvent
+        private class SetPropertiesEvent : VirtualEvent
         {
-            public SetPropertiesEvent(PlayerMovement _player) :
-                base
-                (
-                    EventIds.PlayerMovement.SetProperties,
-                    new float[2]
-                    {
-                        _player.acceleration,
-                        _player.jumpForce
-                    }
-                )
-            { }
+            public float acceleration;
+            public float jumpForce;
+            public SetPropertiesEvent(PlayerMovement _playerMovement)
+            {
+                acceleration = _playerMovement.acceleration;
+                jumpForce = _playerMovement.jumpForce;
+            }
         }
     }
 }

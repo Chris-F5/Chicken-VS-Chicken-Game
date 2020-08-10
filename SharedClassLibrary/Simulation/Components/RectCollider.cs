@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using SharedClassLibrary.Networking;
 
 namespace SharedClassLibrary.Simulation.Components
@@ -16,7 +17,7 @@ namespace SharedClassLibrary.Simulation.Components
             set
             {
                 size = value;
-                pendingEvents.Add(new SetSizeEvent(size));
+                new SetSizeEvent(this).AddEventToQueue(ref pendingEvents);
             }
         }
 
@@ -26,7 +27,7 @@ namespace SharedClassLibrary.Simulation.Components
             set
             {
                 ofset = value;
-                pendingEvents.Add(new SetOfsetEvent(ofset));
+                new SetOfsetEvent(this).AddEventToQueue(ref pendingEvents);
             }
         }
 
@@ -46,11 +47,11 @@ namespace SharedClassLibrary.Simulation.Components
             ofset = _ofset;
         }
 
-        public override void AddStartupEventsToPacket(Packet _packet)
+        public override void AddStartupEventsToQueue(ref Queue<Event> _queue)
         {
-            base.AddStartupEventsToPacket(_packet);
-            new SetSizeEvent(size).AddEventToPacket(_packet);
-            new SetOfsetEvent(ofset).AddEventToPacket(_packet);
+            base.AddStartupEventsToQueue(ref _queue);
+            new SetSizeEvent(this).AddEventToQueue(ref _queue);
+            new SetOfsetEvent(this).AddEventToQueue(ref _queue);
         }
 
         public override Vector2? CollideWith(Collider _collider)
@@ -68,8 +69,8 @@ namespace SharedClassLibrary.Simulation.Components
 
         private Vector2? CollideWithRect(RectCollider _rect)
         {
-            Vector2 _thisPosition = positionComponent.position + ofset;
-            Vector2 _thatPosition = _rect.positionComponent.position + _rect.ofset;
+            Vector2 _thisPosition = positionComponent.Position + ofset;
+            Vector2 _thatPosition = _rect.positionComponent.Position + _rect.ofset;
             float[] _overlaps = new float[] {
                     _thatPosition.x + _rect.size.x - _thisPosition.x,  // Right overlap
                     _thisPosition.x + this.size.x - _thatPosition.x,   // Left overlap
@@ -111,14 +112,26 @@ namespace SharedClassLibrary.Simulation.Components
             }
         }
 
-        private class SetOfsetEvent : SetVector2Event
+        private class SetOfsetEvent : VirtualEvent
         {
-            public SetOfsetEvent(Vector2 _ofset) : base(EventIds.Collider.RectCollider.SetOfset, _ofset) { }
+            public float xOfset;
+            public float yOfset;
+            public SetOfsetEvent(RectCollider _rectCollider) 
+            {
+                xOfset = _rectCollider.ofset.x;
+                yOfset = _rectCollider.ofset.y;
+            }
         }
 
-        private class SetSizeEvent : SetVector2Event
+        private class SetSizeEvent : VirtualEvent
         {
-            public SetSizeEvent(Vector2 _size) : base(EventIds.Collider.RectCollider.SetSize, _size) { }
+            public float xSize;
+            public float ySize;
+            public SetSizeEvent(RectCollider _rectCollider)
+            {
+                xSize = _rectCollider.size.x;
+                ySize = _rectCollider.size.y;
+            }
         }
     }
 }

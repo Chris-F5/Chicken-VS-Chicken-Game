@@ -1,4 +1,5 @@
 ﻿using SharedClassLibrary.Networking;
+using System.Collections.Generic;
 
 namespace SharedClassLibrary.Simulation.Components
 {
@@ -14,16 +15,16 @@ namespace SharedClassLibrary.Simulation.Components
         private readonly PositionComponent positionComponent;
         private readonly Collider[] colliders;
 
-        public Vector2 Velocity 
+        public Vector2 Velocity
         {
-            get 
+            get
             {
-                return velocity; 
-            } 
-            private set 
-            { 
-                velocity = value; 
-            } 
+                return velocity;
+            }
+            private set
+            {
+                velocity = value;
+            }
         }
 
         public DynamicPhysicsBehaviour(NetworkObject _networkObject, float _gravityScale = 1, float _drag = 1, float _xFriction = 1, float _yFriction = 1) : base(_networkObject)
@@ -37,11 +38,11 @@ namespace SharedClassLibrary.Simulation.Components
 
             positionComponent = networkObject.GetComponent<PositionComponent>();
         }
-        public override void AddStartupEventsToPacket(Packet _packet)
+        public override void AddStartupEventsToQueue(ref Queue<Event> _queue)
         {
-            base.AddStartupEventsToPacket(_packet);
-            new SetVelocityEvent(velocity).AddEventToPacket(_packet);
-            new SetPropertiesEvent(this).AddEventToPacket(_packet);
+            base.AddStartupEventsToQueue(ref _queue);
+            new SetVelocityEvent(this).AddEventToQueue(ref _queue);
+            new SetPropertiesEvent(this).AddEventToQueue(ref _queue);
         }
 
         public override void Update()
@@ -49,7 +50,7 @@ namespace SharedClassLibrary.Simulation.Components
             Vector2 gravityForce = new Vector2(0, -1) * gravityScale * Constants.GLOBAL_GRAVITY_SCALE * Constants.SECONDS_PER_TICK;
             velocity += gravityForce;
 
-            positionComponent.position += velocity * Constants.SECONDS_PER_TICK;
+            positionComponent.Position += velocity * Constants.SECONDS_PER_TICK;
 
             grounded = false;
             foreach (NetworkObject colliderObject in KenimaticCollider.allKenimaticColliders)
@@ -65,11 +66,11 @@ namespace SharedClassLibrary.Simulation.Components
             base.Update();
         }
 
-        // Add force function should not be used for changes the client can predict. For example, applying drag.
+        // Add force function should not be used for changes the client can predict. For example, applying gravity.
         public void AddForce(Vector2 _force)
         {
             velocity += _force;
-            pendingEvents.Add(new SetVelocityEvent(velocity));
+            new SetVelocityEvent(this).AddEventToQueue(ref pendingEvents);
         }
 
         private void CollideWith(Collider _collider)
@@ -79,7 +80,7 @@ namespace SharedClassLibrary.Simulation.Components
                 Vector2? _exitBounds = _thisCollider.CollideWith(_collider);
                 if (_exitBounds != null)
                 {
-                    positionComponent.position += _exitBounds.Value;
+                    positionComponent.Position += _exitBounds.Value;
                     CollisionFriction(_exitBounds.Value);
                 }
             }
@@ -100,8 +101,8 @@ namespace SharedClassLibrary.Simulation.Components
                     velocity.x *= _exitDirection.x * -1 + 1;
                     velocity.y *= 1 - Constants.SECONDS_PER_TICK * yFriction;
                 }
-            } 
-            else if (_exitDirection.x < 0) 
+            }
+            else if (_exitDirection.x < 0)
             {
                 if (velocity.x > 0)
                 {
@@ -128,28 +129,31 @@ namespace SharedClassLibrary.Simulation.Components
             }
         }
 
-        private class SetVelocityEvent : SetVector2Event
+        protected class SetVelocityEvent : VirtualEvent
         {
-            public SetVelocityEvent(Vector2 _velocity) :
-                base(EventIds.DynamicPhysicsRect.SetVelocity, _velocity)
-            { }
+            public float xVelocity;
+            public float yVelocity;
+            public SetVelocityEvent(DynamicPhysicsBehaviour _dynamicPhysicsBehaviour)
+            {
+                xVelocity = _dynamicPhysicsBehaviour.velocity.x;
+                yVelocity = _dynamicPhysicsBehaviour.velocity.y;
+            }
         }
 
-        private class SetPropertiesEvent : SetFloatArrayEvent
+        protected class SetPropertiesEvent : VirtualEvent
         {
-            public SetPropertiesEvent(DynamicPhysicsBehaviour _object) :
-                base
-                (
-                    EventIds.DynamicPhysicsRect.SetProperties,
-                    new float[4]
-                    {
-                        _object.gravityScale,
-                        _object.drag,
-                        _object.xFriction,
-                        _object.yFriction,
-                    }
-                )
-            { }
+            public float gravityScale;
+            public float drag;
+            public float xFriction;
+            public float yFriction;
+
+            public SetPropertiesEvent(DynamicPhysicsBehaviour _dynamicPhysicsBehaviour)
+            {
+                gravityScale = _dynamicPhysicsBehaviour.gravityScale;
+                drag = _dynamicPhysicsBehaviour.drag;
+                xFriction = _dynamicPhysicsBehaviour.xFriction;
+                yFriction = _dynamicPhysicsBehaviour.yFriction;
+            }
         }
     }
 }

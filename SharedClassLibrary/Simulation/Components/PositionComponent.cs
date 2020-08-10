@@ -1,37 +1,47 @@
 ﻿using SharedClassLibrary.Networking;
+using System.Collections.Generic;
 
 namespace SharedClassLibrary.Simulation.Components
 {
     public class PositionComponent : Component
     {
-        public Vector2 position;
-        private Vector2 lastUpdatePosition;
+        private Vector2 position;
+
+        public Vector2 Position 
+        { 
+            get { return position; } 
+            set 
+            {
+                position = value;
+                new SetPositionEvent(this).AddEventToQueue(ref pendingEvents);
+            } 
+        }
 
         public PositionComponent(NetworkObject _object, Vector2 _position) : base(_object) 
         {
             position = _position;
-
-            lastUpdatePosition = position;
         }
 
-        public override void AddStartupEventsToPacket(Packet _packet)
+        public override void AddStartupEventsToQueue(ref Queue<Event> _queue)
         {
-            base.AddStartupEventsToPacket(_packet);
-            new SetPositionEvent(position).AddEventToPacket(_packet);
+            base.AddStartupEventsToQueue(ref _queue);
+            new SetPositionEvent(this).AddEventToQueue(ref _queue);
         }
 
         public override void Update()
         {
-            if (position != lastUpdatePosition)
-            {
-                pendingEvents.Add(new SetPositionEvent(position));
-                lastUpdatePosition = position;
-            }
+            new SetPositionEvent(this).AddEventToQueue(ref pendingEvents);
         }
 
-        private class SetPositionEvent : SetVector2Event
+        public class SetPositionEvent : VirtualEvent
         {
-            public SetPositionEvent(Vector2 _position) : base(EventIds.PositionComponent.SetPosition, _position) { }
+            public float xPos;
+            public float ypos;
+            public SetPositionEvent(PositionComponent _positionComponent)
+            {
+                xPos = _positionComponent.position.x;
+                ypos = _positionComponent.position.y;
+            }
         }
     }
 }

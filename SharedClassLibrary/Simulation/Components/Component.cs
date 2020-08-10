@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using SharedClassLibrary.Networking;
 
 namespace SharedClassLibrary.Simulation
 {
@@ -8,7 +7,7 @@ namespace SharedClassLibrary.Simulation
     {
         protected readonly NetworkObject networkObject;
 
-        protected List<Event> pendingEvents = new List<Event>();
+        protected Queue<Event> pendingEvents = new Queue<Event>();
 
         public int pendingEventCount { get { return pendingEvents.Count; } }
 
@@ -18,92 +17,48 @@ namespace SharedClassLibrary.Simulation
                 throw new ArgumentNullException("_networkObject is null.");
 
             networkObject = _networkObject;
-            pendingEvents.Add(new StartupEvents(this));
+            AddStartupEvents();
         }
         public virtual void Update() { }
 
-        /// <summary>The packet this generates will be sent via TCP and UDP to all clients when the object is created. When a new client joins this will also be called and sent to only that client.</summary>
-        public virtual void AddStartupEventsToPacket(Packet _packet)
+        public virtual void AddStartupEventsToQueue(ref Queue<Event> _queue)
         {
-            //new ExampleStartupEvent(this).AddEventToPacket(_packet);
+            //new Event().AddEventToQueue(ref _queue);
         }
-
-        public void AddEventsToPacket(Packet _packet)
+        protected void AddStartupEvents()
         {
-            if (pendingEvents.Count > 0)
-            {
-                foreach (Event _event in pendingEvents)
-                {
-                    _event.AddEventToPacket(_packet);
-                }
-                pendingEvents.Clear();
-            }
+            AddStartupEventsToQueue(ref pendingEvents);
         }
 
         public virtual void Dispose()
         {
-
         }
 
-        // TODO: look into turning events into structs if the gc is not keeping up
-        protected abstract class Event
+        public class Event
         {
-            private readonly byte id;
-            public Event(byte _eventTypeId)
+            public virtual void AddEventToQueue(ref Queue<Event> _queue)
             {
-                id = _eventTypeId;
-            }
-
-            public virtual void AddEventToPacket(Packet _packet)
-            {
-                _packet.WriteByte(id);
+                _queue.Enqueue(this);
             }
         }
 
-        protected abstract class SetVector2Event : Event
+        /// <summary>
+        /// When this event is added to queue, it will dissable all other events of the same type from the queue.
+        /// </summary>
+        public class VirtualEvent : Event
         {
-            readonly float x;
-            readonly float y;
-            public SetVector2Event(byte _eventId, Vector2 _vector) : base(_eventId)
-            {
-                x = _vector.x;
-                y = _vector.y;
-            }
-            public override void AddEventToPacket(Packet _packet)
-            {
-                base.AddEventToPacket(_packet);
-                _packet.WriteFloat(x);
-                _packet.WriteFloat(y);
-            }
-        }
+            private bool replaced = false;
 
-        protected abstract class SetFloatArrayEvent : Event
-        {
-            readonly float[] values;
-            public SetFloatArrayEvent(byte _eventId, float[] _values) : base(_eventId)
+            public override void AddEventToQueue(ref Queue<Event> _queue)
             {
-                values = _values;
-            }
-            public override void AddEventToPacket(Packet _packet)
-            {
-                base.AddEventToPacket(_packet);
-                foreach (float _value in values)
+                foreach (Event _event in _queue)
                 {
-                    _packet.WriteFloat(_value);
+                    if (_event.GetType() == this.GetType())
+                    {
+                        (_event as VirtualEvent).replaced = true;
+                    }
                 }
-            }
-        }
-
-        private class StartupEvents : Event
-        {
-            private readonly Component component;
-            public StartupEvents(Component _component) : base(0) // 0 because it wont be used anyway
-            {
-                component = _component;
-            }
-            public override void AddEventToPacket(Packet _packet)
-            {
-                component.AddStartupEventsToPacket(_packet);
+                base.AddEventToQueue(ref _queue);
             }
         }
     }

@@ -63,30 +63,6 @@ namespace SharedClassLibrary.Simulation
             }
         }
 
-        internal void AddComponentEventsToPacket(Packet _packet)
-        {
-            for (byte i = 0; i < components.Length; i++)
-            {
-                if (components[i].pendingEventCount != 0) {
-                    _packet.WriteByte(i);
-                    components[i].AddEventsToPacket(_packet);
-                    _packet.WriteByte(EventIds.EventEnd);
-                }
-            }
-            _packet.WriteByte(255);
-        }
-
-        public void AddStartupEventsToPacket(Packet _packet)
-        {
-            for (byte i = 0; i < components.Length; i++)
-            {
-                _packet.WriteByte(i);
-                components[i].AddStartupEventsToPacket(_packet);
-                _packet.WriteByte(EventIds.EventEnd);
-            }
-            _packet.WriteByte(255);
-        }
-
         private void UpdateComponents()
         {
             foreach (Component _component in components)
@@ -149,42 +125,18 @@ namespace SharedClassLibrary.Simulation
             }
         }
 
-        public static Packet GenerateSynchronisationPacket()
-        {
-            Packet _packet = new Packet((byte)ServerPacketIds.synchronise);
-            for (int i = 0; i < allNetworkObjects.Count; i++)
-            {
-                _packet.WriteShort(allNetworkObjects[i].objectId);
-                _packet.WriteShort(allNetworkObjects[i].objectTypeId);
-                allNetworkObjects[i].AddComponentEventsToPacket(_packet);
-            }
-            return _packet;
-        }
-        public static Packet GenerateStartupPacket()
-        {
-            Packet _packet = new Packet((byte)ServerPacketIds.synchronise);
-            for (int i = 0; i < allNetworkObjects.Count; i++)
-            {
-                _packet.WriteShort(allNetworkObjects[i].objectId);
-                _packet.WriteShort(allNetworkObjects[i].objectTypeId);
-                allNetworkObjects[i].AddStartupEventsToPacket(_packet);
-            }
-            return _packet;
-        }
-
         private sealed class ObjectComponent : Component
         {
             public ObjectComponent(NetworkObject _networkObject) : base(_networkObject) { }
-            public override void AddStartupEventsToPacket(Packet _packet)
+            public override void AddStartupEventsToQueue(ref Queue<Event> _queue)
             {
-                base.AddStartupEventsToPacket(_packet);
-                new ObjectCreatedEvent().AddEventToPacket(_packet);
+                base.AddStartupEventsToQueue(ref _queue);
+                new ObjectCreatedEvent().AddEventToQueue(ref _queue);
             }
 
             // If this event is sent, it means the startup events for components in this netowrk object are present in the packet.
             private class ObjectCreatedEvent : Event
             {
-                public ObjectCreatedEvent() : base(EventIds.ObjectCreated) { }
             }
         }
     }
