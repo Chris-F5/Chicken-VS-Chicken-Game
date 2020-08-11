@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using SharedClassLibrary.Networking;
 
 namespace SharedClassLibrary.Simulation.Components
 {
     public class RectCollider : Collider
     {
+        public readonly PositionComponent positionComponent;
 
+        private IRectColliderHandler handler;
         private Vector2 size;
         private Vector2 ofset;
-        public readonly PositionComponent positionComponent;
 
         public Vector2 Size
         {
@@ -17,7 +16,7 @@ namespace SharedClassLibrary.Simulation.Components
             set
             {
                 size = value;
-                new SetSizeEvent(this).AddEventToQueue(ref pendingEvents);
+                HandleSize();
             }
         }
 
@@ -27,7 +26,7 @@ namespace SharedClassLibrary.Simulation.Components
             set
             {
                 ofset = value;
-                new SetOfsetEvent(this).AddEventToQueue(ref pendingEvents);
+                HandleOfset();
             }
         }
 
@@ -47,11 +46,11 @@ namespace SharedClassLibrary.Simulation.Components
             ofset = _ofset;
         }
 
-        public override void AddStartupEventsToQueue(ref Queue<Event> _queue)
+        public override void CallStartupHandlers()
         {
-            base.AddStartupEventsToQueue(ref _queue);
-            new SetSizeEvent(this).AddEventToQueue(ref _queue);
-            new SetOfsetEvent(this).AddEventToQueue(ref _queue);
+            base.CallStartupHandlers();
+            HandleOfset();
+            HandleSize();
         }
 
         public override Vector2? CollideWith(Collider _collider)
@@ -112,26 +111,20 @@ namespace SharedClassLibrary.Simulation.Components
             }
         }
 
-        private class SetOfsetEvent : VirtualEvent
+        public void HandleSize()
         {
-            public float xOfset;
-            public float yOfset;
-            public SetOfsetEvent(RectCollider _rectCollider) 
-            {
-                xOfset = _rectCollider.ofset.x;
-                yOfset = _rectCollider.ofset.y;
-            }
+            handler.SetSize(size.x, size.y);
         }
 
-        private class SetSizeEvent : VirtualEvent
+        public void HandleOfset()
         {
-            public float xSize;
-            public float ySize;
-            public SetSizeEvent(RectCollider _rectCollider)
-            {
-                xSize = _rectCollider.size.x;
-                ySize = _rectCollider.size.y;
-            }
+            handler.SetOfset(ofset.x, ofset.y);
         }
+    }
+
+    public interface IRectColliderHandler
+    {
+        void SetSize(float _xSize, float _ySize);
+        void SetOfset(float _xOfset, float _yOfset);
     }
 }

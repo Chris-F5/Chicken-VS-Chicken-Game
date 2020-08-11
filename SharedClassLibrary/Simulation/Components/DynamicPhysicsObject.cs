@@ -1,7 +1,4 @@
-﻿using SharedClassLibrary.Networking;
-using System.Collections.Generic;
-
-namespace SharedClassLibrary.Simulation.Components
+﻿namespace SharedClassLibrary.Simulation.Components
 {
     public class DynamicPhysicsBehaviour : Component
     {
@@ -12,6 +9,7 @@ namespace SharedClassLibrary.Simulation.Components
         public float yFriction { get; private set; }
         public bool grounded { get; private set; }
 
+        private IDynamicPhysicsObjectHandler handler;
         private readonly PositionComponent positionComponent;
         private readonly Collider[] colliders;
 
@@ -38,11 +36,11 @@ namespace SharedClassLibrary.Simulation.Components
 
             positionComponent = networkObject.GetComponent<PositionComponent>();
         }
-        public override void AddStartupEventsToQueue(ref Queue<Event> _queue)
+        public override void CallStartupHandlers()
         {
-            base.AddStartupEventsToQueue(ref _queue);
-            new SetVelocityEvent(this).AddEventToQueue(ref _queue);
-            new SetPropertiesEvent(this).AddEventToQueue(ref _queue);
+            base.CallStartupHandlers();
+            HandleProperties();
+            HandleVelocity();
         }
 
         public override void Update()
@@ -70,7 +68,7 @@ namespace SharedClassLibrary.Simulation.Components
         public void AddForce(Vector2 _force)
         {
             velocity += _force;
-            new SetVelocityEvent(this).AddEventToQueue(ref pendingEvents);
+            HandleVelocity();
         }
 
         private void CollideWith(Collider _collider)
@@ -129,31 +127,20 @@ namespace SharedClassLibrary.Simulation.Components
             }
         }
 
-        protected class SetVelocityEvent : VirtualEvent
+        public void HandleProperties()
         {
-            public float xVelocity;
-            public float yVelocity;
-            public SetVelocityEvent(DynamicPhysicsBehaviour _dynamicPhysicsBehaviour)
-            {
-                xVelocity = _dynamicPhysicsBehaviour.velocity.x;
-                yVelocity = _dynamicPhysicsBehaviour.velocity.y;
-            }
+            handler.SetProperties(gravityScale, drag, xFriction, yFriction);
         }
 
-        protected class SetPropertiesEvent : VirtualEvent
+        public void HandleVelocity()
         {
-            public float gravityScale;
-            public float drag;
-            public float xFriction;
-            public float yFriction;
-
-            public SetPropertiesEvent(DynamicPhysicsBehaviour _dynamicPhysicsBehaviour)
-            {
-                gravityScale = _dynamicPhysicsBehaviour.gravityScale;
-                drag = _dynamicPhysicsBehaviour.drag;
-                xFriction = _dynamicPhysicsBehaviour.xFriction;
-                yFriction = _dynamicPhysicsBehaviour.yFriction;
-            }
+            handler.SetVelocity(velocity.x, velocity.y);
         }
+    }
+
+    public interface IDynamicPhysicsObjectHandler
+    {
+        void SetProperties(float _gravityScale, float _drag, float _xFriction, float _yFriction);
+        void SetVelocity(float _xVelocity, float _yVelocity);
     }
 }

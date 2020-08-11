@@ -1,10 +1,10 @@
-﻿using SharedClassLibrary.Networking;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace SharedClassLibrary.Simulation.Components
 {
     public class PositionComponent : Component
     {
+        private IPositionComponentHandler handler;
         private Vector2 position;
 
         public Vector2 Position 
@@ -13,7 +13,7 @@ namespace SharedClassLibrary.Simulation.Components
             set 
             {
                 position = value;
-                new SetPositionEvent(this).AddEventToQueue(ref pendingEvents);
+                HandlePosition();
             } 
         }
 
@@ -22,26 +22,25 @@ namespace SharedClassLibrary.Simulation.Components
             position = _position;
         }
 
-        public override void AddStartupEventsToQueue(ref Queue<Event> _queue)
+        public override void CallStartupHandlers()
         {
-            base.AddStartupEventsToQueue(ref _queue);
-            new SetPositionEvent(this).AddEventToQueue(ref _queue);
+            base.CallStartupHandlers();
+            HandlePosition();
         }
 
         public override void Update()
         {
-            new SetPositionEvent(this).AddEventToQueue(ref pendingEvents);
+            HandlePosition();
         }
 
-        public class SetPositionEvent : VirtualEvent
+        public void HandlePosition()
         {
-            public float xPos;
-            public float ypos;
-            public SetPositionEvent(PositionComponent _positionComponent)
-            {
-                xPos = _positionComponent.position.x;
-                ypos = _positionComponent.position.y;
-            }
+            handler.SetPosition(position.x, position.y);
         }
+    }
+
+    public interface IPositionComponentHandler
+    {
+        void SetPosition(float _xPos, float _yPos);
     }
 }

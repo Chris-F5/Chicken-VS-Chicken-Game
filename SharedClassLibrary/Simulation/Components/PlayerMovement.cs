@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using SharedClassLibrary.Networking;
 
 namespace SharedClassLibrary.Simulation.Components
 {
@@ -9,6 +7,7 @@ namespace SharedClassLibrary.Simulation.Components
         public float acceleration;
         public float jumpForce;
 
+        private IPlayerMovementHandler handler;
         private PlayerController controller;
         private DynamicPhysicsBehaviour physicsBehaviour;
         private float lastUpdateAcceleration;
@@ -27,16 +26,16 @@ namespace SharedClassLibrary.Simulation.Components
             lastUpdateAcceleration = acceleration;
             lastUpdateJumpForce = jumpForce;
         }
-        public override void AddStartupEventsToQueue(ref Queue<Event> _queue)
+        public override void CallStartupHandlers()
         {
-            base.AddStartupEventsToQueue(ref _queue);
-            new SetPropertiesEvent(this).AddEventToQueue(ref _queue);
+            base.CallStartupHandlers();
+            HandleProperties();
         }
         public override void Update()
         {
             if (acceleration != lastUpdateAcceleration || jumpForce != lastUpdateJumpForce)
             {
-                new SetPropertiesEvent(this).AddEventToQueue(ref pendingEvents);
+                HandleProperties();
 
                 lastUpdateAcceleration = acceleration;
                 lastUpdateJumpForce = jumpForce;
@@ -56,15 +55,14 @@ namespace SharedClassLibrary.Simulation.Components
             }
         }
 
-        private class SetPropertiesEvent : VirtualEvent
+        public void HandleProperties()
         {
-            public float acceleration;
-            public float jumpForce;
-            public SetPropertiesEvent(PlayerMovement _playerMovement)
-            {
-                acceleration = _playerMovement.acceleration;
-                jumpForce = _playerMovement.jumpForce;
-            }
+            handler.SetProperties(acceleration, jumpForce);
         }
+    }
+
+    public interface IPlayerMovementHandler
+    {
+        void SetProperties(float _acceleration, float _jumpForce);
     }
 }
