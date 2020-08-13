@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
 namespace SharedClassLibrary.Simulation.Components
 {
@@ -17,20 +17,26 @@ namespace SharedClassLibrary.Simulation.Components
             } 
         }
 
-        public PositionComponent(NetworkObject _object, Vector2 _position) : base(_object) 
+        public PositionComponent(Component _nextComponent, IPositionComponentHandler _handler, Vector2 _position) : base(_nextComponent) 
         {
+            if (_handler == null)
+                throw new ArgumentNullException("_handler");
+
+            handler = _handler;
             position = _position;
         }
 
-        public override void CallStartupHandlers()
+        internal override void CallStartupHandlers()
         {
             base.CallStartupHandlers();
             HandlePosition();
         }
 
-        public override void Update()
+        internal override void Update()
         {
             HandlePosition();
+
+            base.Update();
         }
 
         public void HandlePosition()

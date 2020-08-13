@@ -4,55 +4,74 @@ namespace SharedClassLibrary.Simulation.Components
 {
     public class PlayerMovement : Component
     {
-        public float acceleration;
-        public float jumpForce;
+        private float acceleration;
+        private float jumpForce;
 
         private IPlayerMovementHandler handler;
         private PlayerController controller;
         private DynamicPhysicsBehaviour physicsBehaviour;
-        private float lastUpdateAcceleration;
-        private float lastUpdateJumpForce;
 
-        public PlayerMovement(NetworkObject _networkObject, PlayerController _controller, float _acceleration = 2, float _jumpForce = 8) : base(_networkObject)
+        public float Acceleration 
         {
-            if (_controller == null)
-                throw new ArgumentNullException("_controller is null.");
+            get { return acceleration; }
+            set
+            {
+                acceleration = value;
+                HandleProperties();
+            }
+        }
 
-            controller = _controller;
+        public float JumpForce
+        {
+            get { return jumpForce; }
+            set
+            {
+                jumpForce = value;
+                HandleProperties();
+            }
+        }
+
+        public PlayerMovement(Component _component, IPlayerMovementHandler _handler, float _acceleration = 2, float _jumpForce = 8) : base(_component)
+        {
+            if (_handler == null)
+                throw new ArgumentNullException("_handler");
+
+            handler = _handler;
             acceleration = _acceleration;
             jumpForce = _jumpForce;
 
-            physicsBehaviour = _networkObject.GetComponent<DynamicPhysicsBehaviour>();
-            lastUpdateAcceleration = acceleration;
-            lastUpdateJumpForce = jumpForce;
+            physicsBehaviour = GetComponent<DynamicPhysicsBehaviour>();
         }
-        public override void CallStartupHandlers()
+        public void SetPlayerController(PlayerController _controller)
+        {
+            if (_controller == null)
+                throw new ArgumentNullException("_controller");
+
+            controller = _controller;
+        }
+        internal override void CallStartupHandlers()
         {
             base.CallStartupHandlers();
             HandleProperties();
         }
-        public override void Update()
+        internal override void Update()
         {
-            if (acceleration != lastUpdateAcceleration || jumpForce != lastUpdateJumpForce)
-            {
-                HandleProperties();
-
-                lastUpdateAcceleration = acceleration;
-                lastUpdateJumpForce = jumpForce;
+            if (controller != null) {
+                if (controller.rightKey)
+                {
+                    physicsBehaviour.AddForce(new Vector2(acceleration * Constants.SECONDS_PER_TICK, 0));
+                }
+                if (controller.leftKey)
+                {
+                    physicsBehaviour.AddForce(new Vector2(-acceleration * Constants.SECONDS_PER_TICK, 0));
+                }
+                if (controller.upKey && physicsBehaviour.grounded)
+                {
+                    physicsBehaviour.AddForce(new Vector2(0, jumpForce));
+                }
             }
 
-            if (controller.rightKey)
-            {
-                physicsBehaviour.AddForce(new Vector2(acceleration * Constants.SECONDS_PER_TICK, 0));
-            }
-            if (controller.leftKey)
-            {
-                physicsBehaviour.AddForce(new Vector2(-acceleration * Constants.SECONDS_PER_TICK, 0));
-            }
-            if (controller.upKey && physicsBehaviour.grounded)
-            {
-                physicsBehaviour.AddForce(new Vector2(0, jumpForce));
-            }
+            base.Update();
         }
 
         public void HandleProperties()

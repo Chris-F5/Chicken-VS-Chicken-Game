@@ -4,19 +4,19 @@ namespace SharedClassLibrary.Simulation.Components
 {
     public class KenimaticCollider : Component
     {
-        public static List<NetworkObject> allKenimaticColliders = new List<NetworkObject>();
+        public static List<KenimaticCollider> allKenimaticColliders = new List<KenimaticCollider>();
         public readonly Collider[] colliders;
 
-        public KenimaticCollider(NetworkObject _networkObject) : base(_networkObject)
+        public KenimaticCollider(Component _nextComponent) : base(_nextComponent)
         {
-            allKenimaticColliders.Add(networkObject);
+            allKenimaticColliders.Add(this);
 
-            colliders = networkObject.GetComponents<Collider>();
+            colliders = GetComponents<Collider>().ToArray();
         }
 
-        public override void Dispose()
+        internal override void Dispose()
         {
-            allKenimaticColliders.Remove(networkObject);
+            allKenimaticColliders.Remove(this);
             base.Dispose();
         }
     }

@@ -1,4 +1,6 @@
-﻿namespace SharedClassLibrary.Simulation.Components
+﻿using System;
+
+namespace SharedClassLibrary.Simulation.Components
 {
     public class DynamicPhysicsBehaviour : Component
     {
@@ -25,25 +27,29 @@
             }
         }
 
-        public DynamicPhysicsBehaviour(NetworkObject _networkObject, float _gravityScale = 1, float _drag = 1, float _xFriction = 1, float _yFriction = 1) : base(_networkObject)
+        public DynamicPhysicsBehaviour(Component _nextComponent, IDynamicPhysicsObjectHandler _handler, float _gravityScale = 1, float _drag = 1, float _xFriction = 1, float _yFriction = 1) : base(_nextComponent)
         {
-            colliders = networkObject.GetComponents<Collider>();
-            velocity = new Vector2(0, 0);
+            if (_handler == null)
+                throw new ArgumentNullException("_handler");
+
+            handler = _handler;
             gravityScale = _gravityScale;
             drag = _drag;
             xFriction = _xFriction;
             yFriction = _yFriction;
 
-            positionComponent = networkObject.GetComponent<PositionComponent>();
+            velocity = new Vector2(0, 0);
+            colliders = GetComponents<Collider>().ToArray();
+            positionComponent = GetComponent<PositionComponent>();
         }
-        public override void CallStartupHandlers()
+        internal override void CallStartupHandlers()
         {
             base.CallStartupHandlers();
             HandleProperties();
             HandleVelocity();
         }
 
-        public override void Update()
+        internal override void Update()
         {
             Vector2 gravityForce = new Vector2(0, -1) * gravityScale * Constants.GLOBAL_GRAVITY_SCALE * Constants.SECONDS_PER_TICK;
             velocity += gravityForce;
@@ -51,9 +57,9 @@
             positionComponent.Position += velocity * Constants.SECONDS_PER_TICK;
 
             grounded = false;
-            foreach (NetworkObject colliderObject in KenimaticCollider.allKenimaticColliders)
+            foreach (KenimaticCollider kenimticCollider in KenimaticCollider.allKenimaticColliders)
             {
-                foreach (Collider collider in colliderObject.GetComponents<Collider>())
+                foreach (Collider collider in kenimticCollider.colliders)
                 {
                     CollideWith(collider);
                 }
@@ -141,6 +147,9 @@
     public interface IDynamicPhysicsObjectHandler
     {
         void SetProperties(float _gravityScale, float _drag, float _xFriction, float _yFriction);
+        /// <summary>
+        /// Handles velocity for unexpected events (not including gravity and friction).
+        /// </summary>
         void SetVelocity(float _xVelocity, float _yVelocity);
     }
 }

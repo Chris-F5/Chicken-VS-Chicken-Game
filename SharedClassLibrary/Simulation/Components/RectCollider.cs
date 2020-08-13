@@ -30,23 +30,26 @@ namespace SharedClassLibrary.Simulation.Components
             }
         }
 
-        public RectCollider(NetworkObject _networkObject, Vector2 _size) : this(_networkObject, _size, new Vector2(0, 0))
-        {
-            positionComponent = networkObject.GetComponent<PositionComponent>();
-        }
+        public RectCollider(Component _nextComponent, IRectColliderHandler _handler, Vector2 _size) : this(_nextComponent, _handler, _size, new Vector2(0, 0)) { }
 
-        public RectCollider(NetworkObject _networkObject, Vector2 _size, Vector2 _ofset) : base(_networkObject)
+        public RectCollider(Component _nextComponent, IRectColliderHandler _handler, Vector2 _size, Vector2 _ofset) : base(_nextComponent)
         {
+            if (_handler == null)
+                throw new ArgumentNullException("_handler");
+
+            handler = _handler;
+            positionComponent = GetComponent<PositionComponent>();
+
             if (_size == null)
-                throw new ArgumentNullException("_size is null.");
+                throw new ArgumentNullException("_size");
             if (_ofset == null)
-                throw new ArgumentNullException("_ofset is null.");
+                throw new ArgumentNullException("_ofset");
 
             size = _size;
             ofset = _ofset;
         }
 
-        public override void CallStartupHandlers()
+        internal override void CallStartupHandlers()
         {
             base.CallStartupHandlers();
             HandleOfset();
