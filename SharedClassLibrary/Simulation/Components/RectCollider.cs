@@ -4,40 +4,16 @@ namespace SharedClassLibrary.Simulation.Components
 {
     public class RectCollider : Collider
     {
+        private readonly Vector2 size;
+        private readonly Vector2 ofset;
+
         public readonly PositionComponent positionComponent;
 
-        private IRectColliderHandler handler;
-        private Vector2 size;
-        private Vector2 ofset;
+        public RectCollider(Component _nextComponent) : this (_nextComponent, new Vector2(0,0)) { }
+        public RectCollider(Component _nextComponent, Vector2 _size) : this(_nextComponent, _size, new Vector2(0, 0)) { }
 
-        public Vector2 Size
+        public RectCollider(Component _nextComponent, Vector2 _size, Vector2 _ofset) : base(_nextComponent)
         {
-            get { return size; }
-            set
-            {
-                size = value;
-                HandleSize();
-            }
-        }
-
-        public Vector2 Ofset
-        {
-            get { return ofset; }
-            set
-            {
-                ofset = value;
-                HandleOfset();
-            }
-        }
-
-        public RectCollider(Component _nextComponent, IRectColliderHandler _handler, Vector2 _size) : this(_nextComponent, _handler, _size, new Vector2(0, 0)) { }
-
-        public RectCollider(Component _nextComponent, IRectColliderHandler _handler, Vector2 _size, Vector2 _ofset) : base(_nextComponent)
-        {
-            if (_handler == null)
-                throw new ArgumentNullException("_handler");
-
-            handler = _handler;
             positionComponent = GetComponent<PositionComponent>();
 
             if (_size == null)
@@ -49,14 +25,7 @@ namespace SharedClassLibrary.Simulation.Components
             ofset = _ofset;
         }
 
-        internal override void CallStartupHandlers()
-        {
-            base.CallStartupHandlers();
-            HandleOfset();
-            HandleSize();
-        }
-
-        public override Vector2? CollideWith(Collider _collider)
+        internal override Vector2? CollideWith(Collider _collider)
         {
             switch (_collider)
             {
@@ -113,21 +82,5 @@ namespace SharedClassLibrary.Simulation.Components
                     throw new Exception("_lowest index should be a value from 0 to 3");
             }
         }
-
-        public void HandleSize()
-        {
-            handler.SetSize(size.x, size.y);
-        }
-
-        public void HandleOfset()
-        {
-            handler.SetOfset(ofset.x, ofset.y);
-        }
-    }
-
-    public interface IRectColliderHandler
-    {
-        void SetSize(float _xSize, float _ySize);
-        void SetOfset(float _xOfset, float _yOfset);
     }
 }

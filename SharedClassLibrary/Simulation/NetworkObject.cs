@@ -1,24 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using SharedClassLibrary.Logging;
+using SharedClassLibrary.Simulation.Components;
 
 namespace SharedClassLibrary.Simulation
 {
-    public sealed class NetworkObject : Component
+    public class NetworkObject : RollbackComponent
     {
+        private static List<NetworkObject> pendingCreationObject = new List<NetworkObject>();
         private static List<NetworkObject> allNetworkObjects = new List<NetworkObject>();
 
         public readonly short objectId;
         public readonly short objectTypeId;
 
-        private INetworkObjectHandler handler;
-
-        internal NetworkObject(Component _firstComponent, INetworkObjectHandler _handler, short _objectTypeId) : base (_firstComponent)
+        internal NetworkObject(Component _firstComponent, short _objectTypeId) 
+            : base (_firstComponent, new NetworkObjectState())
         {
-            if (_handler == null)
-                throw new ArgumentNullException("_handler");
-
-            handler = _handler;
             objectTypeId = _objectTypeId;
 
             // Sellect object id that is not in use.
@@ -45,38 +42,104 @@ namespace SharedClassLibrary.Simulation
                 return;
             }
 
-            allNetworkObjects.Add(this);
-        }
-        internal override void CallStartupHandlers()
-        {
-            handler.Created();
-            base.CallStartupHandlers();
+            AddObject(this);
         }
 
-        internal override void Dispose()
+        internal void EnableObject()
+        {
+            (state as NetworkObjectState).Enabled = true;
+            Enable();
+        }
+        internal void DisableObject()
+        {
+            (state as NetworkObjectState).Enabled = false;
+            Disable();
+        }
+
+        private protected override void RollbackOneTickPastCreation()
+        {
+            if (enabled)
+            {
+                DisableObject();
+            }
+        }
+
+        private protected override void RollforwardPastCreation()
+        {
+            EnableObject();
+        }
+
+        private protected override void Dispose()
         {
             base.Dispose();
             allNetworkObjects.Remove(this);
         }
 
-        public void Destroy()
+        internal void Destroy()
         {
-            handler.Destroyed();
             Dispose();
         }
 
-        public static void UpdateAll()
+        private void RollBackComponentTicks(int _ticks)
+        {
+            for (int i = 0; i < _ticks; i++) {
+                RollBackOneTick();
+            }
+        }
+
+        static internal void RollBackTicks(int _ticks)
+        {
+            foreach (NetworkObject networkObject in allNetworkObjects)
+            {
+                networkObject.RollBackComponentTicks(_ticks);
+            }
+        }
+
+        internal static void UpdateAll()
         {
             foreach (NetworkObject _networkObject in allNetworkObjects)
             {
                 _networkObject.Update();
             }
+            foreach (NetworkObject _networkObject in allNetworkObjects)
+            {
+                _networkObject.LateUpdate();
+            }
+            allNetworkObjects.AddRange(pendingCreationObject);
+        }
+
+        private static void AddObject(NetworkObject _object)
+        {
+            if (_object == null)
+                throw new ArgumentNullException("_object");
+            pendingCreationObject.Add(_object);
         }
     }
 
-    public interface INetworkObjectHandler
+    internal class NetworkObjectState : ComponentRollbackState
     {
-        void Created();
-        void Destroyed();
+        internal NetworkObjectState(bool _enabled = true)
+        {
+            enabled = _enabled;
+        }
+
+        private bool enabled;
+        public bool Enabled 
+        {
+            get 
+            {
+                return (activeState as NetworkObjectState).enabled;
+            }
+            set
+            {
+                ChangeMade();
+                (activeState as NetworkObjectState).enabled = value;
+            }
+        }
+
+        protected override ComponentRollbackState Clone()
+        {
+            return new NetworkObjectState(enabled);
+        }
     }
 }

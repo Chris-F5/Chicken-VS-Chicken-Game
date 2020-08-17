@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿ using System.Collections.Generic;
 
 namespace SharedClassLibrary.Simulation.Components
 {
@@ -14,10 +14,27 @@ namespace SharedClassLibrary.Simulation.Components
             colliders = GetComponents<Collider>().ToArray();
         }
 
-        internal override void Dispose()
+        private protected override void Dispose()
         {
             allKenimaticColliders.Remove(this);
             base.Dispose();
+        }
+
+        private protected override void Enable()
+        {
+            if (!allKenimaticColliders.Contains(this))
+            {
+                allKenimaticColliders.Add(this);
+            }
+            base.Enable();
+        }
+
+        private protected override void Disable()
+        {
+            if (allKenimaticColliders.Contains(this)) {
+                allKenimaticColliders.Remove(this);
+            }
+            base.Disable();
         }
     }
 }

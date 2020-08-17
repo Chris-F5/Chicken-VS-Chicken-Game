@@ -2,70 +2,40 @@
 
 namespace SharedClassLibrary.Simulation.Components
 {
+    // TODO: Use decorator pattern to dynamically add multiply behavior types which all effect acceleration, jump force, ect...
     public class PlayerMovement : Component
     {
-        private float acceleration;
-        private float jumpForce;
+        private readonly float acceleration;
+        private readonly float jumpForce;
 
-        private IPlayerMovementHandler handler;
-        private PlayerController controller;
-        private DynamicPhysicsBehaviour physicsBehaviour;
+        private readonly DynamicPhysicsBehaviour physicsBehaviour;
 
-        public float Acceleration 
-        {
-            get { return acceleration; }
-            set
-            {
-                acceleration = value;
-                HandleProperties();
-            }
-        }
+        public readonly PlayerController controller;
 
-        public float JumpForce
-        {
-            get { return jumpForce; }
-            set
-            {
-                jumpForce = value;
-                HandleProperties();
-            }
-        }
-
-        public PlayerMovement(Component _component, IPlayerMovementHandler _handler, float _acceleration = 2, float _jumpForce = 8) : base(_component)
-        {
-            if (_handler == null)
-                throw new ArgumentNullException("_handler");
-
-            handler = _handler;
-            acceleration = _acceleration;
-            jumpForce = _jumpForce;
-
-            physicsBehaviour = GetComponent<DynamicPhysicsBehaviour>();
-        }
-        public void SetPlayerController(PlayerController _controller)
+        internal PlayerMovement(Component _component, PlayerController _controller, float _acceleration = 2, float _jumpForce = 8) : base(_component)
         {
             if (_controller == null)
                 throw new ArgumentNullException("_controller");
 
             controller = _controller;
+            acceleration = _acceleration;
+            jumpForce = _jumpForce;
+
+            physicsBehaviour = GetComponent<DynamicPhysicsBehaviour>();
         }
-        internal override void CallStartupHandlers()
-        {
-            base.CallStartupHandlers();
-            HandleProperties();
-        }
-        internal override void Update()
+
+        protected internal override void Update()
         {
             if (controller != null) {
-                if (controller.rightKey)
+                if (controller.inputState.rightKey)
                 {
                     physicsBehaviour.AddForce(new Vector2(acceleration * Constants.SECONDS_PER_TICK, 0));
                 }
-                if (controller.leftKey)
+                if (controller.inputState.leftKey)
                 {
                     physicsBehaviour.AddForce(new Vector2(-acceleration * Constants.SECONDS_PER_TICK, 0));
                 }
-                if (controller.upKey && physicsBehaviour.grounded)
+                if (controller.inputState.upKey && physicsBehaviour.grounded)
                 {
                     physicsBehaviour.AddForce(new Vector2(0, jumpForce));
                 }
@@ -73,15 +43,5 @@ namespace SharedClassLibrary.Simulation.Components
 
             base.Update();
         }
-
-        public void HandleProperties()
-        {
-            handler.SetProperties(acceleration, jumpForce);
-        }
-    }
-
-    public interface IPlayerMovementHandler
-    {
-        void SetProperties(float _acceleration, float _jumpForce);
     }
 }

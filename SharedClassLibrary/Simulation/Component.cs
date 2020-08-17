@@ -5,11 +5,13 @@ namespace SharedClassLibrary.Simulation
 {
     public abstract class Component
     {
+        public bool enabled { get; private set; } = true;
+
         public readonly byte indexId;
 
         protected readonly Component nextComponent;
 
-        public Component(Component _nextComponent)
+        internal Component(Component _nextComponent)
         {
             nextComponent = _nextComponent;
 
@@ -21,12 +23,10 @@ namespace SharedClassLibrary.Simulation
             {
                 if (nextComponent.indexId + 1 > byte.MaxValue)
                 {
-                    throw new Exception($"Too many components added to one component chain (> {short.MaxValue})");
+                    throw new Exception($"Too many components added to one component chain (> {byte.MaxValue})");
                 }
                 indexId = (byte)(nextComponent.indexId + 1);
             }
-
-            CallStartupHandlers();
         }
 
         internal ComponentType GetComponent<ComponentType>() where ComponentType : Component
@@ -73,26 +73,49 @@ namespace SharedClassLibrary.Simulation
             }
         }
 
-        internal virtual void Update() 
+        protected internal virtual void Update() 
         {
-            if (nextComponent != null) {
+            if (nextComponent != null)
+            {
                 nextComponent.Update();
             }
         }
+        protected internal virtual void LateUpdate()
+        {
+            if (nextComponent != null)
+            {
+                nextComponent.LateUpdate();
+            }
+        }
 
-        internal virtual void Dispose() 
+        internal virtual void RollBackOneTick() 
+        {
+            if (nextComponent != null)
+            {
+                nextComponent.RollBackOneTick();
+            }
+        }
+        private protected virtual void Disable()
+        {
+            enabled = false;
+            if (nextComponent != null)
+            {
+                nextComponent.Disable();
+            }
+        }
+        private protected virtual void Enable()
+        {
+            enabled = true;
+            if (nextComponent != null)
+            {
+                nextComponent.Enable();
+            }
+        }
+        private protected virtual void Dispose() 
         {
             if (nextComponent != null)
             {
                 nextComponent.Dispose();
-            }
-        }
-
-        internal virtual void CallStartupHandlers()
-        {
-            if (nextComponent != null)
-            {
-                nextComponent.CallStartupHandlers();
             }
         }
     }

@@ -1,17 +1,14 @@
-﻿using System;
-
-namespace SharedClassLibrary.Simulation.Components
+﻿namespace SharedClassLibrary.Simulation.Components
 {
-    public class DynamicPhysicsBehaviour : Component
+    // TODO: Use decorator pattern to dynamically add multiply physics behavior types which all effect friction, drag, ect...
+    public class DynamicPhysicsBehaviour : RollbackComponent
     {
-        private Vector2 velocity;
-        public float gravityScale { get; private set; }
-        public float drag { get; private set; }
-        public float xFriction { get; private set; }
-        public float yFriction { get; private set; }
+        public readonly float gravityScale;
+        public readonly float drag;
+        public readonly float xFriction;
+        public readonly float yFriction;
         public bool grounded { get; private set; }
 
-        private IDynamicPhysicsObjectHandler handler;
         private readonly PositionComponent positionComponent;
         private readonly Collider[] colliders;
 
@@ -19,42 +16,33 @@ namespace SharedClassLibrary.Simulation.Components
         {
             get
             {
-                return velocity;
+                return (state as DynamicPhysicsObjectState).Velocity;
             }
             private set
             {
-                velocity = value;
+                (state as DynamicPhysicsObjectState).Velocity = value;
             }
         }
 
-        public DynamicPhysicsBehaviour(Component _nextComponent, IDynamicPhysicsObjectHandler _handler, float _gravityScale = 1, float _drag = 1, float _xFriction = 1, float _yFriction = 1) : base(_nextComponent)
+        internal DynamicPhysicsBehaviour(Component _nextComponent, float _gravityScale = 1, float _drag = 1, float _xFriction = 1, float _yFriction = 1)
+            : base(_nextComponent, new DynamicPhysicsObjectState( new Vector2(0, 0) ) )
         {
-            if (_handler == null)
-                throw new ArgumentNullException("_handler");
-
-            handler = _handler;
             gravityScale = _gravityScale;
             drag = _drag;
             xFriction = _xFriction;
             yFriction = _yFriction;
 
-            velocity = new Vector2(0, 0);
+            Velocity = new Vector2(0, 0);
             colliders = GetComponents<Collider>().ToArray();
             positionComponent = GetComponent<PositionComponent>();
         }
-        internal override void CallStartupHandlers()
-        {
-            base.CallStartupHandlers();
-            HandleProperties();
-            HandleVelocity();
-        }
 
-        internal override void Update()
+        protected internal override void Update()
         {
             Vector2 gravityForce = new Vector2(0, -1) * gravityScale * Constants.GLOBAL_GRAVITY_SCALE * Constants.SECONDS_PER_TICK;
-            velocity += gravityForce;
+            Velocity += gravityForce;
 
-            positionComponent.Position += velocity * Constants.SECONDS_PER_TICK;
+            positionComponent.Position += Velocity * Constants.SECONDS_PER_TICK;
 
             grounded = false;
             foreach (KenimaticCollider kenimticCollider in KenimaticCollider.allKenimaticColliders)
@@ -65,16 +53,14 @@ namespace SharedClassLibrary.Simulation.Components
                 }
             }
 
-            Drag();
+            ApplyDrag();
 
             base.Update();
         }
 
-        // Add force function should not be used for changes the client can predict. For example, applying gravity.
-        public void AddForce(Vector2 _force)
+        internal void AddForce(Vector2 _force)
         {
-            velocity += _force;
-            HandleVelocity();
+            Velocity += _force;
         }
 
         private void CollideWith(Collider _collider)
@@ -90,66 +76,76 @@ namespace SharedClassLibrary.Simulation.Components
             }
         }
 
-        private void Drag()
+        private void ApplyDrag()
         {
-            velocity *= 1 - Constants.SECONDS_PER_TICK * drag;
+            Velocity *= 1 - Constants.SECONDS_PER_TICK * drag;
         }
 
         private void CollisionFriction(Vector2 _exitBoundsVector)
         {
-            Vector2 _exitDirection = Vector2.Normalise(_exitBoundsVector);
-            if (_exitDirection.x > 0)
+            Vector2 exitDirection = Vector2.Normalise(_exitBoundsVector);
+            Vector2 velocity = Velocity;
+            if (exitDirection.x > 0)
             {
-                if (velocity.x < 0)
+                if (Velocity.x < 0)
                 {
-                    velocity.x *= _exitDirection.x * -1 + 1;
+                    velocity.x *= exitDirection.x * -1 + 1;
                     velocity.y *= 1 - Constants.SECONDS_PER_TICK * yFriction;
                 }
             }
-            else if (_exitDirection.x < 0)
+            else if (exitDirection.x < 0)
             {
-                if (velocity.x > 0)
+                if (Velocity.x > 0)
                 {
-                    velocity.x *= _exitDirection.x * -1;
+                    velocity.x *= exitDirection.x * -1;
                     velocity.y *= 1 - Constants.SECONDS_PER_TICK * yFriction;
                 }
             }
-            if (_exitDirection.y > 0)
+            if (exitDirection.y > 0)
             {
                 if (velocity.y < 0)
                 {
-                    velocity.y *= _exitDirection.y * -1 + 1;
+                    velocity.y *= exitDirection.y * -1 + 1;
                     velocity.x *= 1 - Constants.SECONDS_PER_TICK * xFriction;
                     grounded = true;
                 }
             }
-            else if (_exitDirection.y < 0)
+            else if (exitDirection.y < 0)
             {
                 if (velocity.y > 0)
                 {
-                    velocity.x *= _exitDirection.x * -1;
+                    velocity.x *= exitDirection.x * -1;
                     velocity.x *= 1 - Constants.SECONDS_PER_TICK * xFriction;
                 }
             }
-        }
-
-        public void HandleProperties()
-        {
-            handler.SetProperties(gravityScale, drag, xFriction, yFriction);
-        }
-
-        public void HandleVelocity()
-        {
-            handler.SetVelocity(velocity.x, velocity.y);
+            Velocity = velocity;
         }
     }
 
-    public interface IDynamicPhysicsObjectHandler
+    internal class DynamicPhysicsObjectState : ComponentRollbackState
     {
-        void SetProperties(float _gravityScale, float _drag, float _xFriction, float _yFriction);
-        /// <summary>
-        /// Handles velocity for unexpected events (not including gravity and friction).
-        /// </summary>
-        void SetVelocity(float _xVelocity, float _yVelocity);
+        public DynamicPhysicsObjectState(Vector2 _velocity)
+        {
+            velocity = _velocity;
+        }
+
+        private Vector2 velocity;
+        public Vector2 Velocity 
+        {
+            get 
+            {
+                return (activeState as DynamicPhysicsObjectState).velocity;
+            } 
+            internal set 
+            {
+                ChangeMade();
+                (activeState as DynamicPhysicsObjectState).velocity = value;
+            } 
+        }
+
+        protected override ComponentRollbackState Clone()
+        {
+            return new DynamicPhysicsObjectState(velocity);
+        }
     }
 }

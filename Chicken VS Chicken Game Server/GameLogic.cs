@@ -8,7 +8,7 @@ namespace GameServer
         public static uint gameTick { get; private set; } = 0;
         public static void Update()
         {
-            if (gameTick == int.MaxValue)
+            if (gameTick == uint.MaxValue)
             {
                 // TODO: close the program or something
                 throw new Exception("Game tick exceeded its max value!");

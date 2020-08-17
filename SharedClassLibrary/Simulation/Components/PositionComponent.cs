@@ -1,52 +1,48 @@
-﻿using System;
-
-namespace SharedClassLibrary.Simulation.Components
+﻿namespace SharedClassLibrary.Simulation.Components
 {
-    public class PositionComponent : Component
+    public class PositionComponent : RollbackComponent
     {
-        private IPositionComponentHandler handler;
-        private Vector2 position;
-
         public Vector2 Position 
         { 
-            get { return position; } 
+            get 
+            {
+                return (state as PositionComponentState).Position;
+            } 
             set 
             {
-                position = value;
-                HandlePosition();
+                (state as PositionComponentState).Position = value;
             } 
         }
 
-        public PositionComponent(Component _nextComponent, IPositionComponentHandler _handler, Vector2 _position) : base(_nextComponent) 
-        {
-            if (_handler == null)
-                throw new ArgumentNullException("_handler");
+        internal PositionComponent(Component _nextComponent, Vector2 _position) 
+            : base(_nextComponent, new PositionComponentState( new Vector2(0, 0) ) ) 
+        { }
+    }
 
-            handler = _handler;
+    internal class PositionComponentState : ComponentRollbackState
+    {
+        public PositionComponentState(Vector2 _position)
+        {
             position = _position;
         }
 
-        internal override void CallStartupHandlers()
+        private Vector2 position;
+        public Vector2 Position
         {
-            base.CallStartupHandlers();
-            HandlePosition();
+            get
+            {
+                return (activeState as PositionComponentState).position;
+            }
+            internal set
+            {
+                ChangeMade();
+                (activeState as PositionComponentState).position = value;
+            }
         }
 
-        internal override void Update()
+        protected override ComponentRollbackState Clone()
         {
-            HandlePosition();
-
-            base.Update();
+            return new DynamicPhysicsObjectState(position);
         }
-
-        public void HandlePosition()
-        {
-            handler.SetPosition(position.x, position.y);
-        }
-    }
-
-    public interface IPositionComponentHandler
-    {
-        void SetPosition(float _xPos, float _yPos);
     }
 }
