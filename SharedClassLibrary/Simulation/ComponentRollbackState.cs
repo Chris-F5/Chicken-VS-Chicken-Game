@@ -44,9 +44,11 @@
             }
         }
 
-        public ComponentRollbackState FinishChanges()
+        internal ComponentRollbackState FinishChanges()
         {
-            return activeState;
+            ComponentRollbackState ret = activeState;
+            updatedState = null;
+            return ret;
         }
     }
 }

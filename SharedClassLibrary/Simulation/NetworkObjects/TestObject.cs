@@ -2,7 +2,7 @@
 using SharedClassLibrary.Networking;
 using SharedClassLibrary.Simulation.Components;
 
-namespace SharedClassLibrary.Simulation.ObjectTemplates
+namespace SharedClassLibrary.Simulation.NetworkObjects
 {
     public sealed class TestObject : NetworkObject
     {

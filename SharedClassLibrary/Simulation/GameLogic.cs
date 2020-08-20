@@ -25,11 +25,13 @@ namespace SharedClassLibrary.Simulation
                 ResimulateTicks(numberOfTicksToRollBack);
             }
 
+            PlayerController.UpdateAllToNewTick();
             UpdateToNextTick();
         }
 
         private void UpdateToNextTick()
         {
+            Console.WriteLine("Next Tick");
             NetworkObject.UpdateAll();
             GameTick++;
 
@@ -56,9 +58,12 @@ namespace SharedClassLibrary.Simulation
 
             GameTick -= _ticks;
             NetworkObject.RollBackTicks(_ticks);
+            Console.WriteLine($"Resimulating {_ticks}");
             for (int i = 0; i < _ticks; i++)
             {
-                NetworkObject.UpdateAll();
+                Console.WriteLine($"X Pos : {NetworkObject.allNetworkObjects[2].GetComponent<Components.PositionComponent>().Position.x}");
+                Console.WriteLine($"X Vel : {NetworkObject.allNetworkObjects[2].GetComponent<Components.DynamicPhysicsBehaviour>().Velocity.x}");
+                UpdateToNextTick();
             }
         }
 

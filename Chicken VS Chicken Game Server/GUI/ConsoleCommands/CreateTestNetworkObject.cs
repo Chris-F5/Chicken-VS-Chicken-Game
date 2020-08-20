@@ -1,6 +1,6 @@
 ﻿using System;
 using SharedClassLibrary.Simulation;
-using SharedClassLibrary.Simulation.ObjectTemplates;
+using SharedClassLibrary.Simulation.NetworkObjects;
 
 namespace GameServer.GUI.ConsoleCommands
 {
@@ -32,7 +32,7 @@ namespace GameServer.GUI.ConsoleCommands
                 return ThrowError(_ex.Message);
             }
 
-            new TestObject(new Vector2(_x,_y)).CreateObjectInstance();
+            new TestObject(new Vector2(_x,_y));
 
             return $"Object Created at x: {_perams[0]}, y: {_perams[1]}.";
         }

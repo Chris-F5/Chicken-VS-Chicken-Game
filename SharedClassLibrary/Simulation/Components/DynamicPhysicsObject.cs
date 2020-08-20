@@ -39,7 +39,7 @@
 
         protected internal override void Update()
         {
-            Vector2 gravityForce = new Vector2(0, -1) * gravityScale * Constants.GLOBAL_GRAVITY_SCALE * Constants.SECONDS_PER_TICK;
+            Vector2 gravityForce = new Vector2(0, -1) * (gravityScale * Constants.GLOBAL_GRAVITY_SCALE * Constants.SECONDS_PER_TICK);
             Velocity += gravityForce;
 
             positionComponent.Position += Velocity * Constants.SECONDS_PER_TICK;

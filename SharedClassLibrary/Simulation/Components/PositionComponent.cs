@@ -15,7 +15,7 @@
         }
 
         internal PositionComponent(Component _nextComponent, Vector2 _position) 
-            : base(_nextComponent, new PositionComponentState( new Vector2(0, 0) ) ) 
+            : base(_nextComponent, new PositionComponentState( _position ) ) 
         { }
     }
 
@@ -42,7 +42,7 @@
 
         protected override ComponentRollbackState Clone()
         {
-            return new DynamicPhysicsObjectState(position);
+            return new PositionComponentState(position);
         }
     }
 }

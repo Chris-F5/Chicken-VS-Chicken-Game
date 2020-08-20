@@ -1,7 +1,7 @@
 ﻿using SharedClassLibrary.Networking;
 using SharedClassLibrary.Simulation.Components;
 
-namespace SharedClassLibrary.Simulation.ObjectTemplates
+namespace SharedClassLibrary.Simulation.NetworkObjects
 {
     public class Player : NetworkObject
     {

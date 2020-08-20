@@ -5,16 +5,18 @@ namespace SharedClassLibrary.Simulation
 {
     public class PlayerController
     {
+        private static List<PlayerController> controllers = new List<PlayerController>();
+        private static int newestTick = -1;
+
         private List<InputState> inputStates = new List<InputState>();
         private InputState pendingState;
 
-        private static List<PlayerController> controllers = new List<PlayerController>();
 
-        public InputState inputState 
+        internal InputState inputState 
         { 
             get 
             {
-                return inputStates[GetStateIndex(GameLogic.Instance.GameTick)];
+                return inputStates[inputStates.Count - 1 - (newestTick - GameLogic.Instance.GameTick)];
             } 
         }
 
@@ -31,38 +33,44 @@ namespace SharedClassLibrary.Simulation
             controllers.Remove(this);
         }
 
-        internal static void UpdateAll()
+        internal static void UpdateAllToNewTick()
         {
             foreach (PlayerController controller in controllers)
             {
-                controller.UpdateToNextTick();
+                controller.UpdateToNewTick();
             }
+            newestTick += 1;
         }
 
-        private void UpdateToNextTick()
+        private void UpdateToNewTick()
         {
             inputStates.Add(pendingState);
             pendingState = new InputState();
         }
 
-        private int GetStateIndex(int _tick)
+        public void SetState(InputState _state)
         {
-            return inputStates.Count - 1 - GameLogic.Instance.GameTick - _tick;
+            SetState(GameLogic.Instance.GameTick, _state);
         }
 
         public void SetState(int _tick, InputState _state)
         {
-            if (_tick == inputStates.Count)
+            int index = inputStates.Count - 1 - (newestTick - _tick);
+            if (index < 0)
+            {
+                throw new ArgumentException("cant set input state on this tick", "_tick");
+            }
+            else if (_tick == GameLogic.Instance.GameTick)
             {
                 pendingState = _state;
             }
-            else if (_tick > inputStates.Count)
+            else if (_tick > GameLogic.Instance.GameTick)
             {
-                throw new ArgumentException("tick number can not be in future.", "_tick");
+                throw new ArgumentException("tick number can not be in future", "_tick");
             }
             else
             {
-                inputStates[GetStateIndex(_tick)] = _state;
+                inputStates[index] = _state;
 
                 GameLogic.Instance.RequestRollBack(_tick);
             }

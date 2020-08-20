@@ -8,7 +8,8 @@ namespace SharedClassLibrary.Simulation
     public class NetworkObject : RollbackComponent
     {
         private static List<NetworkObject> pendingCreationObject = new List<NetworkObject>();
-        private static List<NetworkObject> allNetworkObjects = new List<NetworkObject>();
+        // TODO: make private \/
+        public static List<NetworkObject> allNetworkObjects = new List<NetworkObject>();
 
         public readonly short objectId;
         public readonly short objectTypeId;
@@ -106,6 +107,7 @@ namespace SharedClassLibrary.Simulation
                 _networkObject.LateUpdate();
             }
             allNetworkObjects.AddRange(pendingCreationObject);
+            pendingCreationObject.Clear();
         }
 
         private static void AddObject(NetworkObject _object)

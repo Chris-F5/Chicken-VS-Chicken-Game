@@ -30,6 +30,11 @@ namespace SharedClassLibrary.Simulation.Components
                 if (controller.inputState.rightKey)
                 {
                     physicsBehaviour.AddForce(new Vector2(acceleration * Constants.SECONDS_PER_TICK, 0));
+                    Console.WriteLine($"right {GameLogic.Instance.GameTick}");
+                }
+                else
+                {
+                    Console.WriteLine($"not right {GameLogic.Instance.GameTick}");
                 }
                 if (controller.inputState.leftKey)
                 {

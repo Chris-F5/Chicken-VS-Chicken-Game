@@ -3,7 +3,8 @@ using System.Windows.Forms;
 using System.Threading;
 using SharedClassLibrary;
 using SharedClassLibrary.Simulation;
-using SharedClassLibrary.Simulation.ObjectTemplates;
+using SharedClassLibrary.Simulation.NetworkObjects;
+using SharedClassLibrary.Simulation.Components;
 
 namespace GameServer
 {
@@ -14,15 +15,55 @@ namespace GameServer
 
         static void Main()
         {
-            ServerManager.StartServer(25680, 5);
+            //ServerManager.StartServer(25680, 5);
 
             StartFormThread();
             StartGameThread();
 
-            new Wall(new Vector2(-10, -10), new Vector2(20, 6)).CreateObjectInstance();
-            new Wall(new Vector2(-4, -2.5f), new Vector2(3, 0.5f)).CreateObjectInstance();
+            new Wall(new Vector2(-10, -10), new Vector2(20, 6));
+            new Wall(new Vector2(-4, -2.5f), new Vector2(3, 0.5f));
+            PlayerController controller = new PlayerController();
+            Player player = new Player(controller, new Vector2(0, 10));
+            for (int i = 0; i < 300; i++)
+            {
+                GameLogic.Instance.UpdateToNewTick();
+                Console.WriteLine($"Player position: ({player.GetComponent<PositionComponent>().Position.x}, {player.GetComponent<PositionComponent>().Position.y}) Game tick {GameLogic.Instance.GameTick}");
+            }
+            Console.WriteLine("--");
+            for (int i = 0; i < 3; i++)
+            {
+                PlayerController.InputState inputState = new PlayerController.InputState();
+                inputState.rightKey = true;
+                controller.SetState(inputState);
+
+                GameLogic.Instance.UpdateToNewTick();
+                Console.WriteLine($"Player position: ({player.GetComponent<PositionComponent>().Position.x}, {player.GetComponent<PositionComponent>().Position.y}) Game tick {GameLogic.Instance.GameTick}");
+            }
+            for (int i = 0; i < 8; i++)
+            {
+                GameLogic.Instance.UpdateToNewTick();
+                Console.WriteLine($"Player position: ({player.GetComponent<PositionComponent>().Position.x}, {player.GetComponent<PositionComponent>().Position.y}) Game tick {GameLogic.Instance.GameTick}");
+            }
+            /*controller.SetState(303, new PlayerController.InputState());
+            controller.SetState(304, new PlayerController.InputState());
+            controller.SetState(305, new PlayerController.InputState());
+            controller.SetState(306, new PlayerController.InputState());
+            controller.SetState(307, new PlayerController.InputState());
+            controller.SetState(308, new PlayerController.InputState());
+            controller.SetState(309, new PlayerController.InputState());
+            controller.SetState(310, new PlayerController.InputState());
+            GameLogic.Instance.UpdateToNewTick();
+            Console.WriteLine($"Player position: ({player.GetComponent<PositionComponent>().Position.x}, {player.GetComponent<PositionComponent>().Position.y}) Game tick {GameLogic.Instance.GameTick}");*/
         }
-        public static void StartGameThread()
+
+        private static void MainLoop()
+        {
+            //ThreadManager.UpdateMain();
+            //GameLogic.Instance.UpdateToNewTick();
+            //Client.SynchroniseClients();
+        }
+
+        private static void StartGameThread()
         {
             gameThreadRunning = true;
             Thread _mainThread = new Thread(new ThreadStart(GameThread));
@@ -43,7 +84,7 @@ namespace GameServer
             {
                 while (_nextLoop < DateTime.Now)
                 {
-                    GameLogic.Update();
+                    MainLoop();
 
                     _nextLoop = _nextLoop.AddMilliseconds(Constants.MS_PER_TICK);
 

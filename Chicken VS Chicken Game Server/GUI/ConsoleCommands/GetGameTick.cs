@@ -1,9 +1,5 @@
 ﻿using GameServer.GUI.ConsoleCommands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SharedClassLibrary.Simulation;
 
 namespace GameServer.src.GUI.ConsoleCommands
 {
@@ -22,7 +18,7 @@ namespace GameServer.src.GUI.ConsoleCommands
                 return ThrowError($"Expected 0 peramiters, found {_perams.Length}.");
             }
 
-            return $"Current game tick: {GameLogic.gameTick}. Max game tick: {uint.MaxValue}.";
+            return $"Current game tick: {GameLogic.Instance.GameTick}. Max game tick: {int.MaxValue}.";
         }
     }
 }

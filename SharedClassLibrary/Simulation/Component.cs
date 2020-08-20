@@ -29,7 +29,7 @@ namespace SharedClassLibrary.Simulation
             }
         }
 
-        internal ComponentType GetComponent<ComponentType>() where ComponentType : Component
+        public ComponentType GetComponent<ComponentType>() where ComponentType : Component
         {
             if (this.GetType() == typeof(ComponentType) || this.GetType().IsSubclassOf(typeof(ComponentType)))
             {
@@ -45,7 +45,7 @@ namespace SharedClassLibrary.Simulation
             }
         }
 
-        internal List<ComponentType> GetComponents<ComponentType>() where ComponentType : Component
+        public List<ComponentType> GetComponents<ComponentType>() where ComponentType : Component
         {
             if (this.GetType() == typeof(ComponentType) || this.GetType().IsSubclassOf(typeof(ComponentType)))
             {

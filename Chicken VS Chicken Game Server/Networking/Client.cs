@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using SharedClassLibrary.Networking;
 using SharedClassLibrary.Simulation;
+using SharedClassLibrary.Simulation.NetworkObjects;
 
 namespace GameServer
 {
@@ -54,23 +55,13 @@ namespace GameServer
         }
         private void CreatePlayer()
         {
-            Console.WriteLine("Player object created.");
             playerController = new PlayerController();
-        }
-
-        private void SendPing(byte _id)
-        {
-            using (Packet _packet = new Packet((byte)ServerPacketIds.ping))
-            {
-                _packet.WriteByte(_id);
-                _packet.WriteByte(ping);
-                udp.Send(_packet);
-            }
+            new Player(playerController, new Vector2(0, 10));
+            Console.WriteLine("Player object created.");
         }
 
         public void HandlePacket(Packet _packet)
         {
-            // TODO: change client packet id type to byte
             byte _packetId = _packet.ReadByte();
             packetHandlers[_packetId](this, _packet);
         }
@@ -83,14 +74,6 @@ namespace GameServer
                 _packet.WriteByte(id);
                 _packet.WriteString("Welcome to the server");
 
-                tcp.Send(_packet);
-            }
-        }
-        public void NetworkSynchroniserStartup()
-        {
-            Console.WriteLine($"Sending synchroniser startup packet to client id: {id}");
-            using (Packet _packet = NetworkObject.GenerateStartupPacket())
-            {
                 tcp.Send(_packet);
             }
         }
@@ -110,22 +93,6 @@ namespace GameServer
             for (int i = 1; i <= ServerManager.maxPlayers; i++)
             {
                 ServerManager.clients[i].udp.Send(_packet, false);
-            }
-        }
-
-        public static void SynchroniseClients()
-        {
-            using (Packet _packet = NetworkObject.GenerateSynchronisationPacket())
-            {
-                SendUDPToAll(_packet);
-            }
-        }
-
-        public static void PingAllClients(byte _id)
-        {
-            for (int i = 1; i <= ServerManager.maxPlayers; i++)
-            {
-                ServerManager.clients[i].SendPing(_id);
             }
         }
     }
