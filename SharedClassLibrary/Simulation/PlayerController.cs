@@ -5,24 +5,38 @@ namespace SharedClassLibrary.Simulation
 {
     public class PlayerController
     {
-        private static List<PlayerController> controllers = new List<PlayerController>();
+        private static Dictionary<byte, PlayerController> controllers = new Dictionary<byte, PlayerController>();
         private static int newestTick = -1;
 
         private List<InputState> inputStates = new List<InputState>();
         private InputState pendingState;
-
+        private byte id;
 
         internal InputState inputState 
         { 
             get 
             {
-                return inputStates[inputStates.Count - 1 - (newestTick - GameLogic.Instance.GameTick)];
+                return GetState(GameLogic.Instance.GameTick).Value;
             } 
         }
 
-        public PlayerController()
+        public static PlayerController GetPlayerController(byte _id)
         {
-            controllers.Add(this);
+            if (controllers.ContainsKey(_id))
+            {
+                return controllers[_id];
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public PlayerController(byte _playerId)
+        {
+            id = _playerId;
+
+            controllers.Add(id, this);
             pendingState = new InputState();
             // TODO: Set inputStates capacity
             // inputStates.Capacity = 
@@ -30,22 +44,35 @@ namespace SharedClassLibrary.Simulation
 
         public void Dispose()
         {
-            controllers.Remove(this);
+            controllers.Remove(id);
         }
 
         internal static void UpdateAllToNewTick()
         {
-            foreach (PlayerController controller in controllers)
+            foreach (PlayerController controller in controllers.Values)
             {
                 controller.UpdateToNewTick();
             }
             newestTick += 1;
         }
 
+        public InputState? GetState(int _tick)
+        {
+            int index = inputStates.Count - 1 - (newestTick - _tick);
+            if (index < 0 || index >= inputStates.Count)
+            {
+                return inputStates[index];
+            }
+            else
+            {
+                throw null;
+            }
+        }
+
         private void UpdateToNewTick()
         {
             inputStates.Add(pendingState);
-            pendingState = new InputState();
+            pendingState = pendingState.predictNextState();
         }
 
         public void SetState(InputState _state)
@@ -70,17 +97,38 @@ namespace SharedClassLibrary.Simulation
             }
             else
             {
-                inputStates[index] = _state;
+                if (inputStates[index] != _state) {
+                    inputStates[index] = _state;
 
-                GameLogic.Instance.RequestRollBack(_tick);
+                    GameLogic.Instance.RequestRollBack(_tick);
+                }
             }
         }
+    }
+    public struct InputState
+    {
+        public bool rightKey;
+        public bool leftKey;
+        public bool upKey;
+        public bool downKey;
 
-        public struct InputState
+        public InputState predictNextState()
         {
-            public bool rightKey;
-            public bool leftKey;
-            public bool upKey;
+            InputState newState = new InputState();
+            newState.rightKey = rightKey;
+            newState.leftKey = leftKey;
+            newState.upKey = upKey;
+            newState.downKey = downKey;
+            return newState;
+        }
+
+        public static bool operator ==(InputState first, InputState second)
+        {
+            return Equals(first, second);
+        }
+        public static bool operator !=(InputState first, InputState second)
+        {
+            return !(first == second);
         }
     }
 }

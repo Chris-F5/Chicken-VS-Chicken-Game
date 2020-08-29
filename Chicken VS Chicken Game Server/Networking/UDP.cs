@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using SharedClassLibrary.Networking;
+using SharedClassLibrary.Logging;
 
 namespace GameServer
 {
@@ -22,35 +23,19 @@ namespace GameServer
             endPoint = _endPoint;
         }
 
-        public void Send(Packet _packet, bool _writeLength = true)
+        public void Send(byte[] _bytes)
         {
-            try
+            if (endPoint != null)
             {
-                if (endPoint != null)
-                {
-                    if (_writeLength) {
-                        _packet.WriteLength();
-                    }
-                    udpListener.BeginSend(_packet.ToArray(), _packet.Length(), endPoint, null, null);
-                }
-            }
-            catch (Exception _ex)
-            {
-                Console.WriteLine($"Error sending data to {endPoint} via UDP: {_ex}");
+                udpListener.BeginSend(_bytes, _bytes.Length, endPoint, null, null);
             }
         }
 
-        public void HandleData(Packet _packetData)
+        public void HandlePacket(PacketReader _packet)
         {
-            int _packetLength = _packetData.ReadInt();
-            byte[] _packetBytes = _packetData.ReadBytes(_packetLength);
-
             ThreadManager.ExecuteOnMainThread(() =>
             {
-                using (Packet _packet = new Packet(_packetBytes))
-                {
-                    client.HandlePacket(_packet);
-                }
+                client.HandlePacket(_packet);
             });
         }
 
@@ -58,48 +43,57 @@ namespace GameServer
         {
             udpListener = new UdpClient(_port);
             udpListener.BeginReceive(UDP.RecieveCallback, null);
-            Console.WriteLine($"Started listening for UDP on port {_port}");
+            Logger.LogDebug($"Started listening for UDP on port {_port}");
         }
+
         public static void RecieveCallback(IAsyncResult _result)
         {
-            try
+            IPEndPoint _clientEndPoint = new IPEndPoint(IPAddress.Any, 0);
+            byte[] _data = udpListener.EndReceive(_result, ref _clientEndPoint);
+            udpListener.BeginReceive(RecieveCallback, null);
+
+            if (_data.Length < 4)
             {
-                IPEndPoint _clientEndPoint = new IPEndPoint(IPAddress.Any, 0);
-                byte[] _data = udpListener.EndReceive(_result, ref _clientEndPoint);
-                udpListener.BeginReceive(RecieveCallback, null);
+                // Something went wrong while transporting the packet. For now, it will be ignored.
+                Logger.LogWarning("Inbound UDP packet was too short for length to be read. Ignoring.");
+                return;
+            }
+            else
+            {
+                // TODO: Some extra precautions need to be put in place here to prevent DOS attacks.
 
-                if (_data.Length < 4)
+                PacketReader _packet = new PacketReader(_data);
+                int packetLength = _packet.ReadInt();
+
+                if (packetLength != _data.Length - sizeof(int))
+                    Logger.LogWarning("Recieved packet with invalid length.");
+
+                byte claimedClientId = _packet.ReadByte();
+
+                if (claimedClientId <= 0 || claimedClientId > Client.maxPlayerCount)
                 {
-                    // Something went wrong while transporting the packet. For now, it will be ignored.
-                    Console.WriteLine("Something went wrong while transporting a UDP packet. For now, it will be ignored.");
-                    return;
+                    Logger.LogWarning($"A clients claimed id {claimedClientId} does not exist. Either they are using a broken client or something went very wrong.");
                 }
-                else
-                {
-                    using (Packet _packet = new Packet(_data))
+                else {
+                    Client claimedClient = Client.GetClient(claimedClientId);
+                    if (claimedClient == null)
                     {
-                        byte _claimedClientId = _packet.ReadByte();
-
-                        if (_claimedClientId <= 0 || _claimedClientId > ServerManager.maxPlayers)
-                        {
-                            // The clients claimed id does not exist. Either they are using a broken client or something went very wrong.
-                            Console.WriteLine($"A clients claimed id {_claimedClientId} does not exist. Either they are using a broken client or something went very wrong.");
-                        }
-                        else if (!ServerManager.clients[_claimedClientId].IsUDPConnected())
-                        {
-                            Console.WriteLine("New UDP connection established");
-                            ServerManager.clients[_claimedClientId].UDPConnect(_clientEndPoint);
-                        }
-                        else if (ServerManager.clients[_claimedClientId].VerifEndPoint(_clientEndPoint))
-                        {
-                            ServerManager.clients[_claimedClientId].udp.HandleData(_packet);
-                        }
+                        Logger.LogWarning("Client tryed to udp connect to a client id that has not been taken yet.");
+                    }
+                    if (!claimedClient.IsUDPConnected)
+                    {
+                        Logger.LogDebug("New UDP connection established");
+                        claimedClient.UDPConnect(_clientEndPoint);
+                    }
+                    else if (claimedClient.VerifyEndPoint(_clientEndPoint))
+                    {
+                        claimedClient.HandleUdpPacket(_packet);
+                    }
+                    else
+                    {
+                        Logger.LogWarning("Client end point did not match with end point of claimed client.");
                     }
                 }
-            }
-            catch (Exception _ex)
-            {
-                Console.WriteLine($"Error reciving UDP data: {_ex}");
             }
         }
     }

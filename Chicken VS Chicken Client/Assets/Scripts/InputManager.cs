@@ -1,38 +1,34 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
-using SharedClassLibrary.Networking;
+using SharedClassLibrary.Simulation;
 
 namespace GameClient
 {
     public class InputManager : MonoBehaviour
     {
+        public static InputManager instance { get; private set; }
+
+        public InputState inputState;
+        public InputState InputState { get { return inputState; } }
+
+        InputManager()
+        {
+            if (instance != null)
+            {
+                throw new Exception("Only one instance of InputManger can exist.");
+            }
+            instance = this;
+        }
+
         [SerializeField]
         KeyCode up, down, left, right;
-        private Dictionary<ClientInputIds, KeyCode> keys;
-        private void Awake()
-        {
-            keys = new Dictionary<ClientInputIds, KeyCode>()
-        {
-            { ClientInputIds.up, up },
-            { ClientInputIds.down, down },
-            { ClientInputIds.left, left },
-            { ClientInputIds.right, right }
-        };
-        }
 
         void Update()
         {
-            foreach (KeyValuePair<ClientInputIds, KeyCode> _key in keys)
-            {
-                if (Input.GetKeyDown(_key.Value))
-                {
-                    ClientSend.ButtonDown(_key.Key);
-                }
-                else if (Input.GetKeyUp(_key.Value))
-                {
-                    ClientSend.ButtonUp(_key.Key);
-                }
-            }
+            inputState.upKey = Input.GetKey(up);
+            inputState.leftKey = Input.GetKey(left);
+            inputState.rightKey = Input.GetKey(right);
+            inputState.downKey = Input.GetKey(down);
         }
     }
 }

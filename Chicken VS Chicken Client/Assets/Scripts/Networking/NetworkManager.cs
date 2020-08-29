@@ -12,15 +12,14 @@ namespace GameClient
         const int remotePort = 25680;
         const int localPort = 25681;
 
-        public delegate void PacketHandler(Packet _packet);
+        public delegate void PacketHandler(PacketReader _packet);
 
-        public static NetworkManager instance;
+        public static NetworkManager instance { get; private set; }
 
         public static readonly Dictionary<byte, PacketHandler> packetHandlers = new Dictionary<byte, PacketHandler>()
         {
-             { (byte)ServerPacketIds.ping, ClientHandle.RecievePing},
-             { (byte)ServerPacketIds.welcome, ClientHandle.Welcome },
-             { (byte)ServerPacketIds.synchronise, ClientHandle.Synchronise },
+             { (byte)ServerPacketIds.welcome, ClientHandle.RecieveWelcome },
+             { (byte)ServerPacketIds.shareClientInputs, ClientHandle.RecieveClientInputs },
         };
 
         public byte myId = 255;
@@ -43,7 +42,6 @@ namespace GameClient
 
         public void TcpConnectionConfirmed(byte _assignedClientId)
         {
-            Debug.Log("test 1");
             myId = _assignedClientId;
             UDPConnection.Connect(localPort, remoteEndPoint);
         }
@@ -53,13 +51,22 @@ namespace GameClient
             TCPConnection.Connect(remoteEndPoint);
         }
 
-        public void HandlePacket(Packet _packet)
+        public void HandlePacket(PacketReader _packet)
         {
             byte _typeId = _packet.ReadByte();
 
             Debug.Log($"Handling Packet id: {_typeId}");
 
             packetHandlers[_typeId](_packet);
+        }
+
+        public void SendTcp(PacketWriter _packet)
+        {
+            TCPConnection.SendData(_packet.GetGeneratedBytes());
+        }
+        public void SendUdp(PacketWriter _packet)
+        {
+
         }
     }
 }

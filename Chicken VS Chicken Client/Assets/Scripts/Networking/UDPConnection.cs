@@ -26,10 +26,8 @@ namespace GameClient
             socket.Connect(remoteIpEndPoint);
             socket.BeginReceive(RecieveCallback, null);
 
-            using (Packet _packet = new Packet())
-            {
-                SendPacket(_packet);
-            }
+            PacketWriter _packet = new ConnectPacketWriter();
+            Send(_packet.GetGeneratedBytes());
         }
         private static void RecieveCallback(IAsyncResult _result)
         {
@@ -48,35 +46,21 @@ namespace GameClient
             {
                 ThreadManager.ExecuteOnMainThread(() =>
                 {
-                    using (Packet _packet = new Packet(_data))
-                    {
-                        int _packetLength = _packet.ReadInt();
-                        if (_packetLength != _packet.UnreadLength())
-                        {
-                            Debug.LogWarning("Suggested udp packet length does not equal actual length. Ignoring packet.");
-                            return;
-                        }
-                        NetworkManager.instance.HandlePacket(_packet);
-                    }
+                    PacketReader _packet = new PacketReader(_data);
+                    NetworkManager.instance.HandlePacket(_packet);
                 });
             }
         }
-        public static void SendPacket(Packet _packet)
+        public static void Send(byte[] _data)
         {
-            if (_packet == null)
-            {
-                throw new ArgumentNullException("_packet can't be null.");
-            }
             if (remoteIpEndPoint == null)
             {
                 throw new Exception("Cant send packet if not connected.");
             }
 
-            _packet.WriteLength();
-            _packet.InsertByte(NetworkManager.instance.myId);
             if (socket != null)
             {
-                socket.BeginSend(_packet.ToArray(), _packet.Length(), null, null);
+                socket.BeginSend(_data, _data.Length, null, null);
             }
         }
     }

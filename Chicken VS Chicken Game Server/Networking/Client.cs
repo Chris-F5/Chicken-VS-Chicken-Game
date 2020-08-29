@@ -10,27 +10,75 @@ namespace GameServer
 {
     class Client
     {
-        private delegate void PacketHandler(Client _fromClient, Packet _packet);
+        public const byte maxPlayerCount = 8;
+        /// <summary>
+        /// The number of previous consecutive ticks of input state to send clients every tick.
+        /// </summary>
+        public const int extraInputsSend = 1;
+
+        private static Dictionary<byte, Client> allClients = new Dictionary<byte, Client>();
+        private delegate void PacketHandler(Client _fromClient, PacketReader _packet);
         private static Dictionary<byte, PacketHandler> packetHandlers = new Dictionary<byte, PacketHandler>()
         {
-            { (byte) ClientPacketIds.pingRespond, ServerHandle.PingRespond},
-            { (byte) ClientPacketIds.welcomeReceived, ServerHandle.WelcomeRecieved},
-            { (byte) ClientPacketIds.udpTestRecieve, ServerHandle.UDPTestRecieved},
-            { (byte) ClientPacketIds.buttonDown, ServerHandle.ButtonDown},
-            { (byte) ClientPacketIds.buttonUp, ServerHandle.ButtonUp},
+            { (byte) ClientPacketIds.welcomeRespond, ServerHandle.WelcomeRecieved},
+            { (byte) ClientPacketIds.inputs, ServerHandle.InputsRecieved},
         };
 
-        public readonly byte id;
-        public readonly TCP tcp;
-        public readonly UDP udp;
-        public PlayerController playerController;
-        public byte ping;
+        public static bool canAcceptNewClient {
+            get
+            {
+                for (byte i = 0; i < maxPlayerCount; i++)
+                {
+                    if (!allClients.ContainsKey(i))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            } 
+        }
 
-        public Client(byte _id)
+        public static Client GetClient(byte _id)
         {
-            id = _id;
+            return allClients[_id];
+        }
+
+        public readonly byte id;
+        private readonly TCP tcp;
+        private readonly UDP udp;
+        private PlayerController playerController;
+
+        public string playerName { get; set; }
+
+        public bool IsUDPConnected
+        {
+            get
+            {
+                return (udp.endPoint != null);
+            }
+        }
+
+        public Client(TcpClient _tcpSocket)
+        {
+            bool foundId = false;
+            for (byte i = 0; i < maxPlayerCount; i++)
+            {
+                if (!allClients.ContainsKey(i))
+                {
+                    foundId = true;
+
+                }
+            }
+            if (!foundId)
+            {
+                throw new Exception("Max client count exceeded");
+            }
+
             tcp = new TCP(this);
             udp = new UDP(this);
+            playerController = new PlayerController();
+            tcp.Connect(_tcpSocket);
+            allClients.Add(id, this);
         }
         public void TCPConnect(TcpClient _socket)
         {
@@ -39,60 +87,80 @@ namespace GameServer
         }
         public void UDPConnect(IPEndPoint _endPoint)
         {
+            // TODO : Check this end point is equal to the tcp one.
             udp.Connect(_endPoint);
         }
-        public bool IsInUse()
-        {
-            return (tcp.socket != null);
-        }
-        public bool IsUDPConnected()
-        {
-            return (udp.endPoint != null);
-        }
-        public bool VerifEndPoint(IPEndPoint _iPEndPoint)
+        /// <summary>
+        /// Checks if the given ip end point is allowed to send udp data to this client.
+        /// </summary>
+        public bool VerifyEndPoint(IPEndPoint _iPEndPoint)
         {
             return (_iPEndPoint.ToString() == udp.endPoint.ToString());
         }
         private void CreatePlayer()
         {
-            playerController = new PlayerController();
             new Player(playerController, new Vector2(0, 10));
             Console.WriteLine("Player object created.");
         }
+        public InputState? GetInputState(int _tick)
+        {
+            return playerController.GetState(_tick);
+        }
 
-        public void HandlePacket(Packet _packet)
+        public void HandleUdpPacket(PacketReader _packet)
+        {
+            udp.HandlePacket(_packet);
+        }
+
+        public void HandlePacket(PacketReader _packet)
         {
             byte _packetId = _packet.ReadByte();
             packetHandlers[_packetId](this, _packet);
         }
 
-        public void Welcome()
+        public void SetInputState(int _tick, InputState _state)
+        {
+            playerController.SetState(_tick, _state);
+        }
+
+        public void SendWelcome()
         {
             Console.WriteLine($"Sending welcome packet to client id: {id}");
-            using (Packet _packet = new Packet((byte)ServerPacketIds.welcome))
-            {
-                _packet.WriteByte(id);
-                _packet.WriteString("Welcome to the server");
+            PacketWriter packet = new WelcomePacketWriter(id, GameLogic.Instance.startTime, "Welcome to the server");
 
-                tcp.Send(_packet);
-            }
+            tcp.Send(packet.GetGeneratedBytes());
         }
 
-        private static void SendTCPToAll(Packet _packet)
+        private void ShareClientInputs()
         {
-            _packet.WriteLength();
-            for (int i = 1; i <= ServerManager.maxPlayers; i++)
+            Dictionary<byte, Dictionary<int, InputState>> inputStates = new Dictionary<byte, Dictionary<int, InputState>>();
+
+            foreach (Client client in allClients.Values)
             {
-                ServerManager.clients[i].tcp.Send(_packet, false);
+                Dictionary<int, InputState> clientInputStates = new Dictionary<int, InputState>();
+                for (int tick = GameLogic.Instance.GameTick; tick >= GameLogic.Instance.GameTick - extraInputsSend; tick--) 
+                {
+                    InputState? input = client.GetInputState(tick);
+                    if (input != null)
+                    {
+                        clientInputStates.Add(tick, input.Value);
+                    }
+                }
+                if (clientInputStates.Count > 0)
+                {
+                    inputStates.Add(client.id, clientInputStates);
+                }
             }
+
+            PacketWriter packetWriter = new ShareInputStatesPacketWriter(inputStates);
+            tcp.Send(packetWriter.GetGeneratedBytes());
         }
 
-        private static void SendUDPToAll(Packet _packet)
+        public static void ShareClientInputsToAllClients()
         {
-            _packet.WriteLength();
-            for (int i = 1; i <= ServerManager.maxPlayers; i++)
+            foreach (Client client in allClients.Values)
             {
-                ServerManager.clients[i].udp.Send(_packet, false);
+                client.ShareClientInputs();
             }
         }
     }

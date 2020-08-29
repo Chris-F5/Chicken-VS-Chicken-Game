@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using SharedClassLibrary.Networking;
+using SharedClassLibrary.Logging;
 
 namespace GameServer
 {
@@ -14,7 +16,7 @@ namespace GameServer
         public TcpClient socket;
         private NetworkStream stream;
         private byte[] recieveBuffer;
-        private Packet recievedData;
+        private List<byte> recievedData;
 
         public TCP(Client _client)
         {
@@ -28,28 +30,23 @@ namespace GameServer
             socket.SendBufferSize = dataBufferSize;
             stream = socket.GetStream();
 
-            recievedData = new Packet();
+            recievedData = new List<byte>();
             recieveBuffer = new byte[dataBufferSize];
             stream.BeginRead(recieveBuffer, 0, dataBufferSize, RecieveCallback, null);
-
-            client.Welcome();
         }
 
-        public void Send(Packet _packet, bool _writeLength = true)
+        public void Send(byte[] _bytes)
         {
             try
             {
                 if (socket != null)
                 {
-                    if (_writeLength) {
-                        _packet.WriteLength();
-                    }
-                    stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), null, null);
+                    stream.BeginWrite(_bytes, 0, _bytes.Length, null, null);
                 }
             }
             catch (Exception _ex)
             {
-                Console.WriteLine($"Error sending packet to player {client.id} via TCP: {_ex}");
+                Logger.LogWarning($"Error sending packet to player {client.id} via TCP: {_ex}");
                 //TODO: disconect client
             }
         }
@@ -58,6 +55,7 @@ namespace GameServer
         {
             try
             {
+                // This line waits for a pending asynchronous read to complete.
                 int _byteLength = stream.EndRead(_result);
                 if (_byteLength <= 0)
                 {
@@ -69,7 +67,7 @@ namespace GameServer
                     byte[] _data = new byte[_byteLength];
                     Array.Copy(recieveBuffer, _data, _byteLength);
 
-                    recievedData.Reset(HandleData(_data));
+                    HandleData(_data);
 
                     stream.BeginRead(recieveBuffer, 0, dataBufferSize, RecieveCallback, null);
                 }
@@ -81,49 +79,54 @@ namespace GameServer
             }
         }
 
-        private bool HandleData(byte[] _data)
+        private void HandleData(byte[] _data)
         {
-            int _packetLength = 0;
+            int packetLength = 0;
 
-            recievedData.SetBytes(_data);
+            //recievedData.SetBytes(_data);
+            recievedData.AddRange(_data);
 
-            if (recievedData.UnreadLength() >= 4)
+            if (packetLength == 0 && recievedData.Count >= 4)
             {
-                _packetLength = recievedData.ReadInt();
-                if (_packetLength <= 0)
+                byte[] lengthBytes = recievedData.GetRange(0, 4).ToArray();
+
+                packetLength = BitConverter.ToInt32(lengthBytes,0);
+                if (packetLength <= 0)
                 {
-                    return true;
+                    Logger.LogWarning("Client sent packet with claimed length of 0 or less.");
+                    recievedData.Clear();
+                    return;
                 }
             }
 
-            while (_packetLength > 0 && _packetLength <= recievedData.UnreadLength())
+            while (packetLength > 0 && packetLength <= recievedData.Count)
             {
-                byte[] _packetBytes = recievedData.ReadBytes(_packetLength);
+                byte[] packetBytes = recievedData.GetRange(0, packetLength).ToArray();
+                recievedData.RemoveRange(0, packetLength);
+
                 ThreadManager.ExecuteOnMainThread(() =>
                 {
-                    using (Packet _packet = new Packet(_packetBytes))
-                    {
-                        client.HandlePacket(_packet);
-                    }
+                    PacketReader packet = new PacketReader(packetBytes);
+                    client.HandlePacket(packet);
                 });
 
-                _packetLength = 0;
-                if (recievedData.UnreadLength() >= 4)
+                packetLength = 0;
+                if (recievedData.Count >= 4)
                 {
-                    _packetLength = recievedData.ReadInt();
-                    if (_packetLength <= 0)
+                    byte[] lengthBytes = recievedData.GetRange(0, 4).ToArray();
+
+                    packetLength = BitConverter.ToInt32(lengthBytes, 0);
+                    if (packetLength <= 0)
                     {
-                        return true;
+                        Logger.LogWarning("Recieved TCP packet with claimed length of 0 or less.");
+                        recievedData.Clear();
+                        return;
                     }
                 }
             }
-            if (_packetLength <= 1)
+            if (packetLength <= 1)
             {
-                return true;
-            }
-            else
-            {
-                return false;
+                recievedData.Clear();
             }
         }
 
@@ -141,16 +144,14 @@ namespace GameServer
 
             Console.WriteLine($"Incoming connection from {_client.Client.RemoteEndPoint}");
 
-            for (int i = 1; i <= ServerManager.maxPlayers; i++)
+            if (Client.canAcceptNewClient)
             {
-                if (!ServerManager.clients[i].IsInUse())
-                {
-                    ServerManager.clients[i].TCPConnect(_client);
-                    return;
-                }
+                new Client(_client);
             }
-
-            Console.WriteLine($"{_client.Client.RemoteEndPoint} failed to connect: server full");
+            else 
+            {
+                Console.WriteLine($"{_client.Client.RemoteEndPoint} failed to connect: server full");
+            }
         }
     }
 }

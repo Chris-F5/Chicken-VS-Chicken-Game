@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using SharedClassLibrary.Logging;
 
 namespace SharedClassLibrary.Simulation
 {
@@ -13,10 +15,72 @@ namespace SharedClassLibrary.Simulation
 
         private int pendingRollback = 0;
 
-        public int rollbackLimit = 0;
-        public int GameTick { get; private set; } = 0;
+        private Action afterTickUpdate;
+        private Action beforeTickUpdate;
 
-        public void UpdateToNewTick()
+        public int rollbackLimit = 0;
+
+        private bool gameThreadRunning = false;
+        public int GameTick { get; private set; } = 0;
+        public DateTime startTime { get; private set; }
+
+        public void StartGameLogicThread(Action _afterTickUpdate, Action _beforeTickUpdate)
+        {
+            StartGameLogicThread(_afterTickUpdate, _beforeTickUpdate, DateTime.Now);
+        }
+        public void StartGameLogicThread(Action _afterTickUpdate, Action _beforeTickUpdate, DateTime _startTime)
+        {
+            startTime = _startTime;
+
+            afterTickUpdate = _afterTickUpdate;
+            beforeTickUpdate = _beforeTickUpdate;
+
+            if (!gameThreadRunning) 
+            {
+                gameThreadRunning = true;
+                Thread _mainThread = new Thread(new ThreadStart(() => { GameThread(_startTime); }));
+                _mainThread.Start();
+            }
+            else
+            {
+                throw new Exception("GameLogic thread is already running");
+            }
+        }
+        private void GameThread(DateTime _startTime)
+        {
+            gameThreadRunning = true;
+            Logger.LogDebug($"Game thread started. Running at {Constants.TICKS_PER_SECOND} ticks per second");
+            DateTime _nextLoop = _startTime;
+
+            while (gameThreadRunning)
+            {
+                while (_nextLoop < DateTime.Now)
+                {
+                    MainLoop();
+
+                    _nextLoop = _nextLoop.AddMilliseconds(Constants.MS_PER_TICK);
+
+                    if (_nextLoop > DateTime.Now)
+                    {
+                        // TODO: the following line occasionally throws error
+                        // System.ArgumentOutOfRangeException: 'Number must be either non-negative and less than or equal to Int32.MaxValue or -1. Parameter name: timeout'
+
+                        Thread.Sleep(_nextLoop - DateTime.Now);
+                    }
+                }
+            }
+        }
+
+        private void MainLoop()
+        {
+            beforeTickUpdate();
+
+            UpdateToNewTick();
+
+            afterTickUpdate();
+        }
+
+        private void UpdateToNewTick()
         {
             // If a rollback is required
             if (pendingRollback < GameTick)
@@ -31,7 +95,6 @@ namespace SharedClassLibrary.Simulation
 
         private void UpdateToNextTick()
         {
-            Console.WriteLine("Next Tick");
             NetworkObject.UpdateAll();
             GameTick++;
 
@@ -58,11 +121,8 @@ namespace SharedClassLibrary.Simulation
 
             GameTick -= _ticks;
             NetworkObject.RollBackTicks(_ticks);
-            Console.WriteLine($"Resimulating {_ticks}");
             for (int i = 0; i < _ticks; i++)
             {
-                Console.WriteLine($"X Pos : {NetworkObject.allNetworkObjects[2].GetComponent<Components.PositionComponent>().Position.x}");
-                Console.WriteLine($"X Vel : {NetworkObject.allNetworkObjects[2].GetComponent<Components.DynamicPhysicsBehaviour>().Velocity.x}");
                 UpdateToNextTick();
             }
         }

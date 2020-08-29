@@ -61,6 +61,8 @@
     </Compile>
     <Compile Include="GUI\GUIConsole.cs" />
     <Compile Include="Networking\Client.cs" />
+    <Compile Include="Networking\PacketWriters\ShareInputStatesPacketWriter.cs" />
+    <Compile Include="Networking\PacketWriters\WelcomePacketWriter.cs" />
     <Compile Include="Networking\ServerHandle.cs" />
     <Compile Include="Networking\ServerManager.cs" />
     <Compile Include="Networking\TCP.cs" />

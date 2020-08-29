@@ -2,17 +2,13 @@
 {
     public enum ServerPacketIds
     {
-        ping,
         welcome,
-        synchronise,
+        shareClientInputs,
     }
 
     public enum ClientPacketIds
     {
-        pingRespond,
-        welcomeReceived,
-        udpTestRecieve,
-        buttonDown,
-        buttonUp
+        welcomeRespond,
+        inputs
     }
 }

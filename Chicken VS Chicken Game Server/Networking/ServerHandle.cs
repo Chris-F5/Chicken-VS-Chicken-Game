@@ -1,66 +1,42 @@
 ﻿using System;
+using System.Collections.Generic;
+using SharedClassLibrary.Logging;
 using SharedClassLibrary.Networking;
+using SharedClassLibrary.Simulation;
 
 namespace GameServer
 {
     class ServerHandle
     {
-        public static void PingRespond(Client _fromClient, Packet _packet)
+        public static void WelcomeRecieved(Client _fromClient, PacketReader _packet)
         {
-            byte _id = _packet.ReadByte();
-            _fromClient.ping = ServerManager.CalcluatePing(_id);
-        }
-        public static void WelcomeRecieved(Client _fromClient, Packet _packet)
-        {
-            int _clientIdCheck = _packet.ReadInt();
-            string _username = _packet.ReadString();
+            int clientIdCheck = _packet.ReadInt();
+            string playername = _packet.ReadString();
+            _fromClient.playerName = playername;
 
-            Console.WriteLine($"{_fromClient.tcp.socket.Client.RemoteEndPoint} connected successfully and is now player {_fromClient.id}");
-            if (_fromClient.id != _clientIdCheck)
+            Console.WriteLine($"\"{playername}\" connected successfully and is now player {_fromClient.id}");
+            if (_fromClient.id != clientIdCheck)
             {
-                Console.WriteLine($"Player \"{_username}\" (ID: {_fromClient}) has assumed the wrong client ID ({_clientIdCheck})!");
+                Console.WriteLine($"Player \"{playername}\" (ID: {_fromClient}) has assumed the wrong client ID ({clientIdCheck})!");
             }
+        }
 
-            _fromClient.NetworkSynchroniserStartup();
-        }
-        public static void UDPTestRecieved(Client _fromClient, Packet _packet)
+        public static void InputsRecieved(Client _fromClient, PacketReader _packet)
         {
-            string _msg = _packet.ReadString();
-            Console.WriteLine($"Recieved UDP test response: {_msg}");
-        }
-        public static void ButtonDown(Client _fromClient, Packet _packet)
-        {
-            byte _key = _packet.ReadByte();
-            if (_key == (byte)ClientInputIds.right)
+            while (_packet.unreadLength >= 4)
             {
-                _fromClient.playerController.rightKey = true;
+                int tickNumber = _packet.ReadInt();
+                if (tickNumber <= GameLogic.Instance.GameTick && tickNumber >= GameLogic.Instance.rollbackLimit) {
+
+                    InputState inputState = _packet.ReadInputState();
+
+                    _fromClient.SetInputState(tickNumber, inputState);
+                }
+                else
+                {
+                    Logger.LogWarning("Recieved client input message with invalid tick number.");
+                }
             }
-            else if (_key == (byte)ClientInputIds.left)
-            {
-                _fromClient.playerController.leftKey = true;
-            }
-            else if (_key == (byte)ClientInputIds.up)
-            {
-                _fromClient.playerController.upKey = true;
-            }
-            // TODO: Send key confirmation message
-        }
-        public static void ButtonUp(Client _fromClient, Packet _packet)
-        {
-            byte _key = _packet.ReadByte();
-            if (_key == (byte)ClientInputIds.right)
-            {
-                _fromClient.playerController.rightKey = false;
-            }
-            else if (_key == (byte)ClientInputIds.left)
-            {
-                _fromClient.playerController.leftKey = false;
-            }
-            else if (_key == (byte)ClientInputIds.up)
-            {
-                _fromClient.playerController.upKey = false;
-            }
-            // TODO: Send key confirmation message
         }
     }
 }

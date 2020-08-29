@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
@@ -14,7 +15,7 @@ namespace GameClient
         private static TcpClient socket;
         private static NetworkStream stream;
         private static byte[] recieveBuffer;
-        private static Packet recievedData;
+        private static List<byte> recievedData;
 
         public static void Connect(IPEndPoint _remoteIpEndPoint)
         {
@@ -39,19 +40,18 @@ namespace GameClient
 
             stream = socket.GetStream();
 
-            recievedData = new Packet();
+            recievedData = new List<byte>();
 
             stream.BeginRead(recieveBuffer, 0, dataBufferSize, RecieveCallback, null);
         }
         private static void RecieveCallback(IAsyncResult _result)
         {
-            Debug.Log("Recieved TCP data.");
-            // This line is waiting for a pending asynchronous read to complete.
+            // This line waits for a pending asynchronous read to complete.
             int _byteLength = stream.EndRead(_result);
             if (_byteLength <= 0)
             {
                 // TODO: disconect client
-                Debug.LogWarning("Byte length was smaller than or equal to zero.");
+                Debug.LogWarning("TCP byte length was smaller than or equal to zero.");
                 return;
             }
             else
@@ -59,68 +59,63 @@ namespace GameClient
                 byte[] _data = new byte[_byteLength];
                 Array.Copy(recieveBuffer, _data, _byteLength);
 
-                recievedData.Reset(HandleData(_data));
+                HandleData(_data);
 
                 stream.BeginRead(recieveBuffer, 0, dataBufferSize, RecieveCallback, null);
             }
         }
-        private static bool HandleData(byte[] _data)
+        private static void HandleData(byte[] _data)
         {
-            int _packetLength = 0;
+            int packetLength = 0;
 
-            recievedData.SetBytes(_data);
+            recievedData.AddRange(_data);
 
-            if (recievedData.UnreadLength() >= 4)
+            if (packetLength == 0 && recievedData.Count >= 4)
             {
-                _packetLength = recievedData.ReadInt();
-                if (_packetLength <= 0)
+                byte[] lengthBytes = recievedData.GetRange(0, 4).ToArray();
+
+                packetLength = BitConverter.ToInt32(lengthBytes, 0);
+                if (packetLength <= 0)
                 {
-                    Debug.LogWarning("Packet length was smaller than or equal to zero.");
-                    return true;
+                    Debug.LogWarning("Recieved TCP packet with claimed length of 0 or less.");
+                    recievedData.Clear();
+                    return;
                 }
             }
 
-            while (_packetLength > 0 && _packetLength <= recievedData.UnreadLength())
+            while (packetLength > 0 && packetLength <= recievedData.Count)
             {
-                byte[] _packetBytes = recievedData.ReadBytes(_packetLength);
-
-                Debug.Log("Recieved TCP packet.");
+                byte[] packetBytes = recievedData.GetRange(0, packetLength).ToArray();
+                recievedData.RemoveRange(0, packetLength);
 
                 ThreadManager.ExecuteOnMainThread(() =>
                 {
-                    using (Packet _packet = new Packet(_packetBytes))
-                    {
-                        NetworkManager.instance.HandlePacket(_packet);
-                    }
+                    PacketReader packet = new PacketReader(packetBytes);
+                    NetworkManager.instance.HandlePacket(packet);
                 });
 
-                _packetLength = 0;
-                if (recievedData.UnreadLength() >= 4)
+                packetLength = 0;
+                if (recievedData.Count >= 4)
                 {
-                    _packetLength = recievedData.ReadInt();
-                    if (_packetLength <= 0)
+                    byte[] lengthBytes = recievedData.GetRange(0, 4).ToArray();
+
+                    packetLength = BitConverter.ToInt32(lengthBytes, 0);
+                    if (packetLength <= 0)
                     {
-                        return true;
+                        Debug.LogWarning("Recieved TCP packet with claimed length of 0 or less.");
+                        recievedData.Clear();
+                        return;
                     }
                 }
             }
-            if (_packetLength <= 1)
+            if (packetLength <= 1)
             {
-                return true;
-            }
-            else
-            {
-                return false;
+                recievedData.Clear();
             }
         }
-        public static void SendPacket(Packet _packet)
+        public static void SendData(byte[] _data)
         {
-            if (_packet == null)
-            {
-                throw new ArgumentNullException("_packet can't be null.");
-            }
-            _packet.WriteLength();
-            stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), null, null);
+            stream.BeginWrite(_data, 0, _data.Length, null, null);
         }
     }
 }
