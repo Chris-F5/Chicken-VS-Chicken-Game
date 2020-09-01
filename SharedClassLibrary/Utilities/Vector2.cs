@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SharedClassLibrary.Simulation
+namespace SharedClassLibrary.Utilities
 {
     public struct Vector2
     {

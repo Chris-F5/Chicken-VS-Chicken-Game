@@ -5,9 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Simulation\NetworkObjects\items\**" />
-    <EmbeddedResource Remove="Simulation\NetworkObjects\items\**" />
-    <None Remove="Simulation\NetworkObjects\items\**" />
+    <Folder Include="Simulation\Systems\" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
