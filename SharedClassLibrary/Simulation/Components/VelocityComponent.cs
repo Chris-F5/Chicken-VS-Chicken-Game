@@ -2,8 +2,8 @@
 
 namespace SharedClassLibrary.Simulation.Components
 {
-    public struct TransformComponent
+    public struct VelocityComponent
     {
-        Vector2 position;
+        Vector2 velocity;
     }
 }
