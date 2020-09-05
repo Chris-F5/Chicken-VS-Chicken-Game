@@ -138,7 +138,7 @@ namespace GameServer
             foreach (Client client in allClients.Values)
             {
                 Dictionary<int, InputState> clientInputStates = new Dictionary<int, InputState>();
-                for (int tick = GameLogic.Instance.GameTick; tick >= GameLogic.Instance.GameTick - extraInputsSend; tick--) 
+                for (int tick = GameLogic.Instance.GameTick - 1; tick >= GameLogic.Instance.GameTick - 1 - extraInputsSend; tick--) 
                 {
                     InputState? input = client.GetInputState(tick);
                     if (input != null)

@@ -6,11 +6,11 @@ namespace SharedClassLibrary.Simulation
     public class PlayerController
     {
         private static Dictionary<byte, PlayerController> controllers = new Dictionary<byte, PlayerController>();
-        private static int newestTick = -1;
 
         private List<InputState> inputStates = new List<InputState>();
         private InputState pendingState;
         private byte id;
+        private int firstStateTick = -1;
 
         internal InputState inputState 
         { 
@@ -53,24 +53,27 @@ namespace SharedClassLibrary.Simulation
             {
                 controller.UpdateToNewTick();
             }
-            newestTick += 1;
         }
 
         public InputState? GetState(int _tick)
         {
-            int index = inputStates.Count - 1 - (newestTick - _tick);
+            int index = _tick - firstStateTick;
             if (index < 0 || index >= inputStates.Count)
             {
-                return inputStates[index];
+                return null;
             }
             else
             {
-                throw null;
+                return inputStates[index];
             }
         }
 
         private void UpdateToNewTick()
         {
+            if (inputStates.Count == 0)
+            {
+                firstStateTick = GameLogic.Instance.GameTick;
+            }
             inputStates.Add(pendingState);
             pendingState = pendingState.predictNextState();
         }
@@ -82,7 +85,7 @@ namespace SharedClassLibrary.Simulation
 
         public void SetState(int _tick, InputState _state)
         {
-            int index = inputStates.Count - 1 - (newestTick - _tick);
+            int index = _tick - firstStateTick;
             if (index < 0)
             {
                 throw new ArgumentException("cant set input state on this tick", "_tick");

@@ -95,6 +95,10 @@ namespace SharedClassLibrary.Simulation
 
         private void UpdateToNextTick()
         {
+            if (PlayerController.GetPlayerController(0) != null)
+            {
+                int test = 0;
+            }
             NetworkObject.UpdateAll();
             GameTick++;
 
