@@ -77,7 +77,8 @@ namespace SharedClassLibrary.Simulation
 
         internal void Destroy()
         {
-            Dispose();
+            DisableObject();
+            (state as NetworkObjectState).destroyedTime = GameLogic.Instance.GameTick;
         }
 
         private void RollBackComponentTicks(int _ticks)
@@ -85,6 +86,14 @@ namespace SharedClassLibrary.Simulation
             for (int i = 0; i < _ticks; i++) {
                 RollBackOneTick();
             }
+        }
+        protected internal override void Update()
+        {
+            if ((state as NetworkObjectState).destroyedTime != -1 && (state as NetworkObjectState).destroyedTime < GameLogic.Instance.rollbackLimit)
+            {
+                Dispose();
+            }
+            base.Update();
         }
 
         static internal void RollBackTicks(int _ticks)
@@ -123,7 +132,7 @@ namespace SharedClassLibrary.Simulation
         {
             enabled = _enabled;
         }
-
+        public int destroyedTime = -1;
         private bool enabled;
         public bool Enabled 
         {
