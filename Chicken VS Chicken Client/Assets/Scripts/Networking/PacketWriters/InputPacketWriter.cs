@@ -14,11 +14,13 @@ namespace GameClient
 
         protected override void GenerateBufferContent()
         {
+            WriteByte((byte)ClientPacketIds.inputs);
             foreach (KeyValuePair<int, InputState> inputState in inputStates)
             {
                 int tick = inputState.Key;
                 WriteInt(tick);
                 WriteInputState(inputState.Value);
+                InsertInt(buffer.Count);
             }
         }
     }

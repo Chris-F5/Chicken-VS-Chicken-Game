@@ -77,13 +77,11 @@ namespace GameServer
             tcp = new TCP(this);
             udp = new UDP(this);
             playerController = new PlayerController(id);
+            CreatePlayer();
             tcp.Connect(_tcpSocket);
             allClients.Add(id, this);
-        }
-        public void TCPConnect(TcpClient _socket)
-        {
-            tcp.Connect(_socket);
-            CreatePlayer();
+
+            SendWelcome();
         }
         public void UDPConnect(IPEndPoint _endPoint)
         {

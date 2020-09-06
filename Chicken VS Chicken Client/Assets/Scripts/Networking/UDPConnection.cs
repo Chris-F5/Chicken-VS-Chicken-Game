@@ -47,6 +47,7 @@ namespace GameClient
                 ThreadManager.ExecuteOnMainThread(() =>
                 {
                     PacketReader _packet = new PacketReader(_data);
+                    _packet.ReadInt(); // Packet Length
                     NetworkManager.instance.HandlePacket(_packet);
                 });
             }

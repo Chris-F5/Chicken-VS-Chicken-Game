@@ -82,14 +82,16 @@ namespace GameClient
                     return;
                 }
             }
-
+            Debug.Log(packetLength);
             while (packetLength > 0 && packetLength <= recievedData.Count)
             {
                 byte[] packetBytes = recievedData.GetRange(0, packetLength).ToArray();
                 recievedData.RemoveRange(0, packetLength);
 
+                Debug.Log("Handeling TCP 1");
                 ThreadManager.ExecuteOnMainThread(() =>
                 {
+                    Debug.Log("Handeling TCP 2");
                     PacketReader packet = new PacketReader(packetBytes);
                     NetworkManager.instance.HandlePacket(packet);
                 });

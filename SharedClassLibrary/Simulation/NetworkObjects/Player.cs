@@ -21,5 +21,11 @@ namespace SharedClassLibrary.Simulation.NetworkObjects
                   (short) NetworkObjectTemplateIds.player
                   )
         { }
+
+        protected internal override void Update()
+        {
+            Logging.Logger.LogDebug($"Player position: ({GetComponent<PositionComponent>().Position.x}, {GetComponent<PositionComponent>().Position.y})");
+            base.Update();
+        }
     }
 }

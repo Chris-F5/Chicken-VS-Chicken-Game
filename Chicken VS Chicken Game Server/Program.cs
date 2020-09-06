@@ -4,6 +4,7 @@ using System.Threading;
 using SharedClassLibrary;
 using SharedClassLibrary.Simulation;
 using SharedClassLibrary.Simulation.NetworkObjects;
+using SharedClassLibrary.Logging;
 
 namespace GameServer
 {
@@ -30,6 +31,14 @@ namespace GameServer
         private static void AfterTickUpdate()
         {
             Client.ShareClientInputsToAllClients();
+            while (Logger.DebugMessages.Count > 0)
+            {
+                Console.WriteLine(Logger.DebugMessages.Dequeue());
+            }
+            while (Logger.WarningMessages.Count > 0)
+            {
+                Console.WriteLine("WARNING: " + Logger.WarningMessages.Dequeue());
+            }
         }
 
         [STAThread]

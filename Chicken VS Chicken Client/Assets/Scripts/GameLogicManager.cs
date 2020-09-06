@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using SharedClassLibrary.Simulation;
 using SharedClassLibrary.Networking;
+using UnityEngine;
 
 namespace GameClient
 {
@@ -39,7 +40,7 @@ namespace GameClient
             playerController.SetState(InputManager.instance.inputState);
 
             Dictionary<int, InputState> clientInputStates = new Dictionary<int, InputState>();
-            for (int tick = GameLogic.Instance.GameTick; tick >= GameLogic.Instance.GameTick - extraInputsSend; tick--)
+            for (int tick = GameLogic.Instance.GameTick - 1; tick >= GameLogic.Instance.GameTick - 1 - extraInputsSend; tick--)
             {
                 InputState? input = playerController.GetState(tick);
                 if (input != null)
@@ -51,6 +52,7 @@ namespace GameClient
             {
                 PacketWriter packetWriter = new InputPacketWriter(clientInputStates);
                 NetworkManager.instance.SendTcp(packetWriter);
+                Debug.Log("Sent Input");
             }
         }
 

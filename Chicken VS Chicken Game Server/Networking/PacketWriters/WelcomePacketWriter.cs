@@ -22,6 +22,7 @@ namespace GameServer
             WriteByte(clientId);
             WriteLong(gameLogicStartTime);
             WriteString(message);
+            InsertInt(buffer.Count);
         }
     }
 }

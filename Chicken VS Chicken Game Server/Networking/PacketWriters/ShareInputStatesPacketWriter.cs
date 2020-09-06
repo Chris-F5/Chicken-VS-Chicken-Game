@@ -14,6 +14,7 @@ namespace GameServer
 
         protected override void GenerateBufferContent()
         {
+            WriteByte((byte)ServerPacketIds.shareClientInputs);
             foreach (KeyValuePair<byte ,Dictionary<int, InputState>> clientInputState in inputStates)
             {
                 WriteByte(clientInputState.Key);
@@ -26,6 +27,7 @@ namespace GameServer
                 // End of this player info
                 WriteInt(int.MaxValue);
             }
+            InsertInt(buffer.Count);
         }
     }
 }

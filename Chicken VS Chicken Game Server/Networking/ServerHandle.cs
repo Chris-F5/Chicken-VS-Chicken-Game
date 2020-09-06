@@ -23,6 +23,7 @@ namespace GameServer
 
         public static void InputsRecieved(Client _fromClient, PacketReader _packet)
         {
+            Console.WriteLine("Input Recieved");
             while (_packet.unreadLength >= 4)
             {
                 int tickNumber = _packet.ReadInt();

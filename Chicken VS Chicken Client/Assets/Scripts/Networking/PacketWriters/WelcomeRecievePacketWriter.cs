@@ -16,8 +16,10 @@ namespace GameClient
 
         protected override void GenerateBufferContent()
         {
+            WriteByte((byte)ClientPacketIds.welcomeRespond);
             WriteInt(clientId);
             WriteString(playerName);
+            InsertInt(buffer.Count);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace SharedClassLibrary.Networking
 {
     public abstract class PacketWriter
     {
-        private List<byte> buffer;
+        protected List<byte> buffer;
         private byte[] bufferBytes;
 
         public byte[] GetGeneratedBytes(bool _regenerateBuffer = false)
