@@ -2,12 +2,12 @@
 
 namespace SharedClassLibrary.Simulation
 {
-    abstract class System
+    abstract public class System
     {
         private ComponentMask componentMask;
         private List<Entity> concernedEntities = new List<Entity>();
 
-        protected void SetComponentMask(ComponentMask _componentMask)
+        protected System(ComponentMask _componentMask)
         {
             componentMask = _componentMask;
 
@@ -34,5 +34,7 @@ namespace SharedClassLibrary.Simulation
                 }
             }
         }
+
+        abstract public void Update();
     }
 }

@@ -1,49 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace SharedClassLibrary.Simulation
 {
-    struct ComponentMask
+    public struct ComponentMask
     {
-        private World world;
-        private int setComponentIndex;
         private ComponentManager[] componentManagers;
-        private bool active { get { return (setComponentIndex == componentManagers.Length); } }
 
         public IEnumerable<ComponentManager> ComponentManagers { get { return componentManagers; } }
 
-        public ComponentMask(World _world, int _componentTypeCount)
+        public ComponentMask(World _world, params Type[] _componentTypes)
         {
-            world = _world;
-            componentManagers = new ComponentManager[_componentTypeCount];
-            setComponentIndex = 0;
-        }
-
-        public ComponentManager<ComponentType> AddComponentType<ComponentType>() where ComponentType : struct
-        {
-            if (world != null)
+            componentManagers = new ComponentManager[_componentTypes.Length];
+            for (int i = 0; i < _componentTypes.Length; i++)
             {
-                throw new Exception("Cant add component to ComponentMask when its world field is null.");
+                // Use reflections to call world.GetComponentManager with a type
+                MethodInfo method = typeof(World).GetMethod(nameof(World.GetComponentManager));
+                MethodInfo generic = method.MakeGenericMethod(_componentTypes[i]);
+                componentManagers[i] = (ComponentManager)generic.Invoke(_world, null);
             }
-            if (setComponentIndex >= componentManagers.Length)
-            {
-                throw new Exception("Too many component types added to ComponentMask. Please specify a greater component type count in the ComponentMask constructor.");
-            }
-
-            ComponentManager<ComponentType> componentManager = world.GetComponentManager<ComponentType>();
-            componentManagers[setComponentIndex] = componentManager;
-            setComponentIndex++;
-
-            return componentManager;
         }
 
         public bool FitsEntity(Entity _entity)
         {
-            if (!active)
-            {
-                throw new Exception("Cant check if the mask fits an entity if the mask is not fully set.");
-            }
-
             bool valid = true;
 
             foreach (ComponentManager componentManager in componentManagers)

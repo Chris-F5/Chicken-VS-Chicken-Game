@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SharedClassLibrary.Simulation
+﻿namespace SharedClassLibrary.Simulation
 {
-    internal class EntityHandler
+    public class EntityHandler
     {
         private readonly Entity entity;
         private readonly World world;
@@ -15,7 +11,7 @@ namespace SharedClassLibrary.Simulation
         }
         public void AddComponent<ComponentType>(ComponentType _component) where ComponentType : struct
         {
-            world.AttachComponent<ComponentType>(entity, _component);
+            world.AttachComponent(entity, _component);
         }
         public void RemoveComponent<ComponentType>() where ComponentType : struct
         {

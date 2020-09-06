@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SharedClassLibrary.Simulation
+﻿namespace SharedClassLibrary.Simulation
 {
     abstract class EntityBuilder
     {

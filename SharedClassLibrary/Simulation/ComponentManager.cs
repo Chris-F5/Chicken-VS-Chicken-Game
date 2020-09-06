@@ -3,29 +3,16 @@ using System.Collections.Generic;
 
 namespace SharedClassLibrary.Simulation
 {
-    internal abstract class ComponentManager 
+    public abstract class ComponentManager 
     {
         public abstract bool EntityHasComponent(Entity _entity);
         public abstract void SubscribeSystem(System _system);
-        internal abstract WorldData.ComponentFamilyData GetEmptyComponentFamilyData();
     }
 
-    internal class ComponentManager<Component> : ComponentManager where Component : struct
+    public class ComponentManager<Component> : ComponentManager where Component : struct
     {
         private Dictionary<Entity, Component> components = new Dictionary<Entity, Component>();
         private List<System> subscribedSystems = new List<System>();
-        private int maxCount;
-        private int id;
-
-        ComponentManager(int _maxCount)
-        {
-            maxCount = _maxCount;
-        }
-
-        internal override WorldData.ComponentFamilyData GetEmptyComponentFamilyData()
-        {
-            return new WorldData.ComponentFamilyData<Component>(maxCount);
-        }
 
         public override void SubscribeSystem(System _system)
         {

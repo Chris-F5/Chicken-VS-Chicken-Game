@@ -23,6 +23,7 @@ namespace SharedClassLibrary.Simulation
         private bool gameThreadRunning = false;
         public int GameTick { get; private set; } = 0;
         public DateTime startTime { get; private set; }
+        public World world { get; set; }
 
         public void StartGameLogicThread(Action _afterTickUpdate, Action _beforeTickUpdate)
         {
@@ -95,7 +96,7 @@ namespace SharedClassLibrary.Simulation
 
         private void UpdateToNextTick()
         {
-            NetworkObject.UpdateAll();
+            
             GameTick++;
 
             // By default no rollback is planned for next tick.

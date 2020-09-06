@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection
 
 namespace SharedClassLibrary.Simulation
 {
-    class World
+    public class World
     {
         private readonly EntityManager entityManager;
         private Dictionary<Type, ComponentManager> componentManagers = new Dictionary<Type, ComponentManager>();
@@ -25,6 +26,13 @@ namespace SharedClassLibrary.Simulation
         public void AddSystem(System _system)
         {
             systems.Add(_system);
+        }
+        public void Update()
+        {
+            foreach (System system in systems)
+            {
+                system.Update();
+            }
         }
 
         public ComponentManager<Component> GetComponentManager<Component>() where Component : struct

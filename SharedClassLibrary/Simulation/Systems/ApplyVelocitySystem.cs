@@ -8,11 +8,12 @@ namespace SharedClassLibrary.Simulation.Systems
         private ComponentManager<TransformComponent> velocityManager;
 
         public ApplyVelocitySystem(World _world)
+            : base(new ComponentMask(_world, typeof(TransformComponent), typeof(VelocityComponent)))
         {
-            ComponentMask componentMask = new ComponentMask(_world, 2);
-            transformManager = componentMask.AddComponentType<TransformComponent>();
-            velocityManager = componentMask.AddComponentType<TransformComponent>();
-            SetComponentMask(componentMask);
+        }
+        public override void Update()
+        {
+
         }
     }
 }
