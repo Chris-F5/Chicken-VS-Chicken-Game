@@ -5,7 +5,7 @@ namespace SharedClassLibrary.Simulation
     abstract public class System
     {
         private ComponentMask componentMask;
-        private List<Entity> concernedEntities = new List<Entity>();
+        public List<Entity> activeEntities { get; private set; } = new List<Entity>();
 
         protected System(ComponentMask _componentMask)
         {
@@ -21,16 +21,16 @@ namespace SharedClassLibrary.Simulation
         {
             if (componentMask.FitsEntity(_entity))
             {
-                if (!concernedEntities.Contains(_entity))
+                if (!activeEntities.Contains(_entity))
                 {
-                    concernedEntities.Add(_entity);
+                    activeEntities.Add(_entity);
                 }
             }
             else
             {
-                if (concernedEntities.Contains(_entity))
+                if (activeEntities.Contains(_entity))
                 {
-                    concernedEntities.Remove(_entity);
+                    activeEntities.Remove(_entity);
                 }
             }
         }

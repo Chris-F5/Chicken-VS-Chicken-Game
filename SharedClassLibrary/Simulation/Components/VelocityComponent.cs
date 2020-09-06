@@ -4,6 +4,6 @@ namespace SharedClassLibrary.Simulation.Components
 {
     public struct VelocityComponent
     {
-        Vector2 velocity;
+        public Vector2 velocity;
     }
 }

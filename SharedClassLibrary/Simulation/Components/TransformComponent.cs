@@ -4,6 +4,6 @@ namespace SharedClassLibrary.Simulation.Components
 {
     public struct TransformComponent
     {
-        Vector2 position;
+        public Vector2 position;
     }
 }
