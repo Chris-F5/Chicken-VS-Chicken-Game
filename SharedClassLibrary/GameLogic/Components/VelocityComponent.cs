@@ -1,6 +1,6 @@
 ﻿using SharedClassLibrary.Utilities;
 
-namespace SharedClassLibrary.Simulation.Components
+namespace SharedClassLibrary.GameLogic.Components
 {
     public struct VelocityComponent
     {

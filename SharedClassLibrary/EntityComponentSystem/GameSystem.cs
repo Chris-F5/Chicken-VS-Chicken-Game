@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 
-namespace SharedClassLibrary.Simulation
+namespace SharedClassLibrary.ECS
 {
-    abstract public class System
+    abstract public class GameSystem
     {
         private ComponentMask componentMask;
         public List<Entity> activeEntities { get; private set; } = new List<Entity>();
 
-        protected System(ComponentMask _componentMask)
+        protected GameSystem(ComponentMask _componentMask)
         {
             componentMask = _componentMask;
 

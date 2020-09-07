@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SharedClassLibrary.Simulation
+namespace SharedClassLibrary.ECS
 {
     public class World
     {
         private readonly EntityManager entityManager;
         private Dictionary<Type, ComponentManager> componentManagers = new Dictionary<Type, ComponentManager>();
-        private List<System> systems = new List<System>();
+        private List<GameSystem> systems = new List<GameSystem>();
 
         public EntityHandler CreateEntity()
         {
@@ -22,13 +22,13 @@ namespace SharedClassLibrary.Simulation
         {
             GetComponentManager<Component>().RemoveComponent(_entity);
         }
-        public void AddSystem(System _system)
+        public void AddSystem(GameSystem _system)
         {
             systems.Add(_system);
         }
         public void Update()
         {
-            foreach (System system in systems)
+            foreach (GameSystem system in systems)
             {
                 system.Update();
             }

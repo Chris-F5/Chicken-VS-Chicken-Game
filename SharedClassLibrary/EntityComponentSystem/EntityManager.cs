@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SharedClassLibrary.Simulation
+namespace SharedClassLibrary.ECS
 {
     class EntityManager
     {

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading;
 using SharedClassLibrary.Logging;
+using SharedClassLibrary.ECS;
 
-namespace SharedClassLibrary.Simulation
+namespace SharedClassLibrary.GameLogic
 {
     public class GameLogic
     {

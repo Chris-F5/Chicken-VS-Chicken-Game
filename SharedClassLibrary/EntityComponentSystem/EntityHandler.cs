@@ -1,4 +1,4 @@
-﻿namespace SharedClassLibrary.Simulation
+﻿namespace SharedClassLibrary.ECS
 {
     public class EntityHandler
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace SharedClassLibrary.Simulation
+namespace SharedClassLibrary.ECS
 {
     public struct ComponentMask
     {

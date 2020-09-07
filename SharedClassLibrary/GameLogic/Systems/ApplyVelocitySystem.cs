@@ -1,8 +1,9 @@
-﻿using SharedClassLibrary.Simulation.Components;
+﻿using SharedClassLibrary.GameLogic.Components;
+using SharedClassLibrary.ECS;
 
-namespace SharedClassLibrary.Simulation.Systems
+namespace SharedClassLibrary.GameLogic.Systems
 {
-    class ApplyVelocitySystem : System
+    class ApplyVelocitySystem : GameSystem
     {
         private ComponentManager<TransformComponent> transformManager;
         private ComponentManager<VelocityComponent> velocityManager;

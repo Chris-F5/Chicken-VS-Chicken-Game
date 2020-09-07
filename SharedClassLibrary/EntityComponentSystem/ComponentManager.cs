@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SharedClassLibrary.Simulation
+namespace SharedClassLibrary.ECS
 {
     public abstract class ComponentManager 
     {
         public abstract bool EntityHasComponent(Entity _entity);
-        public abstract void SubscribeSystem(System _system);
+        public abstract void SubscribeSystem(GameSystem _system);
     }
 
     public class ComponentManager<Component> : ComponentManager where Component : struct
     {
         private Dictionary<Entity, Component> components = new Dictionary<Entity, Component>();
-        private List<System> subscribedSystems = new List<System>();
+        private List<GameSystem> subscribedSystems = new List<GameSystem>();
 
-        public override void SubscribeSystem(System _system)
+        public override void SubscribeSystem(GameSystem _system)
         {
             subscribedSystems.Add(_system);
             foreach (Entity entity in components.Keys)
@@ -31,7 +31,7 @@ namespace SharedClassLibrary.Simulation
             }
             components.Add(_entity, _component);
 
-            foreach (System system in subscribedSystems)
+            foreach (GameSystem system in subscribedSystems)
             {
                 system.UpdateEntityAttachment(_entity);
             }
@@ -45,7 +45,7 @@ namespace SharedClassLibrary.Simulation
             }
             components.Remove(_entity);
 
-            foreach (System system in subscribedSystems)
+            foreach (GameSystem system in subscribedSystems)
             {
                 system.UpdateEntityAttachment(_entity);
             }
