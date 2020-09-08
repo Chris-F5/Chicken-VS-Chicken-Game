@@ -7,7 +7,6 @@ namespace SharedClassLibrary.ECS
     {
         private readonly EntityManager entityManager;
         private Dictionary<Type, ComponentManager> componentManagers = new Dictionary<Type, ComponentManager>();
-        private List<GameSystem> systems = new List<GameSystem>();
 
         public EntityHandler CreateEntity()
         {
@@ -22,18 +21,6 @@ namespace SharedClassLibrary.ECS
         {
             GetComponentManager<Component>().RemoveComponent(_entity);
         }
-        public void AddSystem(GameSystem _system)
-        {
-            systems.Add(_system);
-        }
-        public void Update()
-        {
-            foreach (GameSystem system in systems)
-            {
-                system.Update();
-            }
-        }
-
         public ComponentManager<Component> GetComponentManager<Component>() where Component : struct
         {
             Type type = typeof(Component);

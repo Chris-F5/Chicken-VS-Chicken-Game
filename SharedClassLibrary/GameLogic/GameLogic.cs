@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using SharedClassLibrary.Logging;
 using SharedClassLibrary.ECS;
+using SharedClassLibrary.GameLogic.Systems;
 
 namespace SharedClassLibrary.GameLogic
 {
@@ -18,6 +20,8 @@ namespace SharedClassLibrary.GameLogic
 
         private Action afterTickUpdate;
         private Action beforeTickUpdate;
+
+        private List<GameSystem> gameLogicSystems = new List<GameSystem>();
 
         public int rollbackLimit = 0;
 
@@ -36,6 +40,8 @@ namespace SharedClassLibrary.GameLogic
 
             afterTickUpdate = _afterTickUpdate;
             beforeTickUpdate = _beforeTickUpdate;
+
+            gameLogicSystems.Add(new ApplyVelocitySystem(world));
 
             if (!gameThreadRunning) 
             {
@@ -97,7 +103,10 @@ namespace SharedClassLibrary.GameLogic
 
         private void UpdateToNextTick()
         {
-            
+            foreach (GameSystem system in gameLogicSystems)
+            {
+
+            }
             GameTick++;
 
             // By default no rollback is planned for next tick.
