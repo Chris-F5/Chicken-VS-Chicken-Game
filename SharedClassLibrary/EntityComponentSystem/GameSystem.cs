@@ -1,16 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SharedClassLibrary.ECS
 {
     abstract public class GameSystem
     {
-        private ComponentMask componentMask;
-        protected ComponentMask ComponentMask { get { return componentMask; } }
+        protected readonly ComponentMask componentMask;
+        protected readonly EventBus eventBus;
         public List<Entity> activeEntities { get; private set; } = new List<Entity>();
 
-        protected GameSystem(ComponentMask _componentMask)
+        protected GameSystem(World _world, params Type[] _componentTypes)
         {
-            componentMask = _componentMask;
+            eventBus = _world.eventBus;
+            componentMask = new ComponentMask(_world, _componentTypes);
 
             foreach (ComponentManager componentManager in componentMask.ComponentManagers)
             {

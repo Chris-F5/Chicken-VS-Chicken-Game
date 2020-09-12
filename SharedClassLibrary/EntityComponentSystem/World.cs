@@ -6,11 +6,14 @@ namespace SharedClassLibrary.ECS
 {
     public class World
     {
+        public readonly EventBus eventBus;
+
         private readonly EntityManager entityManager;
         private Dictionary<Type, ComponentManager> componentManagers;
 
         public World()
         {
+            eventBus = new EventBus();
             entityManager = new EntityManager();
             componentManagers = new Dictionary<Type, ComponentManager>();
         }

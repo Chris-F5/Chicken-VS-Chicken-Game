@@ -9,10 +9,10 @@ namespace SharedClassLibrary.GameLogic.Systems
         private ComponentManager<VelocityComponent> velocityManager;
 
         public ApplyVelocitySystem(World _world)
-            : base(new ComponentMask(_world, typeof(TransformComponent), typeof(VelocityComponent)))
+            : base(_world, typeof(TransformComponent), typeof(VelocityComponent))
         {
-            ComponentMask.GetComponentManager(out transformManager);
-            ComponentMask.GetComponentManager(out velocityManager);
+            componentMask.GetComponentManager(out transformManager);
+            componentMask.GetComponentManager(out velocityManager);
         }
         public override void Update()
         {

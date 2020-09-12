@@ -39,6 +39,43 @@ namespace TestProject
             system.Update();
             Assert.IsTrue(entityB.GetComponent<TestComponent>().foo == 3, "component B did not update correctly after system update");
         }
+
+        #region EventBusTest
+
+        [TestMethod]
+        public void EventBusTest()
+        {
+            EventBus eventBus = new EventBus();
+            eventBus.Subscribe<TestClassA>(TestHandlerA);
+            eventBus.Subscribe<TestClassB>(TestHandlerB);
+
+            eventBus.Publish(new TestClassA());
+            Assert.IsTrue(testACalled, "testA not called");
+            Assert.IsTrue(!testBCalled, "testB should not be called yet");
+
+            eventBus.Publish(new TestClassB());
+            Assert.IsTrue(testBCalled, "testB not called");
+        }
+        bool testACalled = false;
+        bool testBCalled = false;
+        public void TestHandlerA(TestClassA _test)
+        {
+            testACalled = true;
+        }
+        public void TestHandlerB(TestClassB _test)
+        {
+            testBCalled = true;
+        }
+        #endregion EventBusTest
+    }
+
+    public class TestClassA
+    {
+        int foo = 5;
+    }
+    public class TestClassB
+    {
+        int foo = 5;
     }
 
     struct TestComponent
@@ -50,9 +87,9 @@ namespace TestProject
     {
         private ComponentManager<TestComponent> testComponentManager;
 
-        public TestSystem(World _world) : base(new ComponentMask(_world, typeof(TestComponent)))
+        public TestSystem(World _world) : base(_world, typeof(TestComponent))
         {
-            ComponentMask.GetComponentManager(out testComponentManager);
+            componentMask.GetComponentManager(out testComponentManager);
         }
 
         public override void Update()
