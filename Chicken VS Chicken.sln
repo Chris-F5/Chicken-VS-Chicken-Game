@@ -11,6 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestProject", "TestProject\
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameClient", "GameClient\GameClient.csproj", "{F76AB67D-7BA4-494A-8178-2527A0AA19BB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4847219C-7486-4033-ADCC-FF6D92B9AE7E} = {4847219C-7486-4033-ADCC-FF6D92B9AE7E}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServer", "GameServer\GameServer.csproj", "{FE661E39-7427-468C-AA7E-DD5D9893E41C}"
 EndProject
