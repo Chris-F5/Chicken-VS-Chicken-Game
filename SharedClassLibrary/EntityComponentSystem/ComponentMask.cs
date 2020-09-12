@@ -37,5 +37,18 @@ namespace SharedClassLibrary.ECS
 
             return valid;
         }
+
+        public void GetComponentManager<ComponentManagerType>(out ComponentManagerType componentManagerOut) where ComponentManagerType : ComponentManager
+        {
+            foreach (ComponentManager componentManager in componentManagers)
+            {
+                if (componentManager.GetType() == componentManager.GetType())
+                {
+                    componentManagerOut = componentManager as ComponentManagerType;
+                    return;
+                }
+            }
+            throw new Exception("This component mask does not contain this component type.");
+        }
     }
 }

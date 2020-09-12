@@ -131,7 +131,7 @@ namespace SharedClassLibrary.GameLogic
             }
 
             GameTick -= _ticks;
-            NetworkObject.RollBackTicks(_ticks);
+            // TODO: Rollback _tick number of ticks
             for (int i = 0; i < _ticks; i++)
             {
                 UpdateToNextTick();

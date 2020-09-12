@@ -11,15 +11,16 @@ namespace SharedClassLibrary.GameLogic.Systems
         public ApplyVelocitySystem(World _world)
             : base(new ComponentMask(_world, typeof(TransformComponent), typeof(VelocityComponent)))
         {
+            ComponentMask.GetComponentManager(out transformManager);
+            ComponentMask.GetComponentManager(out velocityManager);
         }
         public override void Update()
         {
             foreach (Entity entity in activeEntities)
             {
-                TransformComponent transform = transformManager[entity];
-                VelocityComponent velocity = velocityManager[entity];
+                ref TransformComponent transform = ref transformManager.GetComponent(entity);
+                ref VelocityComponent velocity = ref velocityManager.GetComponent(entity);
                 transform.position += velocity.velocity;
-                transformManager[entity] = transform;
             }
         }
     }

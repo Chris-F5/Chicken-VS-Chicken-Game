@@ -5,6 +5,7 @@ namespace SharedClassLibrary.ECS
     abstract public class GameSystem
     {
         private ComponentMask componentMask;
+        protected ComponentMask ComponentMask { get { return componentMask; } }
         public List<Entity> activeEntities { get; private set; } = new List<Entity>();
 
         protected GameSystem(ComponentMask _componentMask)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace SharedClassLibrary.ECS
 {
@@ -7,29 +8,32 @@ namespace SharedClassLibrary.ECS
     {
         public abstract bool EntityHasComponent(Entity _entity);
         public abstract void SubscribeSystem(GameSystem _system);
+        public abstract void RemoveComponent(Entity _entity);
+        public abstract Type GetComponentType();
     }
 
-    public class ComponentManager<Component> : ComponentManager where Component : struct
+    public class ComponentManager<ComponentType> : ComponentManager where ComponentType : struct
     {
-        private Dictionary<Entity, Component> components = new Dictionary<Entity, Component>();
+        private ComponentPool<ComponentType> componentPool = new ComponentPool<ComponentType>();
         private List<GameSystem> subscribedSystems = new List<GameSystem>();
+
+        public ComponentManager()
+        {
+            componentPool.init();
+        }
 
         public override void SubscribeSystem(GameSystem _system)
         {
             subscribedSystems.Add(_system);
-            foreach (Entity entity in components.Keys)
+            foreach (Entity entity in componentPool.GetEntities())
             {
                 _system.UpdateEntityAttachment(entity);
             }
         }
 
-        public void AttachComponent(Entity _entity, Component _component)
+        public void AttachComponent(Entity _entity, ComponentType _component)
         {
-            if (components.ContainsKey(_entity))
-            {
-                throw new Exception("Entity cant have 2 of the same component attached to it.");
-            }
-            components.Add(_entity, _component);
+            componentPool.AttachComponent(_entity, _component);
 
             foreach (GameSystem system in subscribedSystems)
             {
@@ -37,13 +41,9 @@ namespace SharedClassLibrary.ECS
             }
         }
 
-        public void RemoveComponent(Entity _entity)
+        public override void RemoveComponent(Entity _entity)
         {
-            if (components.ContainsKey(_entity))
-            {
-                throw new Exception("Entity does not have this component type attached.");
-            }
-            components.Remove(_entity);
+            componentPool.RemoveComponent(_entity);
 
             foreach (GameSystem system in subscribedSystems)
             {
@@ -51,21 +51,22 @@ namespace SharedClassLibrary.ECS
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ref ComponentType GetComponent(Entity _entity)
+        {
+            return ref componentPool.GetComponent(_entity);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override bool EntityHasComponent(Entity _entity)
         {
-            return components.ContainsKey(_entity);
+            return componentPool.EntityHasComponent(_entity);
         }
 
-        public Component this[Entity _entity]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override Type GetComponentType()
         {
-            get
-            {
-                return components[_entity];
-            }
-            set
-            {
-                components[_entity] = value;
-            }
+            return typeof(ComponentType);
         }
     }
 }

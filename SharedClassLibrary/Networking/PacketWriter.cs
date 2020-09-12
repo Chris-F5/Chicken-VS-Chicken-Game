@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using SharedClassLibrary.Simulation;
+using SharedClassLibrary.GameLogic;
 
 namespace SharedClassLibrary.Networking
 {
