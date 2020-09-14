@@ -42,7 +42,7 @@ namespace SharedClassLibrary.ECS
         {
             foreach (ComponentManager componentManager in componentManagers)
             {
-                if (componentManager.GetType() == componentManager.GetType())
+                if (componentManager.GetType() == typeof(ComponentManagerType))
                 {
                     componentManagerOut = componentManager as ComponentManagerType;
                     return;

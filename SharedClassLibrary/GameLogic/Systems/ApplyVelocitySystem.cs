@@ -20,7 +20,7 @@ namespace SharedClassLibrary.GameLogic.Systems
             {
                 ref TransformComponent transform = ref transformManager.GetComponent(entity);
                 ref VelocityComponent velocity = ref velocityManager.GetComponent(entity);
-                transform.position += velocity.velocity;
+                transform.position += velocity.velocity * Constants.SECONDS_PER_TICK;
             }
         }
     }

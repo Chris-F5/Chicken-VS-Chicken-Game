@@ -4,6 +4,7 @@ using System.Threading;
 using SharedClassLibrary.Logging;
 using SharedClassLibrary.ECS;
 using SharedClassLibrary.GameLogic.Systems;
+using SharedClassLibrary.GameLogic.Components;
 
 namespace SharedClassLibrary.GameLogic
 {
@@ -30,18 +31,19 @@ namespace SharedClassLibrary.GameLogic
         public DateTime startTime { get; private set; }
         public World world { get; set; }
 
-        public void StartGameLogicThread(Action _afterTickUpdate, Action _beforeTickUpdate)
+        public void StartGameLogicThread(Action _afterTickUpdate, Action _beforeTickUpdate, Action _worldInit)
         {
-            StartGameLogicThread(_afterTickUpdate, _beforeTickUpdate, DateTime.Now);
+            StartGameLogicThread(_afterTickUpdate, _beforeTickUpdate, _worldInit, DateTime.Now);
         }
-        public void StartGameLogicThread(Action _afterTickUpdate, Action _beforeTickUpdate, DateTime _startTime)
+        public void StartGameLogicThread(Action _afterTickUpdate, Action _beforeTickUpdate, Action _worldInit, DateTime _startTime)
         {
             startTime = _startTime;
 
             afterTickUpdate = _afterTickUpdate;
             beforeTickUpdate = _beforeTickUpdate;
 
-            gameLogicSystems.Add(new ApplyVelocitySystem(world));
+            InitWorld();
+            _worldInit();
 
             if (!gameThreadRunning) 
             {
@@ -54,6 +56,24 @@ namespace SharedClassLibrary.GameLogic
                 throw new Exception("GameLogic thread is already running");
             }
         }
+
+        private void InitWorld()
+        {
+            world = new World();
+
+            gameLogicSystems.Add(new ApplyVelocitySystem(world));
+
+            EntityHandler entity = world.CreateEntity();
+            entity.AddComponent(new TransformComponent(-500, 400));
+            entity.AddComponent(new VelocityComponent(150f, -75f));
+            entity.AddComponent(new SpriteComponent());
+
+            entity = world.CreateEntity();
+            entity.AddComponent(new TransformComponent(500, 400));
+            entity.AddComponent(new VelocityComponent(-150f, -95f));
+            entity.AddComponent(new SpriteComponent());
+        }
+
         private void GameThread(DateTime _startTime)
         {
             gameThreadRunning = true;
@@ -105,7 +125,7 @@ namespace SharedClassLibrary.GameLogic
         {
             foreach (GameSystem system in gameLogicSystems)
             {
-
+                system.Update();
             }
             GameTick++;
 
